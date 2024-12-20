@@ -1,0 +1,196 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  color: white;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  background: linear-gradient(45deg, #141405 50%, #021010);
+
+  @media screen and (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
+  @media screen and (max-width: 1160px) {
+    background-repeat: repeat-y;
+    background: linear-gradient(90deg, #111005 25%, #181505 50%, #110f05);
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+main {
+  min-height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    justify-content: flex-start;
+  }
+}
+
+nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  margin: 0;
+  line-height: 1.45;
+  font-size: 2.7rem;
+}
+
+h2 {
+  text-align: center;
+  line-height: 2.15;
+  font-size: 2.7rem;
+  margin: 5px;
+  user-select: none;
+
+  @media screen and (max-width: 428px) {
+    margin: 0px;
+    font-size: 2.5rem;
+  }
+}
+
+h3 {
+  text-align: center;
+  line-height: 1;
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin: 5px;
+}
+
+label {
+  margin: 25px 0;
+  display: block;
+  position: relative;
+  text-align: center;
+
+  @media screen and (max-width: 768px) {
+    margin: 20px 0;
+  }
+}
+
+a {
+  transition: color 0.3s;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: #cdc47b;
+  }
+}
+
+ul {
+  list-style: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+input {
+  color: white;
+}
+
+input[type="text"] {
+  border: none;
+  font-size: 1.5rem;
+  padding: 7px;
+}
+
+textarea {
+  border: none;
+  font-size: 1.5rem;
+  padding: 10px;
+  resize: vertical;
+  min-height: 40px;
+  max-height: 150px;
+}
+
+input[type="number"] {
+  text-align: center;
+  -moz-appearance: textfield;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+button {
+  border: 1px solid rgb(24, 49, 83);
+  padding: 15px;
+  border-radius: 5px;
+  background: rgb(13, 34, 65);
+  font-weight: 500;
+  margin: 5px;
+  transition: opacity 0.3s, box-shadow 0.3s, transform 0.3s;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: 0px 0px 20px 8px transparent;
+  letter-spacing: 0.2px;
+  color: white;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+svg {
+  color: white;
+}
+
+footer {
+  font-size: 0.75rem;
+  font-weight: 300;
+  width: 100%;
+  text-align: center;
+  opacity: 0.9;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  z-index: -1;
+  position: relative;
+
+  @media screen and (max-height: 730px) {
+    margin-top: 60px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(10 24 23);
+  border-radius: 33px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(18 70 75);
+  border-radius: 33px;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgb(10 24 23);
+}

@@ -1,0 +1,25 @@
+.initialized,
+.show-results,
+.show-app,
+.is-connected,
+.is-collapsed,
+body.notification-visible,
+body.display-browser {
+  position: relative;
+}
+
+html.prevent-overscroll {
+  overscroll-behavior: contain;
+}
+body.prevent-overscroll {
+  overscroll-behavior: contain;
+}
+
+body.display-standalone,
+body.display-twa {
+  overscroll-behavior: contain;
+
+  html {
+    overscroll-behavior: contain;
+  }
+}

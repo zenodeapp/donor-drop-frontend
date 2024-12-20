@@ -1,0 +1,213 @@
+#wallets,
+#networks {
+  text-align: center;
+  padding: 0;
+}
+
+#wallets .wallet,
+#networks .network {
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  margin: 15px;
+  padding: 10px 15px;
+  width: 150px;
+  position: relative;
+
+  &.selected,
+  &.disabled {
+    pointer-events: none;
+  }
+
+  &.disabled {
+    color: grey;
+  }
+
+  & .wallet-logo {
+    display: block;
+    transition: transform 0.3s;
+
+    & svg {
+      display: block;
+      margin: 0 auto;
+      height: 3rem;
+      width: 3rem;
+      transition: opacity 0.3s;
+      opacity: 0.5;
+    }
+  }
+
+  & .name {
+    margin-top: 5px;
+    display: block;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgb(79, 223, 151);
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.4s;
+    bottom: 0;
+  }
+}
+
+#wallets,
+#networks {
+  & .wallet,
+  & .network {
+    & .name {
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+
+    & .description {
+      display: block;
+      font-size: 1rem;
+      max-width: 200px;
+      text-align: left;
+    }
+
+    &.selected {
+      & .name {
+        opacity: 1;
+      }
+
+      & .wallet-logo {
+        transform: translateY(-10px);
+
+        & svg {
+          opacity: 1;
+        }
+      }
+    }
+
+    &.connected {
+      // background: rgba(20, 104, 83, 0.541);
+      & .name {
+        // color: rgb(149, 202, 149);
+        opacity: 0.6;
+      }
+      & svg {
+        opacity: 0.7;
+        // opacity: 1;
+      }
+
+      &::after {
+        opacity: 1;
+      }
+    }
+
+    &.selected.connected {
+      & .name {
+        opacity: 1;
+      }
+
+      & svg {
+        opacity: 1;
+      }
+
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+#wallet-submit {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 15px;
+  user-select: none;
+}
+
+.disconnect,
+.connect,
+.install {
+  pointer-events: all;
+}
+
+.select-wallet,
+.not-available {
+  pointer-events: none;
+}
+
+.metamask,
+.ethers {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  z-index: 4;
+
+  & .tooltip-text {
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 50%;
+    background: rgb(30, 30, 30);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    user-select: none;
+    cursor: pointer;
+    pointer-events: all;
+    right: 15px;
+
+    @media screen and (max-width: 460px) {
+      right: -10px;
+    }
+
+    & .tooltip-balloon {
+      opacity: 0;
+      font-size: 0.8rem;
+      position: absolute;
+      bottom: 30px;
+      left: -5px;
+      width: 200px;
+      hyphens: auto;
+      text-align: justify;
+      background: rgb(34, 34, 34);
+      padding: 10px;
+      border-radius: 5px;
+      transition: opacity 0.4s;
+      pointer-events: none;
+
+      @media screen and (max-width: 460px) {
+        right: -10px;
+        width: 150px;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: white;
+        background: rgb(34, 34, 34);
+        display: block;
+        transform: rotate(45deg);
+        bottom: -5px;
+        left: 10px;
+      }
+    }
+
+    &:hover {
+      & .tooltip-balloon {
+        opacity: 1;
+      }
+    }
+  }
+}

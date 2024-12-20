@@ -1,0 +1,155 @@
+@value FloatMedium, FloatLarge from "animations.module.scss";
+
+@value is-connected, show-app from "body.module.scss";
+
+.logo {
+  user-select: none;
+  pointer-events: none;
+  position: relative;
+  margin-top: 150px;
+  margin-top: 129px;
+  filter: saturate(0) brightness(3);
+  white-space: nowrap;
+
+  body:global(.is-connected) & {
+    filter: none;
+  }
+
+  & h1 {
+    overflow: hidden;
+  }
+
+  & .logo-wrapper {
+    margin: 0;
+    padding: 0;
+    margin-top: 150px;
+    animation: FloatLarge 2s 1s infinite alternate;
+    position: absolute;
+    bottom: -33px;
+    right: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+    cursor: pointer;
+    animation-play-state: paused;
+    margin: 0 auto;
+
+    body:global(.is-connected) & {
+      animation-play-state: running;
+      pointer-events: all;
+    }
+
+    body:global(.show-app) & {
+      pointer-events: none;
+    }
+  }
+
+  & .logo-ready {
+    position: absolute;
+    bottom: -20px;
+    right: 62px;
+    font-size: 0.7rem;
+    animation: FloatMedium 2s 1.5s infinite alternate;
+
+    transition: opacity 0.3s 0s;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    animation-play-state: paused;
+
+    @media screen and (max-width: 768px) {
+      right: 48px;
+    }
+
+    body:global(.is-connected) & {
+      transition: opacity 0.7s 0.8s;
+      opacity: 1;
+      animation-play-state: running;
+      pointer-events: all;
+      filter: none;
+    }
+
+    body:global(.show-app) & {
+      transition: opacity 0.3s;
+      opacity: 0;
+      transition-delay: 0s;
+    }
+  }
+
+  & .logo-icon {
+    display: block;
+    max-width: 96px;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 6rem;
+    padding-left: 7px;
+    transform: translateY(30px);
+    transition: transform 0.4s, filter 0.4s;
+    transition-delay: 0.7s, 0.7s;
+
+    body:global(.show-app) & {
+      transform: translateY(-50px);
+      transition-delay: 0s, 0s;
+    }
+  }
+
+  & .first {
+    color: #ffff00;
+    display: inline-block;
+    transition: transform 0.4s 0.7s;
+    transform: translateX(-150%);
+
+    body:global(.show-app) & {
+      transform: translateX(0);
+    }
+  }
+
+  & .second {
+    display: inline-block;
+    font-weight: 300;
+    transition: transform 0.6s 0.8s;
+    transform: translateX(150%);
+
+    body:global(.show-app) & {
+      transform: translateX(0);
+    }
+  }
+}
+
+.logo-text {
+  padding: 0px 20px;
+  position: relative;
+
+  &::before {
+    content: "";
+    border-bottom: 1px dashed rgb(255, 255, 255);
+    width: 70%;
+    position: absolute;
+    left: 30%;
+    bottom: 0;
+    transition: transform 1s 0.5s;
+    transform: translateX(-150%);
+
+    body:global(.show-app) & {
+      transform: translateX(0);
+    }
+  }
+
+  &::after {
+    content: "";
+    border-bottom: 1px dashed rgb(196, 194, 72);
+    width: 75%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: transform 1s 0.5s;
+    transform: translateX(150%);
+
+    body:global(.show-app) & {
+      transform: translateX(0);
+    }
+  }
+}

@@ -1,0 +1,117 @@
+@value active from "global.module.scss";
+
+.slider-header-wrapper {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  margin-top: 11px;
+}
+.slider-header {
+  position: relative;
+  white-space: nowrap;
+  margin-bottom: 10px;
+  margin: 0 auto;
+  display: inline-block;
+  position: relative;
+
+  & .selector {
+    border-bottom: 1px dashed white;
+    width: 68px;
+    position: absolute;
+    left: 6px;
+    bottom: 4px;
+    transition: transform 0.4s ease-in-out, border-color 0.4s 0.15s;
+    margin: 5px;
+    transform: translateX(calc(90px * var(--active-slide)));
+
+    @media screen and (max-width: 368px) {
+      width: 58px;
+      transform: translateX(calc(80px * var(--active-slide)));
+    }
+
+    @media screen and (max-width: 310px) {
+      width: 38px;
+      transform: translateX(calc(60px * var(--active-slide)));
+    }
+  }
+
+  & button {
+    font-size: 0.7rem;
+    width: 80px;
+    padding: 5px;
+
+    text-align: center;
+    border: none;
+    transition: opacity 0.4s;
+    opacity: 0.5;
+    position: relative;
+    color: white;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:global(.active) {
+      opacity: 1;
+    }
+
+    & svg {
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 5px;
+    }
+
+    & .nav-selector-title {
+      position: absolute;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      bottom: -16px;
+      transition: opacity 0.3s;
+      opacity: 0;
+      user-select: none;
+    }
+
+    &:hover .nav-selector-title {
+      opacity: 0.4;
+      transition: opacity 0.7s;
+    }
+
+    &:global(.active) > .nav-selector-title {
+      opacity: 1;
+      transition: opacity 0.5s 0.15s;
+    }
+
+    @media screen and (max-width: 368px) {
+      width: 70px;
+    }
+
+    @media screen and (max-width: 310px) {
+      width: 50px;
+    }
+  }
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  // border-top: 1px solid #192d37;
+  margin-top: 11px;
+  overflow: hidden;
+
+  .slide {
+    width: 100%;
+    position: absolute;
+    transition: transform 0.4s;
+    // min-height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+  }
+  .slide-relative {
+    width: 100%;
+    position: relative;
+    transition: transform 0.4s;
+  }
+}

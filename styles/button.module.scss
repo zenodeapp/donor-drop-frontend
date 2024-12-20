@@ -1,0 +1,38 @@
+@value inactive, active from "global.module.scss";
+
+.btn:global(.inactive) {
+  transform: scale(0.9);
+}
+
+.btn:global(.active) {
+  border-color: rgb(54, 206, 92);
+  background: rgba(39, 209, 116, 0.685);
+  box-shadow: 0px 0px 20px 6px #3ab9903b;
+  opacity: 1;
+  cursor: auto;
+}
+
+.btn.button-blue.holo:global(.active),
+.btn.button-yellow.holo:global(.active),
+.btn.holo,
+.btn.button-blue.holo button.button-yellow.holo {
+  background: transparent;
+  border-radius: 0px;
+}
+
+.btn.button-yellow:global(.active) {
+  border-color: rgb(206 174 54);
+  background: rgb(209 177 39 / 69%);
+  box-shadow: 0px 0px 20px 6px #b99a3a3b;
+}
+
+.btn.button-blue:global(.active) {
+  border-color: rgb(54, 138, 206);
+  background: rgba(39, 127, 209, 0.69);
+  box-shadow: 0px 0px 20px 7px #3a71b93b;
+}
+
+.icon {
+  display: block;
+  font-size: 2rem;
+}

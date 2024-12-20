@@ -1,0 +1,19 @@
+h2 {
+  & .first {
+    font-weight: 300;
+  }
+
+  & .second {
+    color: #50ffd2;
+  }
+}
+
+.text-mono {
+  font-weight: 300;
+  font-family: monospace;
+}
+
+.text-label {
+  font-weight: 400;
+  font-size: 0.8rem;
+}

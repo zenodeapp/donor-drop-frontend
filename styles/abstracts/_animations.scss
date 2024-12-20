@@ -1,0 +1,140 @@
+@use "mixins";
+@use "sass:math";
+
+@mixin float($animation-name, $float-size) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(translateY(0));
+    }
+    100% {
+      @include mixins.transform(translateY(-$float-size));
+    }
+  }
+}
+
+@mixin rotate-float($animation-name, $float-size, $rotate-size) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(translateY(0) rotateZ(0deg));
+    }
+    25% {
+      @include mixins.transform(
+        translateY(-(math.div($float-size, 2))) rotateZ(-$rotate-size)
+      );
+    }
+    50% {
+      @include mixins.transform(translateY(-$float-size) rotateZ(0deg));
+    }
+
+    75% {
+      @include mixins.transform(
+        translateY(-(math.div($float-size, 2))) rotateZ($rotate-size)
+      );
+    }
+
+    100% {
+      @include mixins.transform(translateY(0) rotateZ(0deg));
+    }
+  }
+}
+
+@mixin rotate($animation-name, $rotate-size) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(rotateZ(0deg));
+    }
+    25% {
+      @include mixins.transform(rotateZ(-$rotate-size));
+    }
+
+    50% {
+      @include mixins.transform(rotateZ(0deg));
+    }
+
+    75% {
+      @include mixins.transform(rotateZ($rotate-size));
+    }
+
+    100% {
+      @include mixins.transform(rotateZ(0deg));
+    }
+  }
+}
+
+@mixin spin-circle($animation-name) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(rotate(0deg));
+    }
+    50% {
+      @include mixins.transform(rotate(180deg));
+    }
+    100% {
+      @include mixins.transform(rotate(360deg));
+    }
+  }
+}
+
+@mixin fade-in($animation-name, $in, $out) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      opacity: $in;
+    }
+
+    100% {
+      opacity: $out;
+    }
+  }
+}
+
+@mixin zoom-in($animation-name, $in, $out) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(scale($in));
+    }
+
+    100% {
+      @include mixins.transform(scale($out));
+    }
+  }
+}
+
+@mixin move-x($animation-name, $from, $to) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(translateX($from));
+    }
+
+    100% {
+      @include mixins.transform(translateX($to));
+    }
+  }
+}
+
+@mixin move-y($animation-name, $from, $to) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(translateY($from));
+    }
+
+    100% {
+      @include mixins.transform(translateY($to));
+    }
+  }
+}
+
+@mixin breathe($animation-name, $min, $max) {
+  @include mixins.keyframes($animation-name) {
+    0% {
+      @include mixins.transform(scale($max));
+    }
+
+    50% {
+      @include mixins.transform(scale($min));
+    }
+
+    100% {
+      @include mixins.transform(scale($max));
+    }
+  }
+}

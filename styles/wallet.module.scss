@@ -1,0 +1,258 @@
+@value FloatExtraSmall from "animations.module.scss";
+@value wallets, metamask, ethers, name, wallet-logo, wallet-submit, select-wallet, not-available, selected, connected, disconnect, connect, install from "default.module.scss";
+@value is-connected, show-app from "body.module.scss";
+
+#wallet-container {
+  position: absolute;
+  z-index: 3;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  right: inherit;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background: transparent;
+  margin: 0 auto;
+  pointer-events: none;
+  max-width: 620px;
+
+  &.hidden {
+    & #wallet-selection {
+      transform: translateX(-100%);
+      opacity: 0;
+
+      @media screen and (max-width: 768px) {
+        transform: translateY(-100%);
+      }
+    }
+
+    & .popup-overlay {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+}
+
+.quit-button {
+  font-size: 2rem;
+  position: absolute;
+  top: 0px;
+  right: 6px;
+  padding: 15px;
+  margin: 0px;
+  color: #ffca83;
+  transition: color 0.3s;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.first {
+  font-weight: 300;
+}
+
+.second {
+  color: rgb(255 169 80);
+}
+
+#wallet-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: left;
+
+  & button {
+    transform: translateX(-110px);
+    pointer-events: none;
+
+    & svg {
+      transition: transform 0.3s;
+    }
+    &:hover {
+      & svg {
+        transform: translateY(-5px);
+      }
+    }
+  }
+
+  & button:nth-child(2) {
+    position: absolute;
+    left: 0;
+    transform: translateX(-110px);
+  }
+
+  body:global(.show-app) & button:nth-child(1) {
+    transform: translateX(0px);
+    pointer-events: all;
+  }
+
+  body:global(.show-app):global(.is-connected) & button:nth-child(1) {
+    transform: translateX(-110px);
+  }
+
+  body:global(.is-connected) & button:nth-child(2) {
+    transform: translateX(-110px);
+  }
+
+  body:global(.show-app):global(.is-connected) & button:nth-child(2) {
+    transform: translateX(0);
+    pointer-events: all;
+  }
+}
+
+.wallet-text {
+  font-size: 0.7rem;
+  display: block;
+  transition: color 0.3s;
+}
+
+.wallets-wrapper {
+  position: relative;
+  text-align: center;
+}
+
+.wallets-container {
+  position: relative;
+  display: inline-block;
+  justify-content: center;
+
+  & :global(#wallets) {
+    position: relative;
+
+    & li {
+      font-size: 0.8rem;
+
+      & :global(.wallet-logo) svg {
+        opacity: 1;
+      }
+
+      &:global(.selected) {
+        & :global(.wallet-logo) {
+          transform: none;
+        }
+      }
+
+      &:global(.selected):global(.connected) {
+        &::after {
+          opacity: 0;
+        }
+      }
+      &:global(.connected) {
+        & :global(.wallet-logo) {
+          animation: FloatExtraSmall 1s infinite alternate;
+          &::before {
+            opacity: 1;
+          }
+        }
+
+        &::after {
+          opacity: 0;
+        }
+      }
+
+      &:hover :global(.name) {
+        opacity: 0.8;
+      }
+      & :global(.wallet-logo) {
+        display: block;
+        border-radius: 100%;
+        width: 80px;
+        height: 80px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        &::before {
+          content: "";
+          width: inherit;
+          height: inherit;
+          position: absolute;
+          border-radius: inherit;
+          z-index: -1;
+
+          background: radial-gradient(#275900 5%, transparent);
+          border: 1px solid #2d5a19;
+          box-shadow: 4px 4px 16px 2px rgb(0 0 0 / 23%);
+          opacity: 0;
+          transition: opacity 0.4s;
+        }
+
+        &:global(.metamask) {
+          &::before {
+            background: radial-gradient(#593600 5%, transparent);
+            border: 1px solid #644423;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 460px) {
+    & :global(#wallets) {
+      & li {
+        width: auto;
+
+        & :global(.wallet-logo) {
+          width: 70px;
+          height: 70px;
+        }
+      }
+    }
+  }
+}
+
+#wallet-selector {
+  width: 140px;
+  display: block;
+  height: 1px;
+  border-bottom: 1px dotted white;
+  position: absolute;
+  border-radius: 50px;
+  bottom: 10px;
+  left: 20px;
+  transition: opacity 0.2s, transform 0.4s, border-color 0.4s;
+  transform: translateX(calc(180px * var(--wallet-selected)));
+
+  &.hide {
+    opacity: 0;
+  }
+
+  &:global(.metamask) {
+    border-color: #ffc27f;
+  }
+  &:global(.ethers) {
+    border-color: #9bff7f;
+  }
+
+  @media screen and (max-width: 460px) {
+    width: 90px;
+    transform: translateX(calc(130px * var(--wallet-selected)));
+  }
+}
+
+#connect-button {
+  display: block;
+  text-align: center;
+
+  & :global(#wallet-submit) {
+    transition: transform 0.3s;
+    font-size: 0.8rem;
+    margin-top: 15px;
+    border: none;
+    border-radius: 0;
+    text-transform: lowercase;
+    transform: scale(0.9);
+
+    &:hover {
+      transform: scale(1);
+    }
+
+    &:global(.select-wallet) {
+      color: rgba(255, 255, 255, 0.712);
+    }
+  }
+}
