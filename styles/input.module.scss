@@ -1,5 +1,4 @@
 @value FadeIn, FadeOut, FadeToNone from "animations.module.scss";
-@value is-collapsed from "body.module.scss";
 
 #sequences input {
   display: flex;
@@ -37,6 +36,32 @@ textarea#sequence-a {
     outline: none;
     border-color: rgb(255 250 97);
   }
+}
+
+input#sequence-b,
+textarea#sequence-b {
+  color: white;
+  border-bottom: 1px solid rgb(61, 122, 125);
+  background: transparent;
+  width: 100%;
+  transition: border-color 0.3s;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.744);
+  }
+
+  &:hover {
+    border-color: rgb(98, 196, 186);
+  }
+  &:focus {
+    outline: none;
+    border-color: rgb(97, 247, 255);
+  }
+}
+
+input#sequence-a:disabled,
+input#sequence-b:disabled {
+  background-color: rgb(255 255 255 / 21%);
 }
 
 input#sequence-b,
@@ -81,7 +106,6 @@ input#limit {
 
 .label-sequence-a span,
 .label-sequence-b span {
-  margin-right: 10px;
   font-size: 1.2rem;
 }
 
@@ -270,10 +294,10 @@ form#input {
     //   }
     // }
 
-    body:global(.is-collapsed) & {
-      opacity: 0;
-      pointer-events: none;
-    }
+    // body:global(.is-collapsed) & {
+    //   opacity: 0;
+    //   pointer-events: none;
+    // }
   }
 }
 
@@ -283,13 +307,13 @@ form#input {
   }
 }
 
-#input-mode {
+#screens {
   position: relative;
   width: 100%;
 
   z-index: 3;
 
-  & > li {
+  & > div {
     vertical-align: top;
     display: inline-block;
     transition: opacity 0.5s;
@@ -355,4 +379,27 @@ form#input {
   & li.active button {
     color: rgb(124, 253, 163);
   }
+}
+
+.lock-button {
+  margin-left: 10px;
+  padding: 1px 7px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 5px;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: transform 0.3s;
+}
+
+.lock-button.active {
+  color: g;
+}
+
+.lock-button:hover {
+  transform: scale(1.1);
 }

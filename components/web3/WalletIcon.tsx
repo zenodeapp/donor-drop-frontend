@@ -8,7 +8,7 @@ import walletStyle from "../../styles/wallet.module.scss";
 import { shortenAddress } from "../../helpers/web3";
 
 const WalletIcon = () => {
-  const { showApp, setShowApp, isCollapsed, isMobileView } = useTheme();
+  const { showApp, setShowApp, isMobileView } = useTheme();
   const { web3Wallets, web3Connections, web3UI } = useWeb3();
 
   const connectedWallets = Object.keys(web3Connections.connections).filter(
@@ -36,11 +36,7 @@ const WalletIcon = () => {
             setShowApp(false);
           }
         }}
-        tabIndex={
-          isConnected || !showApp || isCollapsed || isMobileView
-            ? -1
-            : undefined
-        }
+        tabIndex={isConnected || !showApp || isMobileView ? -1 : undefined}
         className={globalStyle["no-tap-highlight"]}
       >
         <IoWalletOutline size='2rem' />
@@ -54,11 +50,7 @@ const WalletIcon = () => {
             setShowApp(false);
           }
         }}
-        tabIndex={
-          !isConnected || !showApp || isCollapsed || isMobileView
-            ? -1
-            : undefined
-        }
+        tabIndex={!isConnected || !showApp || isMobileView ? -1 : undefined}
         className={globalStyle["no-tap-highlight"]}
       >
         {WalletLogo !== undefined ? (

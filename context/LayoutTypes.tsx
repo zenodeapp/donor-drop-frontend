@@ -40,7 +40,7 @@ export type ILayoutState = {
   preventOverscroll: boolean;
   appTitle: string;
   defaultMeta: IMeta;
-  menu: IMenuRecord;
+  menu?: IMenuRecord;
   socials?: Array<ISocialButton>;
 };
 
@@ -52,7 +52,7 @@ export type ILayoutProvider = {
   config: {
     appTitle: string;
     defaultMeta: IMeta;
-    menu: IMenuRecord;
+    menu?: IMenuRecord;
     socials?: Array<ISocialButton>;
     pages?: IPageRecord;
   };

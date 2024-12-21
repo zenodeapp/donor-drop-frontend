@@ -38,13 +38,8 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     };
   }>({});
 
-  const {
-    addNotification,
-    setNotifications,
-    // editNotification,
-    removeNotification,
-    // removeNotifications,
-  } = NotificationDispatch(dispatch);
+  const { addNotification, setNotifications, removeNotification } =
+    NotificationDispatch(dispatch);
 
   function setTimeoutPromise<T = void>(
     cb: () => T,
@@ -92,10 +87,6 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     message: INotificationMessage,
     _options?: INotificationOptions
   ) => {
-    // if (_options?.id && exists(_options.id)) {
-    //   clearTimer(_options.id);
-    //   editNotification(message, _options);
-    // } else {
     return {
       type: _options?.type || "default",
       id: _options?.id || uuid(),
@@ -202,9 +193,6 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
       result = NotificationResult.SUCCESS;
 
       await hideOne(_notification.id, _notification.duration || 5000).catch(
-        // () => {
-        //   if (_notification) hideOne(_notification.id, 0);
-        // }
         () => {
           result = NotificationResult.INTERRUPTED;
         }
@@ -213,44 +201,6 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
 
     return result;
   };
-
-  // const notifyChain = async (
-  //   chain: Array<{
-  //     notification: IPreNotification;
-  //     delay?: number;
-  //   }>
-  // ) => {
-  //   rejectPromises();
-  //   let result;
-  //   let notification: INotification | undefined = undefined;
-
-  //   for (let i = 0; i < chain.length; i++) {
-  //     if (result === NotificationResult.INTERRUPTED)
-  //       return NotificationResult.INTERRUPTED;
-  //     notification = create(chain[i].notification);
-
-  //     await showOne(notification, chain[i].delay).catch(() => {
-  //       result = NotificationResult.INTERRUPTED;
-  //     });
-  //   }
-
-  //   if (result === NotificationResult.INTERRUPTED)
-  //     return NotificationResult.INTERRUPTED;
-  //   if (notification?.duration === Infinity) return NotificationResult.INFINITY;
-
-  //   result = NotificationResult.SHOWN;
-  //   if (notification) {
-  //     await hideOne(notification.id, notification.duration || 5000).catch(
-  //       () => {
-  //         if (notification) hideOne(notification.id, 0);
-  //       }
-  //     );
-
-  //     result = NotificationResult.SUCCESS;
-  //   }
-
-  //   return result;
-  // };
 
   const showOne = async (
     notification: INotification,
@@ -295,22 +245,6 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     }
   };
 
-  // const hideMany = async (notificationIds: Array<string>, delay?: number) => {
-  //   if (delay === undefined || delay === 0) {
-  //     removeNotifications(notificationIds);
-  //     return true;
-  //   } else {
-  //     return await setTimeoutPromise(
-  //       () => {
-  //         removeNotifications(notificationIds);
-  //         return true;
-  //       },
-  //       delay,
-  //       "_hideMany"
-  //     );
-  //   }
-  // };
-
   const hideAll = async (clicked?: boolean) => {
     removeNotification(undefined, clicked);
     return true;
@@ -353,89 +287,11 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     return true;
   };
 
-  // const dismissChain = async (
-  //   notificationIds: Array<string>,
-  //   delay?: number
-  // ) => {
-  //   notificationIds.map((notificationId) => {
-  //     const promiseId = Object.keys(promises.current).find(
-  //       (promiseId) =>
-  //         promises.current[promiseId].notificationId === notificationId
-  //     );
-  //     if (promiseId) rejectPromise(promiseId);
-  //   });
-
-  //   const hide = await hideMany(notificationIds, delay);
-  //   if (!hide) return hide;
-
-  //   return true;
-  // };
-
   const dismissAll = async (clicked?: boolean) => {
     hideAll(clicked);
     rejectPromises();
     return true;
   };
-
-  // const cancel = (id?: string) => {
-  //   if (!id) {
-  //     removeNotification();
-  //   } else {
-  //     removeNotification(id);
-  //   }
-  // };
-
-  // const clearTimer = (id?: string) => {
-  //   if (!id) {
-  //     timeouts.current.map((timeout) => {
-  //       clearTimeout(timeout.timeoutId);
-  //     });
-
-  //     timeouts.current = [];
-  //   } else {
-  //     const _timeout = timeouts.current.find((timeout) => timeout.id === id);
-
-  //     if (_timeout) {
-  //       clearTimeout(_timeout.timeoutId);
-  //       timeouts.current = timeouts.current.filter(
-  //         (timeout) => timeout.timeoutId !== _timeout.timeoutId
-  //       );
-  //     }
-  //   }
-  // };
-
-  // const dismissMany = (ids?: Array<string>, delay?: number) => {
-  //   if (!ids) {
-  //     dismiss(ids, delay);
-  //   } else {
-  //     const cb = () => {
-  //       for (let i = 0; i < ids.length; i++) {
-  //         clearTimer(ids[i]);
-  //         cancel(ids[i]);
-  //       }
-  //     };
-
-  //     if (delay) {
-  //       setTimeout(() => {
-  //         cb();
-  //       }, delay);
-  //     } else {
-  //       cb();
-  //     }
-  //   }
-  // };
-
-  // const dismiss = (id?: string, delay?: number) => {
-  //   if (delay) {
-  //     setTimeout(() => {
-  //       clearTimer(id);
-  //       cancel(id);
-  //     }, delay);
-  //   } else {
-  //     clearTimer(id);
-  //     cancel(id);
-  //   }
-  // };
 
   React.useEffect(() => {
     const someVisible = state.notifications.some(
@@ -447,58 +303,6 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     toggleClass(bodyStyle["notification-visible"], someVisible);
   }, [state.notifications]);
 
-  // React.useEffect(() => {
-  //   //Cancel all invisible timeouts
-  //   timeouts.current.map((timeout) => {
-  //     if (
-  //       state.notifications.findIndex(
-  //         (notification) => notification.id === timeout.id
-  //       ) === -1
-  //     )
-  //       clearTimer(timeout.id);
-  //   });
-
-  //   const _delays = state.notifications
-  //     .filter((notification) => notification.delay > 0)
-  //     .map((notification) => {
-  //       const timeoutId = setTimeout(() => {
-  //         // clearTimer(timeoutId.toString());
-  //         notify(notification.type, notification.message, {
-  //           Icon: notification.Icon,
-  //           duration: notification.duration,
-  //           ghost: notification.ghost,
-  //           antiGhost: notification.antiGhost,
-  //           id: notification.id,
-  //         });
-  //       }, notification.delay);
-
-  //       return {
-  //         id: notification.id,
-  //         timeoutId,
-  //       };
-  //     });
-
-  //   const _timeouts = state.notifications
-  //     .filter(
-  //       (notification) =>
-  //         !timeouts.current.find((timeout) => timeout.id === notification.id) &&
-  //         !notification.hide &&
-  //         notification.duration !== Infinity
-  //     )
-  //     .map((notification) => {
-  //       const timeoutId = setTimeout(() => {
-  //         dismiss(notification.id);
-  //       }, notification.duration);
-
-  //       return {
-  //         id: notification.id,
-  //         timeoutId,
-  //       };
-  //     });
-
-  //   timeouts.current = [...timeouts.current, ..._timeouts, ..._delays];
-  // }, [state.notifications]);
-
   return (
     <NotificationContext.Provider
       value={{
@@ -507,10 +311,8 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
         setNotifications,
         addNotification,
         notify,
-        // notifyChain,
         dismiss,
         dismissAll,
-        // dismissChain,
       }}
     >
       {children}

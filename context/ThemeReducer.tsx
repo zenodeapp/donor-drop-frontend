@@ -3,14 +3,6 @@ import { IThemeActions, IThemeState, ThemeActions } from "./ThemeTypes";
 
 const ThemeDispatch = (dispatch: React.Dispatch<IThemeActions>) => {
   return {
-    setLoading: (loading: boolean) => {
-      dispatch({
-        type: ThemeActions.SET_LOADING,
-        payload: loading,
-      });
-
-      return loading;
-    },
     setShowApp: (showApp: boolean) => {
       dispatch({
         type: ThemeActions.SET_SHOW_APP,
@@ -18,14 +10,6 @@ const ThemeDispatch = (dispatch: React.Dispatch<IThemeActions>) => {
       });
 
       return showApp;
-    },
-    setShowResults: (showResults: boolean) => {
-      dispatch({
-        type: ThemeActions.SET_SHOW_RESULTS,
-        payload: showResults,
-      });
-
-      return showResults;
     },
     setIsConnected: (isConnected: boolean) => {
       dispatch({
@@ -35,13 +19,13 @@ const ThemeDispatch = (dispatch: React.Dispatch<IThemeActions>) => {
 
       return isConnected;
     },
-    setIsCollapsed: (isCollapsed: boolean) => {
+    setSignedIn: (signedIn: boolean) => {
       dispatch({
-        type: ThemeActions.SET_IS_COLLAPSED,
-        payload: isCollapsed,
+        type: ThemeActions.SET_SIGNED_IN,
+        payload: signedIn,
       });
 
-      return isCollapsed;
+      return signedIn;
     },
     setIsMobileView: (isMobileView: boolean) => {
       dispatch({
@@ -51,13 +35,13 @@ const ThemeDispatch = (dispatch: React.Dispatch<IThemeActions>) => {
 
       return isMobileView;
     },
-    setInputInitialized: (inputInitialized: boolean) => {
+    setAppScreenLoaded: (appScreenLoaded: boolean) => {
       dispatch({
-        type: ThemeActions.SET_INPUT_INITIALIZED,
-        payload: inputInitialized,
+        type: ThemeActions.SET_APP_SCREEN_LOADED,
+        payload: appScreenLoaded,
       });
 
-      return inputInitialized;
+      return appScreenLoaded;
     },
   };
 };
@@ -67,20 +51,26 @@ const ThemeReducer = (
   action: IThemeActions
 ): IThemeState => {
   switch (action.type) {
-    case ThemeActions.SET_LOADING:
-      return { ...state, loading: action.payload };
     case ThemeActions.SET_SHOW_APP:
-      return { ...state, showApp: action.payload };
-    case ThemeActions.SET_SHOW_RESULTS:
-      return { ...state, showResults: action.payload };
+      return {
+        ...state,
+        showApp: action.payload,
+        signedIn: !action.payload ? false : state.signedIn,
+      };
     case ThemeActions.SET_IS_CONNECTED:
-      return { ...state, isConnected: action.payload, showApp: action.payload };
-    case ThemeActions.SET_IS_COLLAPSED:
-      return { ...state, isCollapsed: action.payload };
+      return {
+        ...state,
+        isConnected: action.payload,
+      };
+    case ThemeActions.SET_SIGNED_IN:
+      return {
+        ...state,
+        signedIn: action.payload,
+      };
     case ThemeActions.SET_IS_MOBILE_VIEW:
       return { ...state, isMobileView: action.payload };
-    case ThemeActions.SET_INPUT_INITIALIZED:
-      return { ...state, inputInitialized: action.payload };
+    case ThemeActions.SET_APP_SCREEN_LOADED:
+      return { ...state, appScreenLoaded: action.payload };
     default:
       return state;
   }

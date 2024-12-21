@@ -4,17 +4,20 @@ import { useTheme } from "../../context/ThemeProvider";
 
 import logoStyle from "../../styles/logo.module.scss";
 import globalStyle from "../../styles/global.module.scss";
+import { useDonation } from "../../context/DonationProvider";
 
 const Logo = () => {
-  const { setShowApp, showApp, isConnected, isCollapsed, isMobileView } =
-    useTheme();
+  const { showApp, isConnected, isMobileView } = useTheme();
+  const { signIn } = useDonation();
 
   return (
     <div className={logoStyle.logo}>
       <button
         className={`${logoStyle["logo-wrapper"]} ${globalStyle["no-tap-highlight"]}`}
-        onClick={() => {
-          if (isConnected) setShowApp(true);
+        onClick={async () => {
+          if (isConnected) {
+            await signIn();
+          }
         }}
         title={
           !isConnected
@@ -23,7 +26,7 @@ const Logo = () => {
             ? "Click to continue."
             : "Namada"
         }
-        tabIndex={showApp || isCollapsed || isMobileView ? -1 : undefined}
+        tabIndex={showApp || isMobileView ? -1 : undefined}
       >
         <span className={logoStyle["logo-icon"]}>
           <Image

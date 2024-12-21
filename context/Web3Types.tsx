@@ -130,6 +130,7 @@ export type IWeb3Connections = {
     walletId: string | void,
     networkId: string | void
   ) => Promise<boolean>;
+  signMessage: (message: string, walletId: string | void) => any;
   getConnectedWallet: () => string | undefined;
   getConnectedWallets: () => string[];
 };

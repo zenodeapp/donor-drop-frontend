@@ -1,11 +1,16 @@
 import React from "react";
-import { IoIosSend } from "react-icons/io";
+import { IoIosSend, IoMdLink } from "react-icons/io";
 import inputStyle from "../../../styles/input.module.scss";
 import { useTheme } from "../../../context/ThemeProvider";
 import { useDonation } from "../../../context/DonationProvider";
 import { useWeb3 } from "../../../context/Web3Provider";
 
-const Donate = ({
+import warningStyle from "../../../styles/warning.module.scss";
+import { getClassNameByStyle } from "../../../helpers/layout";
+import { IoPencil } from "react-icons/io5";
+import { useNotification } from "../../../context/NotificationProvider";
+
+const Account = ({
   activeSlide,
   slideIndex,
   setSlide,
@@ -19,10 +24,32 @@ const Donate = ({
   const { web3Connections } = useWeb3();
   const wallet = web3Connections.getConnectedWallet();
 
-  const { linkAddresses } = useDonation();
-  const { showApp, isCollapsed, isMobileView } = useTheme();
+  const {
+    requestSignature,
+    verifySignature,
+    namAddress,
+    setNamAddress,
+    lockAddress,
+    setLockAddress,
+    userExists,
+    setUserExists,
+  } = useDonation();
+  const { showApp, isMobileView } = useTheme();
+  const { notify } = useNotification();
 
-  const [namAddress, setNamAddress] = React.useState<string>("");
+  // React.useEffect(() => {
+  //   const _fetchNamAddress = async () => {
+  //     const _address = await signIn();
+
+  //     if (_address) {
+  //       setNamAddress(_address);
+  //     } else {
+  //       setLockAddress(false);
+  //     }
+  //   };
+
+  //   _fetchNamAddress();
+  // }, []);
 
   return (
     <form
@@ -30,20 +57,34 @@ const Donate = ({
       autoComplete={"off"}
       onSubmit={async (e) => {
         e.preventDefault();
+        const ethAddress = wallet
+          ? web3Connections.connections[wallet].address
+          : undefined;
 
-        if (
-          namAddress &&
-          wallet &&
-          web3Connections.connections[wallet].address
-        ) {
-          await linkAddresses(namAddress);
+        if (namAddress && ethAddress) {
+          const request = await requestSignature();
 
-          // if (amount && amount >= 0.03) {
-          //   await donate(amount);
-          // }
+          if (request) {
+            const result = await verifySignature(
+              request.signature,
+              request.message,
+              ethAddress,
+              namAddress
+            );
+
+            console.log(result);
+            if (result) {
+              setLockAddress(true);
+              setUserExists(true);
+            }
+          }
         }
       }}
     >
+      {/* <div className={getClassNameByStyle(warningStyle, "alert-box warning")}>
+        <strong>Warning:</strong> You haven't donated yet. Therefore, you cannot
+        link any NAM wallet to an Ethereum address. Please donate first.
+      </div> */}
       <div id={inputStyle.sequences}>
         <label
           htmlFor={inputStyle["sequence-b"]}
@@ -83,7 +124,18 @@ const Donate = ({
             defaultValue={namAddress}
             tabIndex={setTabIndex(0)}
             required={true}
+            disabled={lockAddress}
+            pattern='^tnam1[A-Za-z0-9]{40}$'
           />
+          {userExists && (
+            <button
+              type='button'
+              className={inputStyle["lock-button"]}
+              onClick={() => setLockAddress(!lockAddress)}
+            >
+              <IoPencil />
+            </button>
+          )}
         </label>
       </div>
       <div id={inputStyle["input-submit-wrapper"]}>
@@ -91,14 +143,14 @@ const Donate = ({
           type='submit'
           id={inputStyle["input-submit"]}
           className={`${activeSlide === slideIndex ? inputStyle["show"] : ""}${
-            namAddress ? "" : ` ${inputStyle.disabled}`
+            namAddress && !lockAddress ? "" : ` ${inputStyle.disabled}`
           }`}
           title='Align'
-          disabled={!namAddress}
-          tabIndex={!showApp || isCollapsed || isMobileView ? -1 : undefined}
+          disabled={!namAddress || lockAddress}
+          tabIndex={!showApp || isMobileView ? -1 : undefined}
         >
           <span>
-            <IoIosSend size='3rem' />
+            <IoMdLink size='3rem' />
             <span>{"LINK ADDRESSES"}</span>
           </span>
         </button>
@@ -107,4 +159,4 @@ const Donate = ({
   );
 };
 
-export default Donate;
+export default Account;

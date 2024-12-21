@@ -1,24 +1,17 @@
 export type IThemeState = {
-  loading: boolean;
   showApp: boolean;
   isConnected: boolean;
-  showResults: boolean;
-  isCollapsed: boolean;
+  signedIn: boolean;
   isMobileView: boolean;
-  inputInitialized: boolean;
+  appScreenLoaded: boolean;
 };
 
 export type IThemeContext = IThemeState & {
-  toggleShowApp: () => void;
-  toggleShowResults: () => void;
-  toggleIsCollapsed: () => void;
-  setLoading: (loading: boolean) => boolean;
   setShowApp: (showApp: boolean) => boolean;
-  setShowResults: (showResults: boolean) => boolean;
   setIsConnected: (isConnected: boolean) => boolean;
-  setIsCollapsed: (isCollapsed: boolean) => boolean;
+  setSignedIn: (signedIn: boolean) => boolean;
   setIsMobileView: (isMobileView: boolean) => boolean;
-  setInputInitialized: (inputInitialized: boolean) => boolean;
+  setAppScreenLoaded: (appScreenLoaded: boolean) => boolean;
 };
 
 export type IThemeProvider = {
@@ -26,26 +19,16 @@ export type IThemeProvider = {
 };
 
 export enum ThemeActions {
-  SET_LOADING = "SET_LOADING",
   SET_SHOW_APP = "SET_SHOW_APP",
-  SET_SHOW_RESULTS = "SET_SHOW_RESULTS",
   SET_IS_CONNECTED = "SET_IS_CONNECTED",
-  SET_IS_COLLAPSED = "SET_IS_COLLAPSED",
+  SET_SIGNED_IN = "SET_SIGNED_IN",
   SET_IS_MOBILE_VIEW = "SET_IS_MOBILE_VIEW",
-  SET_INPUT_INITIALIZED = "SET_INPUT_INITIALIZED",
+  SET_APP_SCREEN_LOADED = "SET_APP_SCREEN_LOADED",
 }
 
 export type IThemeActions =
   | {
-      type: ThemeActions.SET_LOADING;
-      payload: boolean;
-    }
-  | {
       type: ThemeActions.SET_SHOW_APP;
-      payload: boolean;
-    }
-  | {
-      type: ThemeActions.SET_SHOW_RESULTS;
       payload: boolean;
     }
   | {
@@ -53,7 +36,7 @@ export type IThemeActions =
       payload: boolean;
     }
   | {
-      type: ThemeActions.SET_IS_COLLAPSED;
+      type: ThemeActions.SET_SIGNED_IN;
       payload: boolean;
     }
   | {
@@ -61,6 +44,6 @@ export type IThemeActions =
       payload: boolean;
     }
   | {
-      type: ThemeActions.SET_INPUT_INITIALIZED;
+      type: ThemeActions.SET_APP_SCREEN_LOADED;
       payload: boolean;
     };

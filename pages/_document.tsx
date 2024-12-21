@@ -25,7 +25,7 @@ class MyDocument extends Document {
           <meta httpEquiv='Content-Security-Policy' content={csp} />
           <meta name='apple-mobile-web-app-title' content='Donation Drop' />
           <meta name='application-name' content='Donation Drop' />
-          <meta name='theme-color' content='#031214' />
+          <meta name='theme-color' content='#1f1e10' />
           <link rel='icon' type='image/svg+xml' href='/icon.svg' />
           <link
             rel='icon'
@@ -46,7 +46,7 @@ class MyDocument extends Document {
           />
           <link rel='manifest' href='/site.manifest' />
           <meta name='twitter:card' content='summary_large_image' />
-          <meta name='twitter:site' content='zenodeapp' />
+          <meta name='twitter:site' content='namada' />
           <meta
             name='og:image'
             property='og:image'

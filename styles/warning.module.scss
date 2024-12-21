@@ -1,0 +1,25 @@
+/* Common styles for both warning and error */
+.alert-box {
+  padding: 15px;
+  border-radius: 5px;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+.alert-box strong {
+  font-weight: bold;
+}
+
+/* Warning styles (yellow) */
+.alert-box.warning {
+  background-color: #fff3cd; /* Light yellow background */
+  border: 1px solid #ffeeba; /* Light yellow border */
+  color: #856404; /* Dark yellow text */
+}
+
+/* Error styles (red) */
+.alert-box.error {
+  background-color: #f8d7da; /* Light red background */
+  border: 1px solid #f5c6cb; /* Light red border */
+  color: #721c24; /* Dark red text */
+}

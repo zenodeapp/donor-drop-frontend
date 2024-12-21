@@ -2,7 +2,6 @@ import React from "react";
 import {
   INotification,
   INotificationActions,
-  INotificationOptions,
   INotificationState,
   NotificationActions,
 } from "./NotificationTypes";

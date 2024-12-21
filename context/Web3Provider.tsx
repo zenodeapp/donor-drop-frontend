@@ -155,6 +155,7 @@ const Web3Provider = ({
     };
 
     const get = (walletId: string) => WalletProviders[walletId];
+
     const getAll = (walletIds: Array<string> | void) => {
       if (!walletIds) walletIds = state.wallets;
 
@@ -174,6 +175,72 @@ const Web3Provider = ({
       init,
       get,
       getAll,
+    };
+  };
+
+  const Web3UI = (web3Wallets: IWeb3Wallets, web3Networks: IWeb3Networks) => {
+    const init = () => {
+      resetWallet();
+    };
+
+    const isPair = (walletId: string, networkId: string) => {
+      if (walletId === "" || networkId === "") return true;
+
+      const wallet = web3Wallets.get(walletId);
+      return wallet ? wallet?.compatibleNetworks.includes(networkId) : false;
+    };
+
+    const selectWallet = (walletId: string) => {
+      if (web3Wallets.get(walletId)?.disabled) return;
+
+      const pair = isPair(walletId, state.selectedNetwork);
+      const bothSelected = walletId && state.selectedNetwork;
+
+      if (pair || bothSelected) setSelectedWallet(walletId);
+      if (
+        !state.connections[walletId].connected &&
+        pair &&
+        state.selectedNetwork
+      )
+        return;
+      resetNetwork(walletId);
+    };
+
+    const selectNetwork = (networkId: string) => {
+      if (web3Networks.get(networkId)?.disabled) return;
+
+      const pair = isPair(state.selectedWallet, networkId);
+      const bothSelected = state.selectedWallet && networkId;
+
+      if (pair || bothSelected) setSelectedNetwork(networkId);
+      if (!pair && bothSelected) setSelectedWallet("");
+    };
+
+    const resetWallet = () => {
+      const wallet = state.wallets.find((walletId) =>
+        getConnectedCookie(walletId)
+      );
+      if (wallet) selectWallet(wallet);
+    };
+
+    const resetNetwork = (walletId: string) => {
+      const network =
+        !state.connections[walletId].network.id ||
+        state.connections[walletId].network.id === "unknown"
+          ? web3Networks.getByWalletId(walletId)[0]?.id || ""
+          : state.connections[walletId].network.id;
+      setSelectedNetwork(network);
+    };
+
+    return {
+      selectedWallet: state.selectedWallet,
+      selectedNetwork: state.selectedNetwork,
+
+      init,
+      selectWallet,
+      selectNetwork,
+      resetWallet,
+      resetNetwork,
     };
   };
 
@@ -205,11 +272,6 @@ const Web3Provider = ({
       const walletIcon = Wallets[walletId].Logo;
 
       if (!installed(walletId)) {
-        // notify({
-        //   type: "error",
-        //   message: "Wallet is not installed.",
-        //   options: { id: walletId, Icon: walletIcon, duration: 3000 },
-        // });
         if (state.connections[walletId].isMobile && deeplink) {
           window.open(deeplink, "_blank");
         } else {
@@ -259,7 +321,7 @@ const Web3Provider = ({
           type: "error",
           message:
             response.id === "USER_REJECTED_REQUEST"
-              ? "User rejected the request."
+              ? "User rejected the request!"
               : response.id,
           options: { id: walletId, Icon: walletIcon, duration: 3000 },
         });
@@ -276,6 +338,59 @@ const Web3Provider = ({
 
       setConnecting(walletId, false);
       return !response?.error;
+    };
+
+    const signMessage = async (message: string, walletId: string | void) => {
+      if (!walletId) walletId = state.selectedWallet;
+
+      if (!walletId) return;
+      if (!state.selectedNetwork || state.selectedNetwork === "unknown") return;
+
+      const walletIcon = Wallets[walletId].Logo;
+      const _provider = provider(walletId);
+
+      if (state.connections[walletId].connecting) {
+        notify({
+          type: "error",
+          message: `A transaction is already pending.`,
+          options: { id: "tx-pending", Icon: walletIcon, duration: 3000 },
+        });
+        return;
+      }
+
+      setConnecting(walletId, true);
+
+      notify({
+        type: "loading",
+        message: `Requesting signature...`,
+        options: { id: walletId, Icon: walletIcon },
+      });
+
+      let response;
+      if (_provider.switchChain)
+        response = await _provider.switchChain(state.selectedNetwork);
+
+      if (!response?.error) response = await _provider.signMessage(message);
+
+      if (response?.error) {
+        notify({
+          type: "error",
+          message:
+            response.id === "USER_REJECTED_REQUEST"
+              ? "User rejected the request!"
+              : response.id,
+          options: { id: walletId, Icon: walletIcon, duration: 3000 },
+        });
+      } else {
+        notify({
+          type: "success",
+          message: `Signed!`,
+          options: { id: walletId, Icon: walletIcon, duration: 3000 },
+        });
+      }
+      setConnecting(walletId, false);
+
+      return response;
     };
 
     const disconnect = (walletId: string | void) => {
@@ -375,6 +490,7 @@ const Web3Provider = ({
       available,
       install,
       connect,
+      signMessage,
       disconnect,
       addEvents,
       removeEvents,
@@ -384,86 +500,24 @@ const Web3Provider = ({
     };
   };
 
-  const Web3UI = (web3Wallets: IWeb3Wallets, web3Networks: IWeb3Networks) => {
-    const init = () => {
-      resetWallet();
-    };
-
-    const isPair = (walletId: string, networkId: string) => {
-      if (walletId === "" || networkId === "") return true;
-
-      const wallet = web3Wallets.get(walletId);
-      return wallet ? wallet?.compatibleNetworks.includes(networkId) : false;
-    };
-
-    const selectWallet = (walletId: string) => {
-      if (web3Wallets.get(walletId)?.disabled) return;
-
-      const pair = isPair(walletId, state.selectedNetwork);
-      const bothSelected = walletId && state.selectedNetwork;
-
-      if (pair || bothSelected) setSelectedWallet(walletId);
-      if (
-        !state.connections[walletId].connected &&
-        pair &&
-        state.selectedNetwork
-      )
-        return;
-      resetNetwork(walletId);
-    };
-
-    const selectNetwork = (networkId: string) => {
-      if (web3Networks.get(networkId)?.disabled) return;
-
-      const pair = isPair(state.selectedWallet, networkId);
-      const bothSelected = state.selectedWallet && networkId;
-
-      if (pair || bothSelected) setSelectedNetwork(networkId);
-      if (!pair && bothSelected) setSelectedWallet("");
-    };
-
-    const resetWallet = () => {
-      const wallet = state.wallets.find((walletId) =>
-        getConnectedCookie(walletId)
-      );
-      // if(getConnectedCookie())
-      // const walletId = Object.keys(state.connections).find(
-      //   (walletId) => state.connections[walletId].connected
-      // );
-      if (wallet) selectWallet(wallet);
-    };
-
-    const resetNetwork = (walletId: string) => {
-      const network =
-        !state.connections[walletId].network.id ||
-        state.connections[walletId].network.id === "unknown"
-          ? web3Networks.getByWalletId(walletId)[0]?.id || ""
-          : state.connections[walletId].network.id;
-      setSelectedNetwork(network);
-    };
-
-    return {
-      selectedWallet: state.selectedWallet,
-      selectedNetwork: state.selectedNetwork,
-
-      init,
-      selectWallet,
-      selectNetwork,
-      resetWallet,
-      resetNetwork,
-    };
-  };
-
   const web3Wallets = Web3Wallets();
   const web3Networks = Web3Networks();
   const web3Providers = Web3Providers();
-  const web3Connections = Web3Connections();
   const web3UI = Web3UI(web3Wallets, web3Networks);
 
+  const web3Connections = Web3Connections();
+
+  // Initialize wallet providers
   React.useEffect(() => {
     const providers = web3Providers.init();
     web3Connections.init(providers);
   }, []);
+
+  // Add and remove event handlers for every connected wallet.
+  React.useEffect(() => {
+    web3Connections.addEvents();
+    return () => web3Connections.removeEvents();
+  }, [state.providers]);
 
   React.useEffect(() => {
     const _wallets = Object.keys(state.connections)
@@ -488,21 +542,6 @@ const Web3Provider = ({
 
     if (!isEqual) setConnectedWallets(_wallets);
   }, [state.connections]);
-
-  // React.useEffect(() => {
-  //   if (web3Connections.connections["ethers"]?.connected) {
-  //     web3Wallets.wallets.map((walletId) => {
-  //       if (walletId !== "ethers") {
-  //         web3Connections.disconnect(walletId);
-  //       }
-  //     });
-  //   }
-  // }, [web3Connections.connections["ethers"]?.connected]);
-
-  React.useEffect(() => {
-    web3Connections.addEvents();
-    return () => web3Connections.removeEvents();
-  }, [state.providers]);
 
   return (
     <Web3Context.Provider
