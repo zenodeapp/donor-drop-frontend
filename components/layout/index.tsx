@@ -6,6 +6,10 @@ import Notifications from "./Notifications";
 import notificationsStyle from "../../styles/notifications.module.scss";
 import Header from "./Header";
 import Content from "./Content";
+import Sidebar from "./Sidebar";
+import SidebarToggleButton from "./SidebarToggleButton";
+import LiveStatus from "../app/elements/LiveStatus";
+import ShareOnX from "./ShareOnX";
 
 const MyLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -17,6 +21,10 @@ const MyLayout = ({ children }: { children: React.ReactNode }) => {
       <div className={notificationsStyle["notifications-wrapper"]}>
         <Notifications id={notificationsStyle["notifications-custom"]} />
       </div>
+      <LiveStatus />
+      <ShareOnX />
+      <SidebarToggleButton />
+      <Sidebar />
       <Background />
     </>
   );

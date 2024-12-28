@@ -1,14 +1,18 @@
 import React from "react";
 import {
   DonationActions,
-  IDonation,
+  DonationPhases,
+  EthDonated,
   IDonationActions,
   IDonationState,
+  ITransaction,
+  IVisibleDonations,
 } from "./DonationTypes";
+import { BigNumber } from "ethers";
 
 const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
   return {
-    setDonations: (donations: Array<IDonation>) => {
+    setDonations: (donations: Array<ITransaction>) => {
       dispatch({
         type: DonationActions.SET_DONATIONS,
         payload: donations,
@@ -16,21 +20,29 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return donations;
     },
-    setAllowDonations: (allowDonations: boolean) => {
+    setVisibleDonations: (visibleDonations: IVisibleDonations) => {
       dispatch({
-        type: DonationActions.SET_ALLOW_DONATIONS,
-        payload: allowDonations,
+        type: DonationActions.SET_VISIBLE_DONATIONS,
+        payload: visibleDonations,
       });
 
-      return allowDonations;
+      return visibleDonations;
     },
-    setErrorTriggered: (errorTriggered: boolean) => {
+    setTopDonations: (topDonations: Array<ITransaction>) => {
       dispatch({
-        type: DonationActions.SET_ERROR_TRIGGERED,
-        payload: errorTriggered,
+        type: DonationActions.SET_TOP_DONATIONS,
+        payload: topDonations,
       });
 
-      return errorTriggered;
+      return topDonations;
+    },
+    setBottomDonations: (bottomDonations: Array<ITransaction>) => {
+      dispatch({
+        type: DonationActions.SET_BOTTOM_DONATIONS,
+        payload: bottomDonations,
+      });
+
+      return bottomDonations;
     },
     setNamAddress: (namAddress: string) => {
       dispatch({
@@ -40,6 +52,22 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return namAddress;
     },
+    setEthDonated: (ethDonated: EthDonated) => {
+      dispatch({
+        type: DonationActions.SET_ETH_DONATED,
+        payload: ethDonated,
+      });
+
+      return ethDonated;
+    },
+    setTotalDonated: (totalDonated: BigNumber) => {
+      dispatch({
+        type: DonationActions.SET_TOTAL_DONATED,
+        payload: totalDonated,
+      });
+
+      return totalDonated;
+    },
     setUserExists: (userExists: boolean) => {
       dispatch({
         type: DonationActions.SET_USER_EXISTS,
@@ -48,13 +76,29 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return userExists;
     },
-    setLockAddress: (lockAddress: boolean) => {
+    setPhase: (phase: DonationPhases) => {
       dispatch({
-        type: DonationActions.SET_LOCK_ADDRESS,
-        payload: lockAddress,
+        type: DonationActions.SET_PHASE,
+        payload: phase,
       });
 
-      return lockAddress;
+      return phase;
+    },
+    setFilterOn: (filterOn: boolean) => {
+      dispatch({
+        type: DonationActions.SET_FILTER_ON,
+        payload: filterOn,
+      });
+
+      return filterOn;
+    },
+    setMyDonationCount: (myDonationCount: number) => {
+      dispatch({
+        type: DonationActions.SET_MY_DONATION_COUNT,
+        payload: myDonationCount,
+      });
+
+      return myDonationCount;
     },
   };
 };
@@ -66,19 +110,35 @@ const DonationReducer = (state: IDonationState, action: IDonationActions) => {
         ...state,
         donations: action.payload,
       };
-    case DonationActions.SET_ALLOW_DONATIONS:
+    case DonationActions.SET_VISIBLE_DONATIONS:
       return {
         ...state,
-        allowDonations: action.payload,
+        visibleDonations: { ...state.visibleDonations, ...action.payload },
       };
-    case DonationActions.SET_ERROR_TRIGGERED:
-      return { ...state, errorTriggered: action.payload };
+    case DonationActions.SET_TOP_DONATIONS:
+      return {
+        ...state,
+        visibleDonations: { ...state.visibleDonations, top: action.payload },
+      };
+    case DonationActions.SET_BOTTOM_DONATIONS:
+      return {
+        ...state,
+        visibleDonations: { ...state.visibleDonations, bottom: action.payload },
+      };
     case DonationActions.SET_NAM_ADDRESS:
       return { ...state, namAddress: action.payload };
+    case DonationActions.SET_ETH_DONATED:
+      return { ...state, ethDonated: action.payload };
+    case DonationActions.SET_TOTAL_DONATED:
+      return { ...state, totalDonated: action.payload };
     case DonationActions.SET_USER_EXISTS:
       return { ...state, userExists: action.payload };
-    case DonationActions.SET_LOCK_ADDRESS:
-      return { ...state, lockAddress: action.payload };
+    case DonationActions.SET_PHASE:
+      return { ...state, phase: action.payload };
+    case DonationActions.SET_FILTER_ON:
+      return { ...state, filterOn: action.payload };
+    case DonationActions.SET_MY_DONATION_COUNT:
+      return { ...state, myDonationCount: action.payload };
     default:
       return state;
   }

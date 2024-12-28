@@ -9,8 +9,8 @@ const ThemeContext = React.createContext<IThemeContext | undefined>(undefined);
 
 const ThemeProvider = ({ children }: IThemeProvider) => {
   const [state, dispatch] = React.useReducer(ThemeReducer, {
-    showApp: false,
-    isConnected: false,
+    showApp: true,
+    isConnected: true,
     signedIn: false,
     isMobileView: false,
     appScreenLoaded: false,

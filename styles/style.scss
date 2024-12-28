@@ -9,6 +9,7 @@ body {
   margin: 0;
   scroll-behavior: smooth;
   background: linear-gradient(45deg, #141405 50%, #021010);
+  background: linear-gradient(90deg, #111005 25%, #181505 50%, #110f05);
 
   @media screen and (max-width: 768px) {
     font-size: 0.7rem;
@@ -46,9 +47,14 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(rgb(187 167 54 / 24%) 5%, transparent 5%);
-  background-size: 40px 40px;
+  background-image: radial-gradient(rgb(187, 167, 54) 5%, transparent 5%);
+  background-size: 25px 25px;
   z-index: 0;
+  opacity: 0.25;
+
+  @media screen and (max-width: 768px) {
+    background-size: 10px 10px;
+  }
 }
 
 main {
@@ -101,6 +107,12 @@ h3 {
   margin: 5px;
 }
 
+h5 {
+  font-weight: 500;
+  margin: 16px;
+  font-size: 1rem;
+}
+
 label {
   margin: 25px 0;
   display: block;
@@ -118,7 +130,7 @@ a {
   text-decoration: none;
 
   &:hover {
-    color: #cdc47b;
+    color: #ffff00;
   }
 }
 
@@ -190,8 +202,8 @@ footer {
   width: 100%;
   text-align: center;
   opacity: 0.9;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin-top: 17px;
+  margin-bottom: 17px;
   z-index: -1;
   position: relative;
 
@@ -201,20 +213,30 @@ footer {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(10 24 23);
+  background: rgb(24, 20, 10);
   border-radius: 33px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(18 70 75);
+  background: #bfbfbf;
   border-radius: 33px;
 }
 
 ::-webkit-scrollbar-corner {
-  background: rgb(10 24 23);
+  background: rgb(91, 91, 91);
+}
+
+header {
+  position: fixed;
+  z-index: 2;
+  margin: 0 auto;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 20px;
 }

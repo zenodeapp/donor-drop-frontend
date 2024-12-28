@@ -1,9 +1,14 @@
 @value FadeIn from "animations.module.scss";
-@value show-app from "body.module.scss";
+@value show-app, ascended-state from "body.module.scss";
+
+#content {
+  position: relative;
+  z-index: 1000;
+}
 
 .page {
   width: 100%;
-  z-index: 1;
+  z-index: 23;
 }
 
 #page-content {
@@ -12,7 +17,7 @@
   top: 0;
   left: 0;
   position: relative;
-  z-index: 2;
+  z-index: 35;
   height: 100vh;
   display: inline-flex;
   flex-direction: column;
@@ -32,7 +37,9 @@
     width: 100%;
     animation: FadeIn 1s 0.5s forwards;
     opacity: 0;
+    // transform: translateY(0px);
     min-height: 510px;
+    transition: transform 0.5s;
   }
 
   @media screen and (max-width: 1160px) {
@@ -41,6 +48,10 @@
     opacity: 1;
     overflow: hidden;
   }
+
+  // @media screen and (max-width: 768px) {
+  //   overflow: auto;
+  // }
 }
 
 .footer-gap {
@@ -70,4 +81,12 @@ footer .icon {
     width: 32px;
     height: 32px;
   }
+}
+
+body:global(.show-app):global(.expand) #page-content .content {
+  // transform: translateY(-22%);
+}
+
+body:global(.ascended-state):global(.show-app) .content {
+  transform: translateY(-100px);
 }

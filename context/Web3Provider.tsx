@@ -384,7 +384,7 @@ const Web3Provider = ({
       } else {
         notify({
           type: "success",
-          message: `Signed!`,
+          message: `Signature signed successfully!`,
           options: { id: walletId, Icon: walletIcon, duration: 3000 },
         });
       }

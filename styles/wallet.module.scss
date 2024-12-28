@@ -60,6 +60,7 @@
 }
 
 #wallet-button {
+  z-index: 1000;
   position: absolute;
   top: 0;
   left: 0;
@@ -209,7 +210,7 @@
   width: 140px;
   display: block;
   height: 1px;
-  border-bottom: 1px dotted white;
+  border-bottom: 1px solid white;
   position: absolute;
   border-radius: 50px;
   bottom: 10px;
@@ -239,7 +240,7 @@
   text-align: center;
 
   & :global(#wallet-submit) {
-    transition: transform 0.3s;
+    transition: transform 0.2s;
     font-size: 0.8rem;
     margin-top: 15px;
     border: none;
@@ -254,5 +255,24 @@
     &:global(.select-wallet) {
       color: rgba(255, 255, 255, 0.712);
     }
+  }
+}
+
+#return-to-app {
+  text-align: center;
+
+  transition: transform 0.2s;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 0;
+  text-transform: lowercase;
+  transform: scale(0.9);
+
+  &:hover {
+    transform: scale(1);
+  }
+
+  &:global(.select-wallet) {
+    color: rgba(255, 255, 255, 0.712);
   }
 }

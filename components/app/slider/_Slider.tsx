@@ -1,15 +1,16 @@
 import React from "react";
 import sliderStyle from "../../../styles/slider.module.scss";
+import { useLayout } from "../../../context/LayoutProvider";
 
 const Slider = ({
   slides,
-  activeSlide,
   relativeIndex,
 }: {
   slides: Array<React.ReactNode>;
-  activeSlide: number;
   relativeIndex: number;
 }) => {
+  const { activeSlide } = useLayout();
+
   return (
     <div className={sliderStyle.slider}>
       {slides.map((slide, i) => {
@@ -24,7 +25,7 @@ const Slider = ({
             style={{
               transform: `translateX(${
                 (i + 1) * 100 - 100 * (activeSlide + 1)
-              }%) scale(${activeSlide === 0 ? 1 : 0.9})`,
+              }%) scale(${activeSlide === i ? 1 : 0.9})`,
             }}
           >
             {slide}

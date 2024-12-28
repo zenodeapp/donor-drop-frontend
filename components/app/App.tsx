@@ -4,18 +4,27 @@ import Slider from "./slider/_Slider";
 
 import sliderStyle from "../../styles/slider.module.scss";
 import { useTheme } from "../../context/ThemeProvider";
-import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
-import { IoIosStats } from "react-icons/io";
+import { FaBullseye, FaHandHoldingHeart, FaHome, FaUser } from "react-icons/fa";
 import Account from "./slider/Account";
-import Donations from "./slider/Donations";
-import Stats from "./slider/Stats";
 import Navigation from "../layout/Navigation";
+import About from "./slider/About";
+import HowTo from "./slider/How";
+import Target from "./slider/Target";
+import DonationProgress from "./donations/DonationProgress";
+import { ethers } from "ethers";
+import { TARGET_ETH } from "../../donations.config";
+import { useDonation } from "../../context/DonationProvider";
+import { useLayout } from "../../context/LayoutProvider";
+import { DonationPhases } from "../../context/DonationTypes";
+import Countdown from "./elements/Countdown";
 
 const Input = () => {
-  const [activeSlide, setActiveSlide] = React.useState(0);
   const [otherSlidesLocked, setOtherSlidesLocked] = React.useState(false);
   const { showApp, isMobileView, setAppScreenLoaded } = useTheme();
+  const { totalDonated, phase } = useDonation();
+  const { activeSlide, setActiveSlide } = useLayout();
 
+  // TODO: fix tabbing with this logic some day
   const setSlide = (index: number, e: React.FocusEvent<Element, Element>) => {
     if (activeSlide !== index) {
       setActiveSlide(index);
@@ -39,36 +48,44 @@ const Input = () => {
 
   const tabs = [
     {
+      name: "HOME",
+      Icon: FaHome,
+      color: "#eee142",
+    },
+    {
+      name: "TARGET",
+      Icon: FaBullseye,
+      color: "#ffa665",
+    },
+    {
+      name: "DONATE",
+      Icon: FaHandHoldingHeart,
+      color: "rgb(127 196 255)",
+      disabled:
+        phase === DonationPhases.STATUS_ENDED ||
+        phase === DonationPhases.STATUS_FILLED ||
+        phase === DonationPhases.STATUS_UNKNOWN ||
+        phase === DonationPhases.STATUS_NOT_LIVE,
+    },
+    {
       name: "ACCOUNT",
       Icon: FaUser,
       color: "white",
-    },
-    {
-      name: "DONATIONS",
-      Icon: FaHandHoldingHeart,
-      color: "rgb(255 231 127)",
-    },
-    {
-      name: "STATS",
-      Icon: IoIosStats,
-      color: "rgb(127 196 255)",
+      disabled:
+        phase === DonationPhases.STATUS_NOT_LIVE ||
+        phase === DonationPhases.STATUS_UNKNOWN,
     },
   ];
 
   const slides = [
-    <Account
-      activeSlide={activeSlide}
-      slideIndex={0}
-      setSlide={setSlide}
-      setTabIndex={setTabIndex}
+    <About key={0} isActive={activeSlide === 0} />,
+    <Target
+      key={1}
+      isActive={activeSlide === 1}
+      onFocus={(e) => setSlide(1, e)}
     />,
-    <Donations onFocus={(e) => setSlide(1, e)} tabIndex={setTabIndex(1)} />,
-    <Stats
-      onFocus={(e) => {
-        setSlide(2, e);
-      }}
-      tabIndex={setTabIndex(2)}
-    />,
+    <HowTo key={2} isActive={activeSlide === 2} />,
+    <Account key={3} isActive={activeSlide === 3} />,
   ];
 
   React.useEffect(() => {
@@ -79,14 +96,22 @@ const Input = () => {
 
   return (
     <>
+      <DonationProgress
+        totalDonated={totalDonated}
+        max={TARGET_ETH}
+        min={ethers.utils.parseEther("0")}
+        status={<Countdown />}
+        showActual={true}
+        showSuperscript={true}
+        decimals={2}
+      />
       <Navigation
         tabs={tabs}
-        activeSlide={activeSlide}
-        setActiveSlide={setActiveSlide}
+        ghostSlide={Math.min(activeSlide + 1, 3)}
         setOtherSlidesLocked={setOtherSlidesLocked}
         tabIndex={!showApp || isMobileView ? -1 : undefined}
       />
-      <Slider slides={slides} relativeIndex={0} activeSlide={activeSlide} />
+      <Slider slides={slides} relativeIndex={2} />
     </>
   );
 };

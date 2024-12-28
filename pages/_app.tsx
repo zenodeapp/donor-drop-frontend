@@ -5,6 +5,7 @@ import DonationProvider from "../context/DonationProvider";
 import Web3Provider from "../context/Web3Provider";
 import LayoutProvider from "../context/LayoutProvider";
 import NotificationProvider from "../context/NotificationProvider";
+import TimeProvider from "../context/TimeProvider";
 
 import MyLayout from "../components/layout";
 import MyConfig from "../layout.config";
@@ -20,32 +21,35 @@ const poppins = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <LayoutProvider config={MyConfig}>
-      <NotificationProvider options={{ limit: 5 }}>
-        <ThemeProvider>
-          <Web3Provider wallets={["metamask"]} networks={["ethereum"]}>
-            <DonationProvider>
-              <>
-                <style jsx global>{`
-                  html,
-                  body,
-                  input,
-                  button {
-                    font-family: ${poppins.style.fontFamily};
-                  }
+    <TimeProvider>
+      <LayoutProvider config={MyConfig}>
+        <NotificationProvider options={{ limit: 5 }}>
+          <ThemeProvider>
+            <Web3Provider wallets={["metamask"]} networks={["ethereum"]}>
+              <DonationProvider>
+                <>
+                  <style jsx global>{`
+                    html,
+                    body,
+                    input,
+                    button,
+                    textarea {
+                      font-family: ${poppins.style.fontFamily};
+                    }
 
-                  #__next {
-                    overflow: hidden;
-                  }
-                `}</style>
-                <MyLayout>
-                  <Component {...pageProps} />
-                </MyLayout>
-              </>
-            </DonationProvider>
-          </Web3Provider>
-        </ThemeProvider>
-      </NotificationProvider>
-    </LayoutProvider>
+                    #__next {
+                      overflow: hidden;
+                    }
+                  `}</style>
+                  <MyLayout>
+                    <Component {...pageProps} />
+                  </MyLayout>
+                </>
+              </DonationProvider>
+            </Web3Provider>
+          </ThemeProvider>
+        </NotificationProvider>
+      </LayoutProvider>
+    </TimeProvider>
   );
 }

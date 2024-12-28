@@ -22,9 +22,9 @@ const Home = () => {
 const PageContent = () => {
   return (
     <div id={appStyle["page-content"]}>
+      <WalletIcon />
       <div className={appStyle["footer-gap"]}></div>
       <div className={appStyle["content"]}>
-        <WalletIcon />
         <Logo />
         <div id={inputStyle["screens"]}>
           <WalletScreen />

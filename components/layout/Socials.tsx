@@ -1,19 +1,14 @@
 import React from "react";
 import { ISocials } from "../../context/LayoutTypes";
-import { useLayout } from "../../context/LayoutProvider";
+import styles from "../../styles/socials.module.scss";
 
-const Socials = ({ className, liClassName }: ISocials) => {
-  const { socials } = useLayout();
-
+const Socials = ({ socials }: ISocials) => {
   return (
-    <ul className={className ? className : "social-icons"}>
+    <ul className={styles["social-icons"]}>
       {socials &&
         socials.map((social) => {
           return (
-            <li
-              key={social.id}
-              className={liClassName ? liClassName : "social-icon"}
-            >
+            <li key={social.id} className={styles["social-icon"]}>
               <a href={social.url} target='_blank' rel='noreferrer'>
                 <social.Logo aria-label={social.title} title={social.title} />
               </a>
