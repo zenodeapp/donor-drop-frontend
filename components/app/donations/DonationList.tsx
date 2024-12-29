@@ -255,7 +255,7 @@ const DonationList = () => {
             width: "100%",
           }}
         >
-          {topTransactions.map((transaction, i) => (
+          {topTransactions.slice(0, 50).map((transaction, i) => (
             <Donation key={i} transaction={transaction} />
           ))}
         </div>
@@ -270,7 +270,7 @@ const DonationList = () => {
           }}
           ref={elementRef}
         >
-          {bottomTransactions.map((transaction, i) => (
+          {bottomTransactions.slice(0, 50).map((transaction, i) => (
             <Donation key={i} transaction={transaction} />
           ))}
         </div>
