@@ -18,6 +18,7 @@
   background: #0e0e0e;
   border-left: 1px solid #19170c;
   background: #100f0a;
+  // background: #121212;
   &.collapsed {
     transform: translateX(100%);
   }
@@ -186,6 +187,8 @@ body:not(:global(.show-app)) {
 
   border-top: 1px solid #1c1c0e;
   background: #121212;
+  border-top: 1px solid #11223b;
+  background: #121316;
 }
 
 .transaction a {
@@ -205,6 +208,7 @@ body:not(:global(.show-app)) {
 
 .transaction:hover {
   background-color: #0c0d10;
+  background-color: #16161e;
 }
 
 .transactionTop {
@@ -242,6 +246,14 @@ body:not(:global(.show-app)) {
   font-size: 0.8rem;
   // background: #2d2739;
   color: #d9d9d9;
+  margin-top: -7px;
+  max-width: 260px;
+
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+    margin-top: 10px;
+    max-width: 100%;
+  }
 
   & p {
     margin: 0;

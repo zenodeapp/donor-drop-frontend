@@ -40,25 +40,37 @@ const Donation = ({ transaction }: { transaction: ITransaction }) => {
             {shortenAddress(transaction.address)}
           </span>
         </a>
-        <strong className={styles.amount}>
-          {truncateEth(transaction.amount, 3)} ETH{" "}
-          {transaction.amount.gte(MAX_ETH_PER_ADDRESS)
-            ? "🐳"
-            : transaction.amount.gte(MAX_ETH_PER_ADDRESS.div(2))
-            ? "🐬"
-            : transaction.amount.gte(MIN_ETH_PER_ADDRESS)
-            ? "💛"
-            : "🐑"}
-        </strong>
+        <div
+          style={{
+            display: "flex",
+
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <strong className={styles.amount}>
+            {truncateEth(transaction.amount, 3)} ETH{" "}
+            {transaction.amount.gte(MAX_ETH_PER_ADDRESS)
+              ? "🐳"
+              : transaction.amount.gte(MAX_ETH_PER_ADDRESS.div(2))
+              ? "🐬"
+              : transaction.amount.gte(MIN_ETH_PER_ADDRESS)
+              ? "💛"
+              : "🐑"}
+          </strong>
+          <a
+            style={{
+              fontSize: "0.8rem",
+            }}
+            className={styles.hash}
+            href={`https://etherscan.io/tx/${transaction.hash}`}
+            target='_blank'
+            rel='noreferrer'
+          >
+            {shortenAddress(transaction.hash)}
+          </a>
+        </div>
       </div>
-      <a
-        className={styles.hash}
-        href={`https://etherscan.io/tx/${transaction.hash}`}
-        target='_blank'
-        rel='noreferrer'
-      >
-        {shortenAddress(transaction.hash)}
-      </a>
       <div className={styles.transactionCard}>
         <p>{transaction.message}</p>
       </div>

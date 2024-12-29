@@ -25,10 +25,10 @@ const DonationMessage = ({
   const handleSubmit = async () => {
     if (isConnected) {
       setSending(1);
-      if (message.trim().length > 200) {
+      if (message.trim().length > 100) {
         notify({
           type: "error",
-          message: "Message exceeds 200 characters.",
+          message: "Message exceeds 100 characters.",
           options: {
             id: "message",
             Icon: IoMdWarning,
@@ -68,8 +68,8 @@ const DonationMessage = ({
       <textarea
         id='donationMessage'
         value={message}
-        maxLength={200}
-        placeholder='Write your message here (max 200 characters)'
+        maxLength={100}
+        placeholder='Write your message here (max. 100 characters)'
         onChange={(e) => setMessage(e.target.value)}
         className={styles.textarea}
       ></textarea>
