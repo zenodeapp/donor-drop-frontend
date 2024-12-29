@@ -7,20 +7,22 @@ export type IVisibleDonations = {
   translateY: { top: number; bottom: number };
 };
 
+export type IStats = { participantCount: number; donationCount: number };
+
 export type ITransactionsResult = Array<{
-  id: string;
+  hash: string;
   address: string;
+  amount: number;
   message: string;
-  amount: string;
-  timestamp: number;
+  timestamp: string;
 }>;
 
 export type ITransaction = {
-  id: string;
+  hash: string;
   address: string;
-  message: string;
   amount: BigNumber;
-  timestamp: number;
+  message: string;
+  timestamp: Date;
 };
 
 export type IDonationState = {
@@ -33,6 +35,7 @@ export type IDonationState = {
   userExists: boolean;
   phase: DonationPhases;
   myDonationCount: number;
+  stats: IStats;
 };
 
 export type ISignature = {
@@ -46,8 +49,8 @@ export type IProofResult = {
 };
 
 export type EthDonated = {
-  originalTotalEth: BigNumber;
-  adjustedTotalEth: BigNumber;
+  total: BigNumber;
+  eligible: BigNumber;
 };
 
 export type IDonationContext = IDonationState & {
@@ -58,16 +61,10 @@ export type IDonationContext = IDonationState & {
       }
     | undefined
   >;
-  verifySignature: (
-    signature: string,
-    message: string,
-    ethAddress: string,
-    namAddress: string
-  ) => Promise<string | undefined>;
   signIn: () => Promise<string>;
   setNamAddress: (namAddress: string) => string;
   setEthDonated: (ethDonated: EthDonated) => EthDonated;
-  setTotalDonated: (totalDonated: BigNumber) => BigNumber;
+  setTotalDonated: (totalDonated?: BigNumber) => BigNumber | undefined;
   setUserExists: (userExists: boolean) => boolean;
   setPhase: (phase: DonationPhases) => DonationPhases;
   setDonations: (donations: Array<ITransaction>) => Array<ITransaction>;
@@ -78,17 +75,18 @@ export type IDonationContext = IDonationState & {
   setVisibleDonations: (
     visibleDonations: IVisibleDonations
   ) => IVisibleDonations;
-  getTransactions: (
+  getDonations: (
     retries: number,
     delay: number
   ) => Promise<{ all: Array<ITransaction>; new: Array<ITransaction> }>;
-  filterNewTransactions: (
-    oldTransactions: Array<ITransaction>,
-    allTransactions: Array<ITransaction>
+  transactionsFrom: (
+    timestamp: Date,
+    transactions: Array<ITransaction>
   ) => Array<ITransaction>;
   sendMessage: (message: string) => Promise<any>;
   setFilterOn: (filterOn: boolean) => boolean;
   setMyDonationCount: (myDonationCount: number) => number;
+  setStats: (stats: IStats) => IStats;
 };
 
 export type IDonationProvider = {
@@ -115,6 +113,7 @@ export enum DonationActions {
   SET_PHASE = "SET_PHASE",
   SET_FILTER_ON = "SET_FILTER_ON",
   SET_MY_DONATION_COUNT = "SET_MY_DONATION_COUNT",
+  SET_STATS = "SET_STATS",
 }
 
 export type IDonationActions =
@@ -144,7 +143,7 @@ export type IDonationActions =
     }
   | {
       type: DonationActions.SET_TOTAL_DONATED;
-      payload: BigNumber;
+      payload: BigNumber | undefined;
     }
   | {
       type: DonationActions.SET_USER_EXISTS;
@@ -161,4 +160,8 @@ export type IDonationActions =
   | {
       type: DonationActions.SET_MY_DONATION_COUNT;
       payload: number;
+    }
+  | {
+      type: DonationActions.SET_STATS;
+      payload: IStats;
     };

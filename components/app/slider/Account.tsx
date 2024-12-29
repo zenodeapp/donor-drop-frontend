@@ -25,7 +25,13 @@ export enum AccountPhases {
   STATUS_EXISTING_USER = 4,
 }
 
-const Account = ({ isActive }: { isActive: boolean }) => {
+const Account = ({
+  isActive,
+  onFocus,
+}: {
+  isActive: boolean;
+  onFocus: React.FocusEventHandler;
+}) => {
   const { web3Connections } = useWeb3();
   const { isConnected, signedIn, setShowApp } = useTheme();
   const { userExists, namAddress, ethDonated, setEthDonated, signIn } =
@@ -77,6 +83,7 @@ const Account = ({ isActive }: { isActive: boolean }) => {
           }`
         )}
         onClick={() => setShowApp(false)}
+        onFocus={onFocus}
       >
         <IoWalletOutline size='2rem' />
         <p className={styles.connectText}>Connect a wallet to get started.</p>
@@ -86,28 +93,35 @@ const Account = ({ isActive }: { isActive: boolean }) => {
           <h2 className={styles.header}>ETH ADDRESS</h2>
           <p className={styles.text}>{ethAddress}</p>
           <DonationProgress
-            totalDonated={ethDonated.adjustedTotalEth}
+            value={ethDonated.eligible}
             max={MAX_ETH_PER_ADDRESS}
             min={MIN_ETH_PER_ADDRESS}
             status={""}
             showActual={false}
             decimals={2}
+            colorBasedOn={ethDonated.total}
           />
           <div className={styles.donationInfo}>
             <span>
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
-                {truncateEth(ethDonated.adjustedTotalEth, 2)} ETH{" "}
-                {!ethDonated.adjustedTotalEth.eq(ethDonated.originalTotalEth)
-                  ? ` (${ethToFloat(
-                      ethDonated.originalTotalEth.sub(
-                        ethDonated.adjustedTotalEth
-                      )
-                    )})`
-                  : ""}
-                {!ethDonated.adjustedTotalEth.isZero() ? "💛" : "😌"}
+                {truncateEth(ethDonated.total, 2)} ETH{" "}
+                {!ethDonated.eligible.isZero() ? "💛" : "😌"}
               </span>{" "}
               —
+            </span>
+            <span style={{ display: "block", fontSize: "0.8rem" }}>
+              {!ethDonated.eligible.eq(ethDonated.total) ? (
+                <>
+                  — eligible{" "}
+                  <span style={{ color: "#e2ebff" }}>
+                    {ethToFloat(ethDonated.eligible)} ETH
+                  </span>{" "}
+                  —
+                </>
+              ) : (
+                ""
+              )}
             </span>
           </div>
         </div>
@@ -134,6 +148,7 @@ const Account = ({ isActive }: { isActive: boolean }) => {
           }`
         )}
         onClick={signIn}
+        onFocus={onFocus}
       >
         <FaSignature size='2rem' />
         <p className={styles.connectText}>Sign to reveal your tnam address.</p>
@@ -157,26 +172,26 @@ const Account = ({ isActive }: { isActive: boolean }) => {
           <div className={styles.donationInfo}>
             <span>
               —{" "}
-              {ethDonated.adjustedTotalEth.lt(MIN_ETH_PER_ADDRESS)
+              {ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
                 ? "not eligible for any rewards "
                 : `will receive min. `}
               <span style={{ color: "#e2ebff" }}>
-                {!ethDonated.adjustedTotalEth.lt(MIN_ETH_PER_ADDRESS)
+                {!ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
                   ? `${(
                       (parseFloat(
-                        ethDonated.adjustedTotalEth.gt(MAX_ETH_PER_ADDRESS)
+                        ethDonated.eligible.gt(MAX_ETH_PER_ADDRESS)
                           ? MAX_ETH_PER_ADDRESS.toString()
-                          : ethDonated.adjustedTotalEth.toString()
+                          : ethDonated.eligible.toString()
                       ) /
                         parseFloat(TARGET_ETH.toString())) *
                       REWARD_NAM
                     ).toFixed(2)} NAM `
                   : ""}
-                {ethDonated.adjustedTotalEth.gte(MAX_ETH_PER_ADDRESS)
+                {ethDonated.eligible.gte(MAX_ETH_PER_ADDRESS)
                   ? "🤯"
-                  : ethDonated.adjustedTotalEth.lt(MIN_ETH_PER_ADDRESS)
+                  : ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
                   ? "😥"
-                  : parseFloat(ethDonated.adjustedTotalEth.toString()) <
+                  : parseFloat(ethDonated.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2
                   ? "😇"
                   : "🥰"}

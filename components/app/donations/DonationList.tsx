@@ -24,10 +24,10 @@ import { useTheme } from "../../../context/ThemeProvider";
 // 5. Now we contact the server for more transactions and repeat this process.
 const Donation = ({ transaction }: { transaction: ITransaction }) => {
   return (
-    <div key={transaction.id} className={styles.transaction}>
+    <div key={transaction.hash} className={styles.transaction}>
       <div className={styles.transactionTop}>
         <a
-          href={`https://etherscan.io/advanced-filter?tadd=0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3&txntype=0&fadd=${transaction.address}&qt=1`}
+          href={`https://etherscan.io/advanced-filter?tadd=${process.env.NEXT_PUBLIC_DONOR_ADDRESS}&txntype=0&fadd=${transaction.address}&qt=1`}
           target='_blank'
           rel='noopener noreferrer'
           className={styles.shortenedAddress}
@@ -51,6 +51,14 @@ const Donation = ({ transaction }: { transaction: ITransaction }) => {
             : "🐑"}
         </strong>
       </div>
+      <a
+        className={styles.hash}
+        href={`https://etherscan.io/tx/${transaction.hash}`}
+        target='_blank'
+        rel='noreferrer'
+      >
+        {shortenAddress(transaction.hash)}
+      </a>
       <div className={styles.transactionCard}>
         <p>{transaction.message}</p>
       </div>
@@ -67,7 +75,7 @@ const DonationList = () => {
     visibleDonations,
     setTopDonations,
     phase,
-    getTransactions,
+    getDonations,
     setVisibleDonations,
     filterOn,
   } = useDonation();
@@ -83,7 +91,7 @@ const DonationList = () => {
     clearTimeout(timeoutId);
 
     const fetchTransactions = async () => {
-      const transactions = await getTransactions(5, 2000);
+      const transactions = await getDonations(5, 2000);
 
       if (init) setInit(false);
       setTopDonations(transactions.new);
@@ -100,7 +108,12 @@ const DonationList = () => {
     };
 
     return scheduleFetch();
-  }, [visibleDonations.bottom, init, donations]);
+  }, [
+    visibleDonations.bottom,
+    init,
+    // donations,
+    web3Connections.connections["metamask"].address,
+  ]);
 
   // When new transactions get added to the upper transactions
   React.useEffect(() => {

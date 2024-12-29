@@ -16,12 +16,7 @@ const Target = ({
   isActive: boolean;
   onFocus: React.FocusEventHandler<HTMLAnchorElement>;
 }) => {
-  const { phase, totalDonated, donations } = useDonation();
-
-  const calculateUniqueParticipants = () => {
-    const participants = donations.map((donation) => donation.address);
-    return new Set(participants).size;
-  };
+  const { phase, totalDonated, donations, stats } = useDonation();
 
   const formatDuration = (start: Date, end: Date) => {
     const ms = end.getTime() - start.getTime();
@@ -40,8 +35,8 @@ const Target = ({
   const results = (
     <div className={styles.visualInfo}>
       {[
-        { value: `${calculateUniqueParticipants()}`, label: "Participants" },
-        { value: `${donations.length}`, label: "Donations" },
+        { value: `${stats.participantCount}`, label: "Participants" },
+        { value: `${stats.donationCount}`, label: "Donations" },
         {
           value: `${truncateEth(totalDonated || BigNumber.from("0"), 2)} ETH`,
           label: "Total Donated",
@@ -101,9 +96,15 @@ const Target = ({
                 has not been reached, but we got close! Thank you to everyone
                 who came together to help donate for this cause 💛. Here are the
                 end results for our donor drop to{" "}
-                <span style={{ background: "#262626", color: "white" }}>
-                  coincenter.eth
-                </span>
+                <a
+                  className={styles.coinCenterLink}
+                  href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  onFocus={onFocus}
+                >
+                  <span style={{ background: "#262626" }}>coincenter.eth</span>
+                </a>
                 :
               </p>
               {results}
@@ -125,9 +126,15 @@ const Target = ({
                 </span>
                 🥳! Thank you to everyone who participated! Here are the end
                 results for our donor drop to{" "}
-                <span style={{ background: "#262626", color: "white" }}>
-                  coincenter.eth
-                </span>
+                <a
+                  className={styles.coinCenterLink}
+                  href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  onFocus={onFocus}
+                >
+                  <span style={{ background: "#262626" }}>coincenter.eth</span>
+                </a>
                 :
               </p>
               {results}

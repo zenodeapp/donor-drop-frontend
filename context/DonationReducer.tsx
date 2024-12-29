@@ -5,6 +5,7 @@ import {
   EthDonated,
   IDonationActions,
   IDonationState,
+  IStats,
   ITransaction,
   IVisibleDonations,
 } from "./DonationTypes";
@@ -60,7 +61,7 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return ethDonated;
     },
-    setTotalDonated: (totalDonated: BigNumber) => {
+    setTotalDonated: (totalDonated?: BigNumber) => {
       dispatch({
         type: DonationActions.SET_TOTAL_DONATED,
         payload: totalDonated,
@@ -99,6 +100,14 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
       });
 
       return myDonationCount;
+    },
+    setStats: (stats: IStats) => {
+      dispatch({
+        type: DonationActions.SET_STATS,
+        payload: stats,
+      });
+
+      return stats;
     },
   };
 };
@@ -139,6 +148,8 @@ const DonationReducer = (state: IDonationState, action: IDonationActions) => {
       return { ...state, filterOn: action.payload };
     case DonationActions.SET_MY_DONATION_COUNT:
       return { ...state, myDonationCount: action.payload };
+    case DonationActions.SET_STATS:
+      return { ...state, stats: action.payload };
     default:
       return state;
   }

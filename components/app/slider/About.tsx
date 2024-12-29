@@ -5,7 +5,13 @@ import Socials from "../../layout/Socials";
 import { FaXTwitter } from "react-icons/fa6";
 import { getClassNameByStyle } from "../../../helpers/layout";
 
-const About = ({ isActive }: { isActive: boolean }) => (
+const About = ({
+  isActive,
+  onFocus,
+}: {
+  isActive: boolean;
+  onFocus: React.FocusEventHandler;
+}) => (
   <>
     <div
       className={getClassNameByStyle(
@@ -50,6 +56,7 @@ const About = ({ isActive }: { isActive: boolean }) => (
                 title: "Namada on X",
               },
             ]}
+            onFocus={onFocus}
           />
         </div>
       </div>

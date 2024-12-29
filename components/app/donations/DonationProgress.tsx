@@ -6,25 +6,27 @@ import { BigNumber } from "ethers";
 import { truncateEth } from "../../../helpers/web3";
 
 const DonationProgress = ({
-  totalDonated,
+  value,
   min,
   max,
   status,
   showActual,
   showSuperscript,
   decimals = 2,
+  colorBasedOn,
 }: {
-  totalDonated?: BigNumber;
+  value?: BigNumber;
   min: BigNumber;
   max: BigNumber;
   status?: React.ReactNode;
   showActual?: boolean;
   showSuperscript?: boolean;
   decimals?: number;
+  colorBasedOn?: BigNumber;
 }) => {
-  if (!totalDonated) totalDonated = BigNumber.from("0");
-  const donationPercentage = totalDonated.mul(100).div(max).lte(100)
-    ? totalDonated.mul(100).div(max)
+  if (!value) value = BigNumber.from("0");
+  const donationPercentage = value.mul(100).div(max).lte(100)
+    ? value.mul(100).div(max)
     : BigNumber.from(100);
 
   const minPercentage = min.mul(100).div(max).lte(100)
@@ -33,22 +35,27 @@ const DonationProgress = ({
 
   const maxPercentage = BigNumber.from(100);
 
-  let progressClass = styles.progressBlue;
-  if (totalDonated.lt(min)) {
-    progressClass = styles.progressRed;
-  } else if (totalDonated.gte(max)) {
-    progressClass = styles.progressYellow;
-  }
-  if (totalDonated.gt(max)) {
-    progressClass = styles.progressRedFast;
-  }
+  const getProgressClass = () => {
+    const _value =
+      colorBasedOn !== undefined ? colorBasedOn : value || BigNumber.from("0");
+    let progressClass = styles.progressBlue;
+    if (_value.lt(min)) {
+      progressClass = styles.progressRed;
+    } else if (_value.gte(max)) {
+      progressClass = styles.progressYellow;
+    }
+    if (_value.gt(max)) {
+      progressClass = styles.progressRedFast;
+    }
+    return progressClass;
+  };
 
   return (
     <div className={styles.donationContainer}>
       <div className={styles.progressBarContainer}>
         <div className={styles.progressBar}>
           <div
-            className={`${styles.progressFilled} ${progressClass}`}
+            className={`${styles.progressFilled} ${getProgressClass()}`}
             style={{ width: `${donationPercentage}%` }}
           />
           <div
@@ -56,18 +63,18 @@ const DonationProgress = ({
             style={{ transform: `translateX(${donationPercentage}%)` }}
           >
             <FaEthereum size={24} className={`${styles.ethIcon}`} />
-            {showSuperscript && !(showActual && totalDonated.gte(max)) && (
+            {showSuperscript && !(showActual && value.gte(max)) && (
               <span className={styles.totalDonated}>
-                {truncateEth(totalDonated, decimals).toString()}E
+                {truncateEth(value, decimals).toString()}E
               </span>
             )}
           </div>
           {/* Mark for min donation */}
           <div
-            className={`${progressClass} ${getClassNameByStyle(
+            className={`${getProgressClass()} ${getClassNameByStyle(
               styles,
-              `minMark${totalDonated.gte(min) ? " passed" : ""}${
-                totalDonated.eq(min) ? " on-top" : ""
+              `minMark${value.gte(min) ? " passed" : ""}${
+                value.eq(min) ? " on-top" : ""
               }`
             )}`}
             style={{ left: `${minPercentage}%` }}
@@ -75,7 +82,7 @@ const DonationProgress = ({
           {/* Min value text */}
           <div
             className={`${styles.minValueText} ${
-              totalDonated.gte(min) ? styles.passed : ""
+              value.gte(min) ? styles.passed : ""
             }`}
             style={{ left: `${minPercentage}%` }}
           >
@@ -84,10 +91,10 @@ const DonationProgress = ({
 
           {/* Mark for max donation (100%) */}
           <div
-            className={`${progressClass} ${getClassNameByStyle(
+            className={`${getProgressClass()} ${getClassNameByStyle(
               styles,
-              `maxMark ${progressClass}${
-                totalDonated.gte(max) ? " passed on-top" : ""
+              `maxMark ${getProgressClass()}${
+                value.gte(max) ? " passed on-top" : ""
               }`
             )}`}
             style={{ left: `${maxPercentage}%` }}
@@ -95,12 +102,12 @@ const DonationProgress = ({
           {/* Max value text */}
           <div
             className={`${styles.maxValueText} ${
-              totalDonated.gte(max) ? styles.passed : ""
+              value.gte(max) ? styles.passed : ""
             }`}
             style={{ left: `${maxPercentage}%` }}
           >
-            {showActual && totalDonated.gte(max)
-              ? truncateEth(totalDonated, decimals).toString()
+            {showActual && value.gte(max)
+              ? truncateEth(value, decimals).toString()
               : truncateEth(max, decimals).toString()}
             E
           </div>

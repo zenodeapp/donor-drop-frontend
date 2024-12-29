@@ -14,7 +14,7 @@ import { IoIosClock, IoMdWarning } from "react-icons/io";
 import { IoCheckmark } from "react-icons/io5";
 import { shortenAddress } from "../helpers/web3";
 import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { GiStopSign } from "react-icons/gi";
 
@@ -24,7 +24,7 @@ const DonationContext = React.createContext<IDonationContext | undefined>(
 
 const DonationProvider = ({ children }: IDonationProvider) => {
   const { web3Connections, web3UI } = useWeb3();
-  const { setActiveSlide } = useLayout();
+  const { setActiveSlide, activeSlide } = useLayout();
   const [state, dispatch] = React.useReducer(DonationReducer, {
     donations: [],
     visibleDonations: {
@@ -36,14 +36,20 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     filterOn: false,
     namAddress: "",
     ethDonated: {
-      originalTotalEth: BigNumber.from("00000000000000000"),
-      adjustedTotalEth: BigNumber.from("00000000000000000"),
+      total: BigNumber.from("0"),
+      eligible: BigNumber.from("0"),
     },
     totalDonated: undefined,
     userExists: false,
     phase: DonationPhases.STATUS_UNKNOWN,
     myDonationCount: 0,
+    stats: { donationCount: 0, participantCount: 0 },
   });
+
+  const GET_USER_TOTAL_INTERVAL = 10000;
+  const GET_TOTAL_INTERVAL = 10000;
+  const GET_DONATIONS_INTERVAL = 5000;
+  const GET_DONATIONS_MAX_INTERVAL = 15000;
 
   const {
     setDonations,
@@ -57,6 +63,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     setPhase,
     setFilterOn,
     setMyDonationCount,
+    setStats,
   } = DonationDispatch(dispatch);
 
   const { setIsConnected, isConnected, setSignedIn } = useTheme();
@@ -75,45 +82,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   };
 
-  const verifySignature = async (
-    signature: string,
-    message: string,
-    ethAddress: string,
-    namAddress: string
-  ) => {
-    try {
-      const response = await fetch("http://localhost:4000/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          signature,
-          message,
-          ethAddress,
-          namAddress,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        console.log("Verification successful:", result.message);
-        console.log("Verification data:", result.data);
-        return result.data;
-      } else {
-        console.error("Verification failed:", result.message || result.error);
-      }
-    } catch (error) {
-      console.error("Error sending signature to backend:", error);
-    }
-  };
-
   // Returns sign in data
   const signIn = async () => {
     try {
       const request = await requestSignature();
-
       if (request) {
         notify({
           type: "success",
@@ -125,7 +97,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           },
         });
 
-        const response = await fetch("http://localhost:4000/sign-in", {
+        const response = await fetch("/api/sign-in", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -141,33 +113,33 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         if (response.ok) {
           notify({
             type: "success",
-            message: result.data
-              ? `Logged in as ${shortenAddress(result.data, 6, 6)}!`
+            message: result.namadaKey
+              ? `Logged in as ${shortenAddress(result.namadaKey, 6, 6)}!`
               : "Signature successfully verified!",
             options: {
               id: web3UI.selectedWallet,
-              Icon: result.data ? FaUser : IoCheckmark,
+              Icon: result.namadaKey ? FaUser : IoCheckmark,
               duration: 7000,
             },
           });
 
-          console.log("Verification successful:", result.message);
+          console.log("Verification successful:", result.namadaKey);
           setSignedIn(true);
         } else {
           notify({
             type: "error",
-            message: result.message,
+            message: result.error,
             options: {
               id: web3UI.selectedWallet,
               Icon: IoMdWarning,
               duration: 5000,
             },
           });
-          console.error("Verification failed:", result.message);
+          console.error("Verification failed:", result.error);
         }
-        setUserExists(result.data || false);
-        setNamAddress(result.data || "");
-        return result.data;
+        setUserExists(result.namadaKey || false);
+        setNamAddress(result.namadaKey || "");
+        return result.namadaKey;
       }
     } catch (error) {
       notify({
@@ -183,6 +155,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       console.error("Error sending signature to backend:", error);
     }
   };
+
   React.useEffect(() => {
     const connections = Object.keys(web3Connections.connections).filter(
       (walletId) => web3Connections.connections[walletId].connected
@@ -203,34 +176,27 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     isConnected,
   ]);
 
-  const calculateTotalDonated = () => {
-    let total = BigNumber.from("0");
-    state.donations.map((donation) => {
-      total = total.add(donation.amount);
-    });
+  // const calculateTotalDonated = () => {
+  //   let total = BigNumber.from("0");
+  //   state.donations.map((donation) => {
+  //     total = total.add(donation.amount);
+  //   });
 
-    return total;
-  };
+  //   return total;
+  // };
 
-  const calculateEthDonated = (address: string) => {
-    let total = BigNumber.from("0");
-    state.donations
-      .filter(
-        (donation) => donation.address.toLowerCase() === address.toLowerCase()
-      )
-      .map((donation) => {
-        total = total.add(donation.amount);
-      });
+  // const calculateEthDonated = (address: string) => {
+  //   let total = BigNumber.from("0");
+  //   state.donations
+  //     .filter(
+  //       (donation) => donation.address.toLowerCase() === address.toLowerCase()
+  //     )
+  //     .map((donation) => {
+  //       total = total.add(donation.amount);
+  //     });
 
-    return total;
-  };
-
-  React.useEffect(() => {
-    if (state.donations.length > 0) {
-      const result = calculateTotalDonated();
-      setTotalDonated(result);
-    }
-  }, [state.donations]);
+  //   return total;
+  // };
 
   React.useEffect(() => {
     setMyDonationCount(
@@ -241,31 +207,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       )?.length || 0
     );
   }, [state.donations, web3Connections.connections["metamask"].address]);
-
-  React.useEffect(() => {
-    const addr =
-      web3Connections.connections[
-        web3Connections.getConnectedWallet() || "metamask"
-      ].address;
-    if (isConnected && addr) {
-      const result = calculateEthDonated(addr);
-      setEthDonated({
-        originalTotalEth: result,
-        adjustedTotalEth: result,
-      });
-    } else {
-      setEthDonated({
-        originalTotalEth: BigNumber.from("0"),
-        adjustedTotalEth: BigNumber.from("0"),
-      });
-    }
-  }, [
-    state.donations,
-    web3Connections.connections[
-      web3Connections.getConnectedWallet() || "metamask"
-    ].address,
-    isConnected,
-  ]);
 
   React.useEffect(() => {
     if (
@@ -309,26 +250,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   }, [state.phase]);
 
-  // React.useEffect(() => {
-  //   if (activeSlide === 2 && state.phase === DonationPhases.STATUS_NOT_LIVE) {
-  //     notify({
-  //       type: "warning",
-  //       message: "The campaign hasn't started yet!",
-  //       options: {
-  //         id: "end",
-  //         Icon: GiStopSign,
-  //         duration: Infinity,
-  //         dismissable: false,
-  //       },
-  //     });
-  //   } else if (
-  //     activeSlide !== 2 &&
-  //     state.phase === DonationPhases.STATUS_NOT_LIVE
-  //   ) {
-  //     dismiss("end");
-  //   }
-  // }, [state.phase, activeSlide]);
-
   // Returns sign in data
   const sendMessage = async (message: string) => {
     try {
@@ -345,14 +266,14 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         //   },
         // });
 
-        const response = await fetch("http://localhost:4000/send-message", {
+        const response = await fetch("/api/send-message", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             signature: request.signature,
-            signatureMessage: request.message,
+            signedMessage: request.message,
             message,
             ethAddress: web3Connections.connections["metamask"].address,
           }),
@@ -362,18 +283,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
         if (response.ok) {
           dismiss(web3UI.selectedWallet);
-          // notify({
-          //   type: "success",
-          //   message: "",
-          //   // result.data
-          //   //   ? `Successfully send signature!`
-          //   //   : "Signature successfully verified!",
-          //   options: {
-          //     id: web3UI.selectedWallet,
-          //     Icon: result.data ? FaUser : IoCheckmark,
-          //     duration: 7000,
-          //   },
-          // });
 
           console.log("Sending message succeeded:", result.message);
         } else {
@@ -388,7 +297,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           });
           console.error("Verification failed:", result.message);
         }
-        return result.data;
+        return result;
       }
     } catch (error) {
       notify({
@@ -405,196 +314,236 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   };
 
-  const filterNewTransactions = (
-    oldTransactions: Array<ITransaction>,
-    allTransactions: Array<ITransaction>
+  const transactionsFrom = (
+    timestamp: Date,
+    transactions: Array<ITransaction>
   ) => {
-    const length1 = oldTransactions.length;
-    const length2 = allTransactions.length;
+    return transactions.filter(
+      (tx) => tx.timestamp.getTime() > timestamp.getTime()
+    );
+  };
 
-    if (length1 > length2) {
-      return oldTransactions.slice(0, length1 - length2);
-    } else if (length2 > length1) {
-      return allTransactions.slice(0, length2 - length1);
-    } else {
-      return [];
+  const getDonations = async (): Promise<{
+    all: Array<ITransaction>;
+    new: Array<ITransaction>;
+  }> => {
+    let delay = GET_DONATIONS_INTERVAL; // Initial delay for retries
+
+    while (true) {
+      try {
+        const timestamp =
+          state.donations.length > 0 ? state.donations[0].timestamp : undefined;
+
+        const response = await fetch(
+          `/api/donations${
+            timestamp ? `?timestamp=${timestamp.getTime().toString()}` : ""
+          }`
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          const txs = (result.donations as ITransactionsResult).map((tx) => ({
+            ...tx,
+            amount: ethers.utils.parseEther(tx.amount.toString()),
+            timestamp: new Date(tx.timestamp),
+          }));
+
+          const newDonations = timestamp
+            ? transactionsFrom(timestamp, txs)
+            : txs;
+
+          if (newDonations.length > 0) {
+            const allDonations = [...newDonations, ...state.donations];
+            setDonations(allDonations);
+            return { all: allDonations, new: newDonations };
+          } else {
+            console.log("No new transactions found. Retrying...");
+          }
+        } else {
+          // Notify the user about connection issues
+          notify({
+            type: "error",
+            message: "Couldn't establish a connection with the server.",
+            options: {
+              id: "server",
+              Icon: IoMdWarning,
+              duration: 5000,
+            },
+          });
+
+          console.error(`Error: Received status ${response.status}`);
+        }
+      } catch (error) {
+        // Notify the user about connection issues
+        notify({
+          type: "error",
+          message: "Couldn't establish a connection with the server.",
+          options: {
+            id: "server",
+            Icon: IoMdWarning,
+            duration: 5000,
+          },
+        });
+        console.error("Error during getTransactions:", error);
+      }
+
+      // Wait for the delay before retrying
+      console.log(`Retrying in ${delay / 1000} seconds...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      delay = Math.min(delay * 2, GET_DONATIONS_MAX_INTERVAL);
     }
   };
 
-  const getTransactions = async (
-    retries = 3,
-    delay = 2000
-  ): Promise<{ all: Array<ITransaction>; new: Array<ITransaction> }> => {
+  const getEthDonated = async (): Promise<{
+    cutoffTimestamp: Date | null;
+    ethAddress: {
+      total: number;
+      eligible: number;
+    };
+  }> => {
     try {
-      const response = await fetch(`http://localhost:4000/transactions`);
+      const response = await fetch("/api/user-total", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ethAddress: web3Connections.connections["metamask"].address,
+        }),
+      });
       if (response.ok) {
-        const result = await response.json();
-
-        const txs = (result.data as ITransactionsResult).map((tx) => ({
-          ...tx,
-          amount: BigNumber.from(tx.amount),
-        }));
-        if (state.totalDonated === undefined && txs.length === 0)
-          setTotalDonated(BigNumber.from("0"));
-
-        const newTransactions = filterNewTransactions(txs, state.donations);
-
-        if (newTransactions.length > 0) {
-          setDonations(txs);
-          return { all: txs, new: newTransactions };
-        } else {
-          console.log(`No new transactions found, (${retries} retries left)`);
-          console.log(`Retrying... (${retries} retries left)`);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          return getTransactions(retries - 1, delay * 2); // Exponential backoff // return getTransactions(retries - 1, delay * 2);
-        }
+        const result = await response.json(); // Parse the JSON response
+        return result; // Return the specific property
       } else {
-        console.error(`Error: Received status ${response.status}`);
+        console.error(`Error: ${response.status} - ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Error during getTransactions:", error);
+      console.error("Failed to fetch total for user:", error);
     }
-
-    // Retry logic
-    if (retries > 0) {
-      notify({
-        type: "error",
-        message: "Couldn't establish a connection with the server.",
-        options: {
-          id: "server",
-          Icon: IoMdWarning,
-          duration: 5000,
-        },
-      });
-      console.log(`Retrying... (${retries} retries left)`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      return getTransactions(retries - 1, delay * 2); // Exponential backoff
-    }
-
-    console.error("Failed to fetch transactions after multiple attempts.");
-    return { all: [], new: [] };
+    return { cutoffTimestamp: null, ethAddress: { total: 0, eligible: 0 } }; // Return undefined if the request fails
   };
 
-  // const eventSourceRef = React.useRef<EventSource | null>(null);
+  React.useEffect(() => {
+    const addr =
+      web3Connections.connections[
+        web3Connections.getConnectedWallet() || "metamask"
+      ].address;
 
-  // const handleHealthSSE = (data: any) => {
-  //   try {
-  //     console.log(data);
-  //     setDonations(
-  //       data.map((transaction) => {
-  //         return {
-  //           ...transaction,
-  //           amount: ethers.BigNumber.from(transaction.amount),
-  //         };
-  //       })
-  //     );
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+    const fetchEthDonated = async () => {
+      const userTotal = await getEthDonated();
+      if (userTotal) {
+        // TODO: Do I need to do something with the cutoffTimestamp?
+        const weiValues = {
+          total: ethers.utils.parseEther(userTotal.ethAddress.total.toString()),
+          eligible: ethers.utils.parseEther(
+            userTotal.ethAddress.eligible.toString()
+          ),
+        };
+        setEthDonated(weiValues);
+      }
+    };
 
-  // const closeEventSource = async () => {
-  //   if (eventSourceRef.current) {
-  //     eventSourceRef.current.removeEventListener(
-  //       "transactions",
-  //       handleHealthEvent
-  //     );
-  //     eventSourceRef.current.onerror = null;
-  //     eventSourceRef.current.close();
-  //     eventSourceRef.current = null; // Reset the ref to null after closing
-  //   }
-  //   if (state.userPulseId) {
-  //     try {
-  //       const response = await fetch(`http://localhost:4000/depulse`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ userId: state.userPulseId }),
-  //       });
+    fetchEthDonated();
 
-  //       if (response.status === 422) {
-  //         // Handle the 404 error (userId not found)
-  //         // console.error("User not found. Depulse cannot be done.");
-  //       } else if (response.ok) {
-  //         // console.log("Paused stream.");
-  //         // Add your logic for handling successful depulse
-  //         setUserPulseId("");
-  //       } else {
-  //         // console.error("Failed to depulse");
-  //         // Add your logic for handling failed depulse
-  //       }
-  //     } catch (error) {
-  //       console.error("Error during pausing of stream:", error);
-  //       // Add your logic for handling errors during depulse
-  //     }
-  //   }
-  // };
+    if (
+      isConnected &&
+      addr &&
+      activeSlide === 3 &&
+      !(
+        state.phase === DonationPhases.STATUS_ENDED ||
+        state.phase === DonationPhases.STATUS_FILLED
+      )
+    ) {
+      const intervalId = setInterval(fetchEthDonated, GET_USER_TOTAL_INTERVAL);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [
+    web3Connections.connections[
+      web3Connections.getConnectedWallet() || "metamask"
+    ].address,
+    isConnected,
+    activeSlide,
+    state.phase,
+  ]);
 
-  // const handleHealthEvent = (event: MessageEvent<any>) => {
-  //   if (event.data) {
-  //     const data = JSON.parse(event.data);
-  //     if (data.error) {
-  //     } else {
-  //       handleHealthSSE(data);
-  //     }
-  //   }
-  // };
+  const getTotalDonated = async (): Promise<number | undefined> => {
+    try {
+      const response = await fetch("/api/total"); // Ensure the URL is correct
+      if (response.ok) {
+        const result = await response.json(); // Parse the JSON response
+        return result.totalSum; // Return the specific property
+      } else {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch total sum:", error);
+    }
+    return undefined; // Return undefined if the request fails
+  };
 
-  // const handleUserConnectedEvent = (event: MessageEvent<any>) => {
-  //   if (event.data) {
-  //     const data = JSON.parse(event.data);
-  //     setUserPulseId(data.userId);
-  //   }
-  // };
+  React.useEffect(() => {
+    const fetchTotal = async () => {
+      const total = await getTotalDonated();
+      const weiValue = total
+        ? ethers.utils.parseEther(total.toString())
+        : BigNumber.from("0");
+      setTotalDonated(weiValue);
+    };
 
-  // // const handleChainUnavailableEvent = (event: MessageEvent<any>) => {
-  // //   setRpcState("unavailable");
-  // //   setChainStatus("rpc_unavailable");
-  // //   closeEventSource();
-  // // };
+    fetchTotal();
 
-  // const createEventSource = () => {
-  //   const eventSource = new EventSource(
-  //     `http://localhost:4000/transactions/stream`
-  //   );
+    // Set the interval only when necessary
+    if (
+      !(
+        state.phase === DonationPhases.STATUS_ENDED ||
+        state.phase === DonationPhases.STATUS_FILLED
+      )
+    ) {
+      const intervalId = setInterval(fetchTotal, GET_TOTAL_INTERVAL);
 
-  //   eventSource.addEventListener("transactions", handleHealthEvent);
-  //   eventSource.addEventListener("userConnected", handleUserConnectedEvent);
+      // Cleanup the interval when the phase changes or the component unmounts
+      return () => clearInterval(intervalId);
+    }
+  }, [state.phase]);
 
-  //   eventSource.onerror = (error) => {
-  //     console.error("EventSource failed:", error);
-  //     closeEventSource();
-  //   };
+  const getStats = async (): Promise<{
+    donationCount: number;
+    participantCount: number;
+  }> => {
+    try {
+      const response = await fetch("/api/stats");
 
-  //   eventSourceRef.current = eventSource;
-  // };
+      if (response.ok) {
+        const result = await response.json(); // Parse the JSON response
+        console.log(result);
+        return result; // Return the specific property
+      } else {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch stats:", error);
+    }
+    return { donationCount: 0, participantCount: 0 };
+  };
 
-  // const reconnectEventSource = async () => {
-  //   await closeEventSource();
-  //   createEventSource();
-  // };
+  React.useEffect(() => {
+    const fetchStats = async () => {
+      {
+        const stats = await getStats();
+        setStats(stats);
+      }
+    };
 
-  // React.useEffect(() => {
-  //   const localUserPulseId = sessionStorage.getItem("zen.userPulseId");
-  //   if (localUserPulseId !== null && localUserPulseId !== "") {
-  //     setUserPulseId(localUserPulseId);
-  //   }
-
-  //   reconnectEventSource();
-  //   //     } else {
-  //   //       closeEventSource();
-  //   //     }
-  //   //   }
-  //   // } else {
-  //   //   closeEventSource();
-  //   // }
-
-  //   return () => {
-  //     // closeEventSource();
-  //   };
-  //   // eslint-disable-next-line
-  // }, []);
+    if (
+      state.phase === DonationPhases.STATUS_ENDED ||
+      state.phase === DonationPhases.STATUS_FILLED
+    ) {
+      fetchStats();
+    }
+  }, [state.phase]);
 
   return (
     <DonationContext.Provider
@@ -608,6 +557,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         userExists: state.userExists,
         phase: state.phase,
         myDonationCount: state.myDonationCount,
+        stats: state.stats,
         setNamAddress,
         setEthDonated,
         setTotalDonated,
@@ -618,13 +568,15 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         setFilterOn,
         setPhase,
         requestSignature,
-        verifySignature,
+        // verifySignature,
         setUserExists,
         signIn,
-        getTransactions,
-        filterNewTransactions,
+        getDonations,
+        // getUserDonations,
+        transactionsFrom,
         sendMessage,
         setMyDonationCount,
+        setStats,
       }}
     >
       {children}

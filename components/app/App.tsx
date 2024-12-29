@@ -78,14 +78,26 @@ const Input = () => {
   ];
 
   const slides = [
-    <About key={0} isActive={activeSlide === 0} />,
+    <About
+      key={0}
+      isActive={activeSlide === 0}
+      onFocus={(e) => setSlide(0, e)}
+    />,
     <Target
       key={1}
       isActive={activeSlide === 1}
       onFocus={(e) => setSlide(1, e)}
     />,
-    <HowTo key={2} isActive={activeSlide === 2} />,
-    <Account key={3} isActive={activeSlide === 3} />,
+    <HowTo
+      key={2}
+      isActive={activeSlide === 2}
+      onFocus={(e) => setSlide(2, e)}
+    />,
+    <Account
+      key={3}
+      isActive={activeSlide === 3}
+      onFocus={(e) => setSlide(3, e)}
+    />,
   ];
 
   React.useEffect(() => {
@@ -97,7 +109,7 @@ const Input = () => {
   return (
     <>
       <DonationProgress
-        totalDonated={totalDonated}
+        value={totalDonated}
         max={TARGET_ETH}
         min={ethers.utils.parseEther("0")}
         status={<Countdown />}

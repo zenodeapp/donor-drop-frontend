@@ -46,6 +46,7 @@ const NavigationButtons = ({
   nextTitle,
   nextOnClick,
   backOnClick,
+  onFocus,
 }: {
   max: number;
   currentStep: number;
@@ -54,6 +55,7 @@ const NavigationButtons = ({
   nextTitle?: string;
   nextOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   backOnClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onFocus: React.FocusEventHandler<HTMLButtonElement>;
 }) => {
   return (
     <div className={styles.navigationButtons}>
@@ -67,6 +69,7 @@ const NavigationButtons = ({
                   if (currentStep > 0) setCurrentStep(currentStep - 1);
                 }
           }
+          onFocus={onFocus}
         >
           <span className={styles.back}>{backTitle ? backTitle : "BACK"}</span>
           <span className={styles.line}></span>
@@ -81,6 +84,7 @@ const NavigationButtons = ({
                 if (currentStep < max) setCurrentStep(currentStep + 1);
               }
         }
+        onFocus={onFocus}
       >
         <span className={styles.next}>{nextTitle ? nextTitle : "NEXT"}</span>
         <span className={styles.line}></span>
@@ -106,10 +110,12 @@ const StepBubble = ({
   backOnClick,
   navEnabled = true,
   ghost,
+  onFocus,
 }: IStepBubble & {
   max: number;
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  onFocus: React.FocusEventHandler<HTMLButtonElement>;
 }) => {
   return (
     <div
@@ -163,6 +169,7 @@ const StepBubble = ({
               nextTitle={nextTitle}
               nextOnClick={nextOnClick}
               backOnClick={backOnClick}
+              onFocus={onFocus}
             />
           )}
         </div>
@@ -171,7 +178,13 @@ const StepBubble = ({
   );
 };
 
-const How = ({ isActive }: { isActive: boolean }) => {
+const How = ({
+  isActive,
+  onFocus,
+}: {
+  isActive: boolean;
+  onFocus: React.FocusEventHandler;
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const { setActiveSlide } = useLayout();
   const [ethInput, setEthInput] = useState(0.03);
@@ -291,7 +304,7 @@ const How = ({ isActive }: { isActive: boolean }) => {
           NAM.
           <div style={{ width: "90%", margin: "0 auto" }}>
             <DonationProgress
-              totalDonated={ethers.utils.parseEther(ethInput.toString())}
+              value={ethers.utils.parseEther(ethInput.toString())}
               min={MIN_ETH_PER_ADDRESS}
               max={MAX_ETH_PER_ADDRESS}
               showActual={false}
@@ -307,6 +320,7 @@ const How = ({ isActive }: { isActive: boolean }) => {
                     onChange={(e) => {
                       setEthInput(Math.max(0, parseFloat(e.target.value) || 0));
                     }}
+                    tabIndex={-1}
                   />
                   <span
                     style={{
@@ -370,6 +384,7 @@ const How = ({ isActive }: { isActive: boolean }) => {
             target='_blank'
             rel='noreferrer'
             className={styles.extension}
+            onFocus={onFocus}
           >
             download the extension
           </a>{" "}
@@ -406,6 +421,7 @@ const How = ({ isActive }: { isActive: boolean }) => {
             href='https://www.myetherwallet.com/blog/how-to-send-a-message-onchain/'
             target='_blank'
             rel='noreferrer'
+            onFocus={onFocus}
           >
             click here
           </a>{" "}
@@ -458,9 +474,10 @@ const How = ({ isActive }: { isActive: boolean }) => {
           0.30 ETH to{" "}
           <span style={{ color: "rgb(239 183 132)" }}>
             <a
-              href='https://etherscan.io/address/0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3'
+              href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
               target='_blank'
               rel='noreferrer'
+              onFocus={onFocus}
             >
               coincenter.eth
             </a>
@@ -528,6 +545,7 @@ const How = ({ isActive }: { isActive: boolean }) => {
             nextOnClick={step.nextOnClick}
             backOnClick={step.backOnClick}
             ghost={step.ghost}
+            onFocus={onFocus}
           />
         ))}
       </div>

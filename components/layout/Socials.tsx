@@ -2,14 +2,22 @@ import React from "react";
 import { ISocials } from "../../context/LayoutTypes";
 import styles from "../../styles/socials.module.scss";
 
-const Socials = ({ socials }: ISocials) => {
+const Socials = ({
+  socials,
+  onFocus,
+}: ISocials & { onFocus?: React.FocusEventHandler }) => {
   return (
     <ul className={styles["social-icons"]}>
       {socials &&
         socials.map((social) => {
           return (
             <li key={social.id} className={styles["social-icon"]}>
-              <a href={social.url} target='_blank' rel='noreferrer'>
+              <a
+                href={social.url}
+                target='_blank'
+                rel='noreferrer'
+                onFocus={onFocus}
+              >
                 <social.Logo aria-label={social.title} title={social.title} />
               </a>
             </li>
