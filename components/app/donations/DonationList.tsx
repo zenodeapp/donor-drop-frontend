@@ -114,7 +114,7 @@ const DonationList = () => {
         fetchTransactions();
       } else {
         const _timeoutId = setTimeout(fetchTransactions, 5000);
-        setTimeoutId(timeoutId);
+        setTimeoutId(_timeoutId);
         return () => clearTimeout(_timeoutId); // Cleanup
       }
     };
@@ -123,7 +123,7 @@ const DonationList = () => {
   }, [
     visibleDonations.bottom,
     init,
-    // donations,
+    donations,
     web3Connections.connections["metamask"].address,
   ]);
 
