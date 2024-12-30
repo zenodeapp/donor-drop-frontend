@@ -306,12 +306,6 @@ const Web3Provider = ({
 
       if (_provider.setNetworkId) _provider.setNetworkId(state.selectedNetwork);
 
-      web3Wallets.wallets.map((walletId) => {
-        if (walletId !== "ethers") {
-          web3Connections.disconnect(walletId);
-        }
-      });
-
       if (!response?.error) response = await _provider.connect();
       else setConnected(walletId, false);
 
