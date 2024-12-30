@@ -1,10 +1,26 @@
 import { saveTransaction } from "../../lib/db";
 
-// Helper function to generate a random Ethereum address
+const generateRandomAddress = () =>
+  `0x${[...Array(40)]
+    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .join("")}`;
+
 const generateRandomHash = () =>
   `0x${[...Array(64)]
     .map(() => Math.floor(Math.random() * 16).toString(16))
     .join("")}`;
+
+const generateRandomTnam = () => {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const length = 41;
+  let randomString = "tnam";
+
+  for (let i = 0; i < length; i++) {
+    randomString += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return randomString;
+};
 
 // Helper function to generate a random ETH value between 0.01 and 0.5
 const generateRandomValue = () =>
@@ -17,18 +33,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Example transaction object (this would normally come from a query param or another source)
     const tx = {
       hash: generateRandomHash(),
 
-      from: req.query.from || "0x5c8763834df1491bf7dabe4aded50b74c61089ef",
-      value: generateRandomValue(), // Amount in ETH
+      from: req.query.address || generateRandomAddress(),
+
+      value: req.query.amount || generateRandomValue(),
       decodedRawInput: {
-        data: req.query.data || "tnam1qpzlvdhf0vte0sd3u832rmtnvc6l8ajr0g8g4n4y", // Raw input
+        data: req.query.tnam || generateRandomTnam(),
       },
-      timestamp: req.query.timestamp
-        ? new Date(req.query.timestamp)
-        : new Date(),
+      timestamp: new Date(),
     };
 
     const result = await saveTransaction(tx);

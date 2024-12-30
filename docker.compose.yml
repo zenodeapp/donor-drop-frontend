@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: . # Use the current directory to build the Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000" # Map port 3000 on your machine to port 3000 in the container
+    environment:
+      NODE_ENV: production # Run in production mode

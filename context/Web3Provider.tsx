@@ -503,8 +503,10 @@ const Web3Provider = ({
 
   // Initialize wallet providers
   React.useEffect(() => {
-    const providers = web3Providers.init();
-    web3Connections.init(providers);
+    setTimeout(() => {
+      const providers = web3Providers.init();
+      web3Connections.init(providers);
+    }, 500);
   }, []);
 
   // Add and remove event handlers for every connected wallet.
