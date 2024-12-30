@@ -49,7 +49,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   const GET_USER_TOTAL_INTERVAL = 10000;
   const GET_TOTAL_INTERVAL = 10000;
   const GET_DONATIONS_INTERVAL = 5000;
-  const GET_DONATIONS_MAX_INTERVAL = 15000;
+  const GET_DONATIONS_MAX_INTERVAL = 10000;
 
   const {
     setDonations,
@@ -323,43 +323,68 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     );
   };
 
+  const isFetching = React.useRef(false); // Prevent duplicate calls
+
   const getDonations = async (): Promise<{
     all: Array<ITransaction>;
     new: Array<ITransaction>;
   }> => {
+    if (isFetching.current) {
+      console.log("Fetch already in progress. Skipping...");
+      return Promise.reject("Fetch in progress");
+    }
+
+    isFetching.current = true;
     let delay = GET_DONATIONS_INTERVAL; // Initial delay for retries
 
-    while (true) {
-      try {
-        const timestamp =
-          state.donations.length > 0 ? state.donations[0].timestamp : undefined;
+    try {
+      while (true) {
+        try {
+          const timestamp =
+            state.donations.length > 0
+              ? state.donations[0].timestamp
+              : undefined;
 
-        const response = await fetch(
-          `/api/donations${
-            timestamp ? `?timestamp=${timestamp.getTime().toString()}` : ""
-          }`
-        );
+          const response = await fetch(
+            `/api/donations${
+              timestamp ? `?timestamp=${timestamp.getTime().toString()}` : ""
+            }`
+          );
 
-        if (response.ok) {
-          const result = await response.json();
-          const txs = (result.donations as ITransactionsResult).map((tx) => ({
-            ...tx,
-            amount: ethers.parseEther(tx.amount.toString()),
-            timestamp: new Date(tx.timestamp),
-          }));
+          if (response.ok) {
+            const result = await response.json();
+            const txs = (result.donations as ITransactionsResult).map((tx) => ({
+              ...tx,
+              amount: ethers.parseEther(tx.amount.toString()),
+              timestamp: new Date(tx.timestamp),
+            }));
 
-          const newDonations = timestamp
-            ? transactionsFrom(timestamp, txs)
-            : txs;
+            const newDonations = timestamp
+              ? transactionsFrom(timestamp, txs)
+              : txs;
 
-          if (newDonations.length > 0) {
-            const allDonations = [...newDonations, ...state.donations];
-            setDonations(allDonations);
-            return { all: allDonations, new: newDonations };
+            if (newDonations.length > 0) {
+              const allDonations = [...newDonations, ...state.donations];
+              setDonations(allDonations);
+              return { all: allDonations, new: newDonations };
+            } else {
+              console.log("No new transactions found. Retrying...");
+            }
           } else {
-            console.log("No new transactions found. Retrying...");
+            // Notify the user about connection issues
+            notify({
+              type: "error",
+              message: "Couldn't establish a connection with the server.",
+              options: {
+                id: "server",
+                Icon: IoMdWarning,
+                duration: 5000,
+              },
+            });
+
+            console.error(`Error: Received status ${response.status}`);
           }
-        } else {
+        } catch (error) {
           // Notify the user about connection issues
           notify({
             type: "error",
@@ -370,28 +395,17 @@ const DonationProvider = ({ children }: IDonationProvider) => {
               duration: 5000,
             },
           });
-
-          console.error(`Error: Received status ${response.status}`);
+          console.error("Error during getTransactions:", error);
         }
-      } catch (error) {
-        // Notify the user about connection issues
-        notify({
-          type: "error",
-          message: "Couldn't establish a connection with the server.",
-          options: {
-            id: "server",
-            Icon: IoMdWarning,
-            duration: 5000,
-          },
-        });
-        console.error("Error during getTransactions:", error);
+
+        // Wait for the delay before retrying
+        console.log(`Retrying in ${delay / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        delay = Math.min(delay * 2, GET_DONATIONS_MAX_INTERVAL);
       }
-
-      // Wait for the delay before retrying
-      console.log(`Retrying in ${delay / 1000} seconds...`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-
-      delay = Math.min(delay * 2, GET_DONATIONS_MAX_INTERVAL);
+    } finally {
+      isFetching.current = false;
     }
   };
 
@@ -554,6 +568,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         phase: state.phase,
         myDonationCount: state.myDonationCount,
         stats: state.stats,
+        isFetching: isFetching,
         setNamAddress,
         setEthDonated,
         setTotalDonated,

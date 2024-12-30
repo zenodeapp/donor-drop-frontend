@@ -97,13 +97,15 @@ const DonationList = () => {
   const [_fetch, _setFetch] = React.useState(true);
   const { web3Connections } = useWeb3();
   const { isConnected } = useTheme();
-  const { donations } = useDonation();
+  const { donations, isFetching } = useDonation();
   const ethAddress = web3Connections.connections["metamask"].address;
+  const TRANSACTION_HEIGHT = 115;
 
   React.useEffect(() => {
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
 
     const fetchTransactions = async () => {
+      if (isFetching.current) return;
       const transactions = await getDonations(5, 2000);
 
       if (init) setInit(false);
@@ -122,12 +124,11 @@ const DonationList = () => {
 
     return scheduleFetch();
     //eslint-disable-next-line
-  }, [visibleDonations.bottom, init, donations, ethAddress]);
+  }, [visibleDonations.bottom, donations]);
 
   // When new transactions get added to the upper transactions
   React.useEffect(() => {
     if (visibleDonations.top.length > 0) {
-      const TRANSACTION_HEIGHT = 115;
       // Step 2 - Make the upper transactions spawn above
       setVisibleDonations({
         ...visibleDonations,
@@ -160,7 +161,7 @@ const DonationList = () => {
       }, 500);
     }
     //eslint-disable-next-line
-  }, [visibleDonations.top]);
+  }, [visibleDonations.top, filterOn]);
 
   React.useEffect(() => {
     const element = elementRef.current;
@@ -265,6 +266,18 @@ const DonationList = () => {
             <Donation key={i} transaction={transaction} />
           ))}
         </div>
+        {/* <div
+          className={styles.lowerTransactions}
+          style={{
+            opacity: 1,
+            height: "115px",
+            transform: `translateY(${visibleDonations.translateY.bottom}px)`,
+            transition: `opacity 0.3s 0.3s, transform ${0.5}s`,
+          }}
+          ref={elementRef}
+        >
+          Test
+        </div> */}
       </div>
     </div>
   );

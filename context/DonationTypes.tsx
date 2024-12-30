@@ -85,6 +85,7 @@ export type IDonationContext = IDonationState & {
   setFilterOn: (filterOn: boolean) => boolean;
   setMyDonationCount: (myDonationCount: number) => number;
   setStats: (stats: IStats) => IStats;
+  isFetching: React.RefObject<boolean>;
 };
 
 export type IDonationProvider = {
