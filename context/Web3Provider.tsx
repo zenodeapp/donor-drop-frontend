@@ -26,8 +26,8 @@ const Web3Provider = ({
   children,
 }: IWeb3Provider) => {
   const [state, dispatch] = React.useReducer(Web3Reducer, {
-    selectedWallet: "",
-    selectedNetwork: "",
+    selectedWallet: "metamask",
+    selectedNetwork: "ethereum",
     wallets,
     networks,
     providers: {},
