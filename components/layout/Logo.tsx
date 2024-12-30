@@ -54,6 +54,7 @@ const Logo = () => {
               position: "relative",
               width: "12rem",
             }}
+            unoptimized
           />
         </span>
       </div>

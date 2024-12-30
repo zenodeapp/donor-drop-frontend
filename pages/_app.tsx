@@ -11,7 +11,7 @@ import MyLayout from "../components/layout";
 import MyConfig from "../layout.config";
 
 import "../styles/style.scss";
-import { Poppins } from "@next/font/google";
+import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
   weight: ["200", "400"],

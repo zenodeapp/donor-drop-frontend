@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-
 export type IVisibleDonations = {
   top: Array<ITransaction>;
   bottom: Array<ITransaction>;
@@ -20,7 +18,7 @@ export type ITransactionsResult = Array<{
 export type ITransaction = {
   hash: string;
   address: string;
-  amount: BigNumber;
+  amount: bigint;
   message: string;
   timestamp: Date;
 };
@@ -31,7 +29,7 @@ export type IDonationState = {
   filterOn: boolean;
   namAddress: string;
   ethDonated: EthDonated;
-  totalDonated?: BigNumber;
+  totalDonated?: bigint;
   userExists: boolean;
   phase: DonationPhases;
   myDonationCount: number;
@@ -49,8 +47,8 @@ export type IProofResult = {
 };
 
 export type EthDonated = {
-  total: BigNumber;
-  eligible: BigNumber;
+  total: bigint;
+  eligible: bigint;
 };
 
 export type IDonationContext = IDonationState & {
@@ -64,7 +62,7 @@ export type IDonationContext = IDonationState & {
   signIn: () => Promise<string>;
   setNamAddress: (namAddress: string) => string;
   setEthDonated: (ethDonated: EthDonated) => EthDonated;
-  setTotalDonated: (totalDonated?: BigNumber) => BigNumber | undefined;
+  setTotalDonated: (totalDonated?: bigint) => bigint | undefined;
   setUserExists: (userExists: boolean) => boolean;
   setPhase: (phase: DonationPhases) => DonationPhases;
   setDonations: (donations: Array<ITransaction>) => Array<ITransaction>;
@@ -143,7 +141,7 @@ export type IDonationActions =
     }
   | {
       type: DonationActions.SET_TOTAL_DONATED;
-      payload: BigNumber | undefined;
+      payload: bigint | undefined;
     }
   | {
       type: DonationActions.SET_USER_EXISTS;

@@ -2,7 +2,6 @@ import React from "react";
 import { FaEthereum } from "react-icons/fa";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import styles from "../../../styles/progress.module.scss";
-import { BigNumber } from "ethers";
 import { truncateEth } from "../../../helpers/web3";
 
 const DonationProgress = ({
@@ -15,36 +14,32 @@ const DonationProgress = ({
   decimals = 2,
   colorBasedOn,
 }: {
-  value?: BigNumber;
-  min: BigNumber;
-  max: BigNumber;
+  value?: bigint;
+  min: bigint;
+  max: bigint;
   status?: React.ReactNode;
   showActual?: boolean;
   showSuperscript?: boolean;
   decimals?: number;
-  colorBasedOn?: BigNumber;
+  colorBasedOn?: bigint;
 }) => {
-  if (!value) value = BigNumber.from("0");
-  const donationPercentage = value.mul(100).div(max).lte(100)
-    ? value.mul(100).div(max)
-    : BigNumber.from(100);
+  if (!value) value = 0n;
+  const donationPercentage =
+    (value * 100n) / max <= 100n ? (value * 100n) / max : 100n;
 
-  const minPercentage = min.mul(100).div(max).lte(100)
-    ? min.mul(100).div(max)
-    : BigNumber.from(100);
+  const minPercentage = (min * 100n) / max <= 100n ? (min * 100n) / max : 100n;
 
-  const maxPercentage = BigNumber.from(100);
+  const maxPercentage = 100n;
 
   const getProgressClass = () => {
-    const _value =
-      colorBasedOn !== undefined ? colorBasedOn : value || BigNumber.from("0");
+    const _value = colorBasedOn !== undefined ? colorBasedOn : value || 0n;
     let progressClass = styles.progressBlue;
-    if (_value.lt(min)) {
+    if (_value < min) {
       progressClass = styles.progressRed;
-    } else if (_value.gte(max)) {
+    } else if (_value >= max) {
       progressClass = styles.progressYellow;
     }
-    if (_value.gt(max)) {
+    if (_value > max) {
       progressClass = styles.progressRedFast;
     }
     return progressClass;
@@ -63,7 +58,7 @@ const DonationProgress = ({
             style={{ transform: `translateX(${donationPercentage}%)` }}
           >
             <FaEthereum size={24} className={`${styles.ethIcon}`} />
-            {showSuperscript && !(showActual && value.gte(max)) && (
+            {showSuperscript && !(showActual && value >= max) && (
               <span className={styles.totalDonated}>
                 {truncateEth(value, decimals).toString()}E
               </span>
@@ -73,8 +68,8 @@ const DonationProgress = ({
           <div
             className={`${getProgressClass()} ${getClassNameByStyle(
               styles,
-              `minMark${value.gte(min) ? " passed" : ""}${
-                value.eq(min) ? " on-top" : ""
+              `minMark${value >= min ? " passed" : ""}${
+                value === min ? " on-top" : ""
               }`
             )}`}
             style={{ left: `${minPercentage}%` }}
@@ -82,7 +77,7 @@ const DonationProgress = ({
           {/* Min value text */}
           <div
             className={`${styles.minValueText} ${
-              value.gte(min) ? styles.passed : ""
+              value >= min ? styles.passed : ""
             }`}
             style={{ left: `${minPercentage}%` }}
           >
@@ -94,7 +89,7 @@ const DonationProgress = ({
             className={`${getProgressClass()} ${getClassNameByStyle(
               styles,
               `maxMark ${getProgressClass()}${
-                value.gte(max) ? " passed on-top" : ""
+                value >= max ? " passed on-top" : ""
               }`
             )}`}
             style={{ left: `${maxPercentage}%` }}
@@ -102,11 +97,11 @@ const DonationProgress = ({
           {/* Max value text */}
           <div
             className={`${styles.maxValueText} ${
-              value.gte(max) ? styles.passed : ""
+              value >= max ? styles.passed : ""
             }`}
             style={{ left: `${maxPercentage}%` }}
           >
-            {showActual && value.gte(max)
+            {showActual && value >= max
               ? truncateEth(value, decimals).toString()
               : truncateEth(max, decimals).toString()}
             E

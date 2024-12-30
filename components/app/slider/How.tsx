@@ -304,7 +304,7 @@ const How = ({
           NAM.
           <div style={{ width: "90%", margin: "0 auto" }}>
             <DonationProgress
-              value={ethers.utils.parseEther(ethInput.toString())}
+              value={ethers.parseEther(ethInput.toString())}
               min={MIN_ETH_PER_ADDRESS}
               max={MAX_ETH_PER_ADDRESS}
               showActual={false}
@@ -335,7 +335,7 @@ const How = ({
                       ? "not eligible 😞"
                       : `${(
                           (Math.min(0.3, ethInput) /
-                            parseFloat(ethers.utils.formatEther(TARGET_ETH))) *
+                            parseFloat(ethers.formatEther(TARGET_ETH))) *
                           REWARD_NAM
                         ).toFixed(2)} NAM ${ethInput >= 0.3 ? "🤯" : "🥰"}`}
                   </span>

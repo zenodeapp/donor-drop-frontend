@@ -1,7 +1,7 @@
 {
-  "name": "Donation Drop",
-  "short_name": "Donation Drop",
-  "description": "Donation Drop powered by Namada.",
+  "name": "Namada Donor Drop",
+  "short_name": "Donor Drop",
+  "description": "Donor Drop powered by Namada.",
   "start_url": "/",
   "scope": "/",
   "icons": [

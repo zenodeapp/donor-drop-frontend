@@ -5,7 +5,6 @@ import walletStyle from "../../styles/wallet.module.scss";
 import globalStyle from "../../styles/global.module.scss";
 import defaultWalletStyle from "../../styles/default.module.scss";
 
-import { SiteUrl } from "../../layout.config";
 import { useWeb3 } from "../../context/Web3Provider";
 import Connect from "./Connect";
 import Wallets from "./Wallets";
@@ -54,7 +53,7 @@ const WalletScreen = () => {
             <Connect
               styleModule={defaultWalletStyle}
               tabIndex={showApp || isMobileView ? -1 : undefined}
-              deeplink={`https://metamask.app.link/dapp/${SiteUrl}`}
+              deeplink={`https://metamask.app.link/dapp/${process.env.NEXT_PUBLIC_SITE_URL}`}
             />
             <OpenApp />
           </div>

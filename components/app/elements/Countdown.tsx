@@ -16,7 +16,7 @@ const Countdown = () => {
       if (now < START_DATE.getTime()) {
         setPhase(DonationPhases.STATUS_NOT_LIVE);
         setTimeRemaining(START_DATE.getTime() - now);
-      } else if (totalDonated && totalDonated.gte(TARGET_ETH)) {
+      } else if (totalDonated && totalDonated >= TARGET_ETH) {
         setPhase(DonationPhases.STATUS_FILLED);
         clearInterval(timer);
       } else if (now < END_DATE.getTime() && totalDonated !== undefined) {

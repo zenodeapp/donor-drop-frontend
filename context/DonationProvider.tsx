@@ -14,7 +14,7 @@ import { IoIosClock, IoMdWarning } from "react-icons/io";
 import { IoCheckmark } from "react-icons/io5";
 import { shortenAddress } from "../helpers/web3";
 import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { GiStopSign } from "react-icons/gi";
 
@@ -36,8 +36,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     filterOn: false,
     namAddress: "",
     ethDonated: {
-      total: BigNumber.from("0"),
-      eligible: BigNumber.from("0"),
+      total: 0n,
+      eligible: 0n,
     },
     totalDonated: undefined,
     userExists: false,
@@ -177,7 +177,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   ]);
 
   // const calculateTotalDonated = () => {
-  //   let total = BigNumber.from("0");
+  //   let total = 0n;
   //   state.donations.map((donation) => {
   //     total = total.add(donation.amount);
   //   });
@@ -186,7 +186,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   // };
 
   // const calculateEthDonated = (address: string) => {
-  //   let total = BigNumber.from("0");
+  //   let total = 0n;
   //   state.donations
   //     .filter(
   //       (donation) => donation.address.toLowerCase() === address.toLowerCase()
@@ -344,7 +344,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           const result = await response.json();
           const txs = (result.donations as ITransactionsResult).map((tx) => ({
             ...tx,
-            amount: ethers.utils.parseEther(tx.amount.toString()),
+            amount: ethers.parseEther(tx.amount.toString()),
             timestamp: new Date(tx.timestamp),
           }));
 
@@ -435,10 +435,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       if (userTotal) {
         // TODO: Do I need to do something with the cutoffTimestamp?
         const weiValues = {
-          total: ethers.utils.parseEther(userTotal.ethAddress.total.toString()),
-          eligible: ethers.utils.parseEther(
-            userTotal.ethAddress.eligible.toString()
-          ),
+          total: ethers.parseEther(userTotal.ethAddress.total.toString()),
+          eligible: ethers.parseEther(userTotal.ethAddress.eligible.toString()),
         };
         setEthDonated(weiValues);
       }
@@ -487,9 +485,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   React.useEffect(() => {
     const fetchTotal = async () => {
       const total = await getTotalDonated();
-      const weiValue = total
-        ? ethers.utils.parseEther(total.toString())
-        : BigNumber.from("0");
+      const weiValue = total ? ethers.parseEther(total.toString()) : 0n;
       setTotalDonated(weiValue);
     };
 

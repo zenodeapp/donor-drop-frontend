@@ -50,11 +50,11 @@ const Donation = ({ transaction }: { transaction: ITransaction }) => {
         >
           <strong className={styles.amount}>
             {truncateEth(transaction.amount, 3)} ETH{" "}
-            {transaction.amount.gte(MAX_ETH_PER_ADDRESS)
+            {transaction.amount >= MAX_ETH_PER_ADDRESS
               ? "🐳"
-              : transaction.amount.gte(MAX_ETH_PER_ADDRESS.div(2))
+              : transaction.amount >= MAX_ETH_PER_ADDRESS / 2n
               ? "🐬"
-              : transaction.amount.gte(MIN_ETH_PER_ADDRESS)
+              : transaction.amount >= MIN_ETH_PER_ADDRESS
               ? "💛"
               : "🐑"}
           </strong>
@@ -98,6 +98,7 @@ const DonationList = () => {
   const { web3Connections } = useWeb3();
   const { isConnected } = useTheme();
   const { donations } = useDonation();
+  const ethAddress = web3Connections.connections["metamask"].address;
 
   React.useEffect(() => {
     clearTimeout(timeoutId);
@@ -120,12 +121,8 @@ const DonationList = () => {
     };
 
     return scheduleFetch();
-  }, [
-    visibleDonations.bottom,
-    init,
-    donations,
-    web3Connections.connections["metamask"].address,
-  ]);
+    //eslint-disable-next-line
+  }, [visibleDonations.bottom, init, donations, ethAddress]);
 
   // When new transactions get added to the upper transactions
   React.useEffect(() => {
@@ -141,8 +138,7 @@ const DonationList = () => {
             -visibleDonations.top.filter(
               (tx) =>
                 !filterOn ||
-                tx.address.toLowerCase() ===
-                  web3Connections.connections["metamask"].address.toLowerCase()
+                tx.address.toLowerCase() === ethAddress.toLowerCase()
             ).length * TRANSACTION_HEIGHT,
         },
       });
@@ -156,16 +152,14 @@ const DonationList = () => {
               visibleDonations.top.filter(
                 (tx) =>
                   !filterOn ||
-                  tx.address.toLowerCase() ===
-                    web3Connections.connections[
-                      "metamask"
-                    ].address.toLowerCase()
+                  tx.address.toLowerCase() === ethAddress.toLowerCase()
               ).length * TRANSACTION_HEIGHT,
             top: 0,
           },
         });
       }, 500);
     }
+    //eslint-disable-next-line
   }, [visibleDonations.top]);
 
   React.useEffect(() => {
@@ -201,23 +195,20 @@ const DonationList = () => {
     return () => {
       element.removeEventListener("transitionend", handleTransitionEnd);
     };
+    //eslint-disable-next-line
   }, [visibleDonations.top, visibleDonations.bottom]);
 
   let topTransactions =
     filterOn && isConnected
       ? visibleDonations.top.filter(
-          (tx) =>
-            tx.address.toLowerCase() ===
-            web3Connections.connections["metamask"].address.toLowerCase()
+          (tx) => tx.address.toLowerCase() === ethAddress.toLowerCase()
         )
       : visibleDonations.top;
 
   let bottomTransactions =
     filterOn && isConnected
       ? visibleDonations.bottom.filter(
-          (tx) =>
-            tx.address.toLowerCase() ===
-            web3Connections.connections["metamask"].address.toLowerCase()
+          (tx) => tx.address.toLowerCase() === ethAddress.toLowerCase()
         )
       : visibleDonations.bottom;
 

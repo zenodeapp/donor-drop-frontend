@@ -6,7 +6,6 @@ import Document, {
   DocumentContext,
 } from "next/document";
 import { getCsp } from "../helpers/csp";
-import { SiteUrl } from "../layout.config";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -23,8 +22,8 @@ class MyDocument extends Document {
           <meta charSet='utf-8' />
           <meta name='referrer' content='strict-origin-when-cross-origin' />
           <meta httpEquiv='Content-Security-Policy' content={csp} />
-          <meta name='apple-mobile-web-app-title' content='Donation Drop' />
-          <meta name='application-name' content='Donation Drop' />
+          <meta name='apple-mobile-web-app-title' content='Namada Donor Drop' />
+          <meta name='application-name' content='Namada Donor Drop' />
           <meta name='theme-color' content='#1f1e10' />
           <link rel='icon' type='image/svg+xml' href='/icon.svg' />
           <link
@@ -52,7 +51,7 @@ class MyDocument extends Document {
             property='og:image'
             content={
               process.env.NODE_ENV == "production"
-                ? `${SiteUrl}/og.webp`
+                ? `${process.env.NEXT_PUBLIC_SITE_URL}/og.webp`
                 : "/og.webp"
             }
           />

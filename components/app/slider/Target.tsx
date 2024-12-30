@@ -7,7 +7,6 @@ import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import { END_DATE, START_DATE, TARGET_ETH } from "../../../donations.config";
 import { truncateEth } from "../../../helpers/web3";
-import { BigNumber } from "ethers";
 
 const Target = ({
   isActive,
@@ -38,7 +37,7 @@ const Target = ({
         { value: `${stats.participantCount}`, label: "Participants" },
         { value: `${stats.donationCount}`, label: "Donations" },
         {
-          value: `${truncateEth(totalDonated || BigNumber.from("0"), 2)} ETH`,
+          value: `${truncateEth(totalDonated || 0n, 2)} ETH`,
           label: "Total Donated",
         },
       ].map((item, index) => (

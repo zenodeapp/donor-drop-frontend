@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { BigNumber, ethers } from "ethers";
 import { useTheme } from "../../../context/ThemeProvider";
 import { useDonation } from "../../../context/DonationProvider";
 import { getClassNameByStyle } from "../../../helpers/layout";
@@ -53,23 +52,6 @@ const Account = ({
     setAccountPhase(AccountPhases.STATUS_EXISTING_USER);
   }, [isConnected, signedIn, userExists]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setEthDonated({
-  //       originalTotalEth: ethDonated.originalTotalEth.add(
-  //         BigNumber.from("10000000000000000")
-  //       ), // Increase by 0.01 ETH (10^16 wei)
-  //       adjustedTotalEth: ethDonated.adjustedTotalEth.add(
-  //         BigNumber.from("10000000000000000")
-  //       ), // Increase by 0.01 ETH (10^16 wei)
-  //     });
-  //   }, 5000); // Update every 5 seconds
-  //   console.log("hallo");
-  //   console.log(ethDonated.originalTotalEth);
-
-  //   return () => clearInterval(interval); // Cleanup on component unmount
-  // }, [ethDonated, setEthDonated]); // Dependency array to rerun effect if `ethDonated` changes
-
   const renderEthereumSection = () => (
     <div className={getClassNameByStyle(styles, `section eth`)}>
       <span className={getClassNameByStyle(styles, `wallet-icon`)}>
@@ -106,12 +88,12 @@ const Account = ({
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
                 {truncateEth(ethDonated.total, 2)} ETH{" "}
-                {!ethDonated.eligible.isZero() ? "💛" : "😌"}
+                {ethDonated.eligible !== 0n ? "💛" : "😌"}
               </span>{" "}
               —
             </span>
             <span style={{ display: "block", fontSize: "0.8rem" }}>
-              {!ethDonated.eligible.eq(ethDonated.total) ? (
+              {ethDonated.eligible !== ethDonated.total ? (
                 <>
                   — eligible{" "}
                   <span style={{ color: "#e2ebff" }}>
@@ -172,14 +154,14 @@ const Account = ({
           <div className={styles.donationInfo}>
             <span>
               —{" "}
-              {ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
+              {ethDonated.eligible < MIN_ETH_PER_ADDRESS
                 ? "not eligible for any rewards "
                 : `will receive min. `}
               <span style={{ color: "#e2ebff" }}>
-                {!ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
+                {ethDonated.eligible >= MIN_ETH_PER_ADDRESS
                   ? `${(
                       (parseFloat(
-                        ethDonated.eligible.gt(MAX_ETH_PER_ADDRESS)
+                        ethDonated.eligible > MAX_ETH_PER_ADDRESS
                           ? MAX_ETH_PER_ADDRESS.toString()
                           : ethDonated.eligible.toString()
                       ) /
@@ -187,9 +169,9 @@ const Account = ({
                       REWARD_NAM
                     ).toFixed(2)} NAM `
                   : ""}
-                {ethDonated.eligible.gte(MAX_ETH_PER_ADDRESS)
+                {ethDonated.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : ethDonated.eligible.lt(MIN_ETH_PER_ADDRESS)
+                  : ethDonated.eligible < MIN_ETH_PER_ADDRESS
                   ? "😥"
                   : parseFloat(ethDonated.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2

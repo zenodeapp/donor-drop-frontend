@@ -111,7 +111,7 @@ const Input = () => {
       <DonationProgress
         value={totalDonated}
         max={TARGET_ETH}
-        min={ethers.utils.parseEther("0")}
+        min={ethers.parseEther("0")}
         status={<Countdown />}
         showActual={true}
         showSuperscript={true}

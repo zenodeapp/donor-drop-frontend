@@ -9,7 +9,6 @@ import {
   ITransaction,
   IVisibleDonations,
 } from "./DonationTypes";
-import { BigNumber } from "ethers";
 
 const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
   return {
@@ -61,7 +60,7 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return ethDonated;
     },
-    setTotalDonated: (totalDonated?: BigNumber) => {
+    setTotalDonated: (totalDonated?: bigint) => {
       dispatch({
         type: DonationActions.SET_TOTAL_DONATED,
         payload: totalDonated,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { IconType } from "react-icons";
 import { IMeta } from "../components/layout/_types";
 
