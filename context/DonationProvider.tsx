@@ -409,7 +409,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   };
 
-  const getEthDonated = async (): Promise<{
+  const getUserTotal = async (): Promise<{
     cutoffTimestamp: Date | null;
     ethAddress: {
       total: number;
@@ -444,8 +444,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         web3Connections.getConnectedWallet() || "metamask"
       ].address;
 
-    const fetchEthDonated = async () => {
-      const userTotal = await getEthDonated();
+    const fetchUserTotal = async () => {
+      const userTotal = await getUserTotal();
       if (userTotal) {
         // TODO: Do I need to do something with the cutoffTimestamp?
         const weiValues = {
@@ -456,8 +456,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       }
     };
 
-    fetchEthDonated();
-
     if (
       isConnected &&
       addr &&
@@ -467,7 +465,9 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         state.phase === DonationPhases.STATUS_FILLED
       )
     ) {
-      const intervalId = setInterval(fetchEthDonated, GET_USER_TOTAL_INTERVAL);
+      fetchUserTotal();
+
+      const intervalId = setInterval(fetchUserTotal, GET_USER_TOTAL_INTERVAL);
       return () => {
         clearInterval(intervalId);
       };
@@ -481,7 +481,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     state.phase,
   ]);
 
-  const getTotalDonated = async (): Promise<number | undefined> => {
+  const getTotal = async (): Promise<number | undefined> => {
     try {
       const response = await fetch("/api/total"); // Ensure the URL is correct
       if (response.ok) {
@@ -496,15 +496,13 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     return undefined; // Return undefined if the request fails
   };
 
+  const fetchTotal = async () => {
+    const total = await getTotal();
+    const weiValue = total ? ethers.parseEther(total.toString()) : 0n;
+    setTotalDonated(weiValue);
+  };
+
   React.useEffect(() => {
-    const fetchTotal = async () => {
-      const total = await getTotalDonated();
-      const weiValue = total ? ethers.parseEther(total.toString()) : 0n;
-      setTotalDonated(weiValue);
-    };
-
-    fetchTotal();
-
     // Set the interval only when necessary
     if (
       !(
@@ -518,6 +516,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       return () => clearInterval(intervalId);
     }
   }, [state.phase]);
+
+  React.useEffect(() => {
+    fetchTotal();
+  }, []);
 
   const getStats = async (): Promise<{
     donationCount: number;

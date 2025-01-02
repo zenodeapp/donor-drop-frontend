@@ -14,11 +14,11 @@ export default async function handler(req, res) {
   try {
     // Ensure the timestamp is valid or use the default if invalid
     let afterTimestamp = req.query.timestamp
-      ? new Date(req.query.timestamp)
+      ? new Date(Number(req.query.timestamp))
       : defaultDate;
 
     // If the timestamp is invalid, fallback to default date
-    if (isNaN(afterTimestamp)) {
+    if (isNaN(afterTimestamp.getTime())) {
       console.warn("Invalid timestamp provided, using default date");
       afterTimestamp = defaultDate;
     }

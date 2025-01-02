@@ -268,9 +268,9 @@ const How = ({
             </li>
           </ul>
           <p>
-            It&#39;s literally just: send ETH to coincenter.eth with your tnam
-            address in the memo so that the Namada community can see and
-            recognize it.
+            It&#39;s literally just: send ETH to{" "}
+            {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} with your tnam address
+            in the memo so that the Namada community can see and recognize it.
           </p>
         </div>
       ),
@@ -279,8 +279,9 @@ const How = ({
         <>
           Since we are not handling donations, we cannot refund your donation,
           even if you make a mistake. Anyone trying to convince you to do
-          anything but send ETH to 0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3{" "}
-          <i>or</i> coincenter.eth is likely scamming you.
+          anything but send ETH to {process.env.NEXT_PUBLIC_DONOR_ADDRESS}{" "}
+          <i>or</i> {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} is likely
+          scamming you.
           <br />
           <br />
           We have no control over anything you send, so participate at your own
@@ -514,7 +515,7 @@ const How = ({
               rel='noreferrer'
               onFocus={onFocus}
             >
-              coincenter.eth
+              {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
             </a>
           </span>{" "}
           and make sure to type your TNAM address in the Hex data field.
