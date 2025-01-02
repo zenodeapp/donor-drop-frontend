@@ -253,7 +253,7 @@ const Target = ({
                   }
                 >
                   <div className={styles.speechBubble}>
-                    Please participate with one ETH address & don't bot 🤖!
+                    Please participate with one ETH address & don&#39;t bot 🤖!
                   </div>
                   <button
                     onClick={(e) => {

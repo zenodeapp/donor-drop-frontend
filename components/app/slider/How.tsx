@@ -263,12 +263,12 @@ const How = ({
             <li>Namada and its community are not an intermediary</li>
             <li>Coin Center is not involved in this campaign</li>
             <li>
-              A recorded donation does not mean recognized–the Namada community
-              will do this (so don’t bot!)
+              A recorded donation does not mean recognized-the Namada community
+              will do this (so don&#39;t bot!)
             </li>
           </ul>
           <p>
-            It's literally just: send ETH to coincenter.eth with your tnam
+            It&#39;s literally just: send ETH to coincenter.eth with your tnam
             address in the memo so that the Namada community can see and
             recognize it.
           </p>
@@ -560,7 +560,7 @@ const How = ({
       nextTitle: "FINISH",
       subscript: (
         <>
-          Please participate with one ETH address & don't bot 🤖. The Namada
+          Please participate with one ETH address & don&#39;t bot 🤖. The Namada
           community will use a PGF governance proposal to distribute NAM to
           recognized addresses.
         </>
