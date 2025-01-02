@@ -116,7 +116,9 @@ const Target = ({
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
-                  <span style={{ background: "#262626" }}>coincenter.eth</span>
+                  <span style={{ background: "#262626" }}>
+                    {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
+                  </span>
                 </a>
                 :
               </p>
@@ -146,7 +148,9 @@ const Target = ({
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
-                  <span style={{ background: "#262626" }}>coincenter.eth</span>
+                  <span style={{ background: "#262626" }}>
+                    {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
+                  </span>
                 </a>
                 :
               </p>
