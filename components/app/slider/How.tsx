@@ -16,7 +16,7 @@ import { IoIosClock } from "react-icons/io";
 import { ethToString } from "../../../helpers/web3";
 import { GiPartyPopper } from "react-icons/gi";
 import { useLayout } from "../../../context/LayoutProvider";
-import { IoRocket, IoWalletSharp } from "react-icons/io5";
+import { IoRocket, IoWalletSharp, IoWarning } from "react-icons/io5";
 import DonationProgress from "../donations/DonationProgress";
 import { ethers } from "ethers";
 import { FaShield } from "react-icons/fa6";
@@ -197,11 +197,11 @@ const How = ({
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 2500);
-    } else if (currentStep === 4) {
+    } else if (currentStep === 5) {
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 2000);
-    } else if (currentStep === 8 && sending === 3) {
+    } else if (currentStep === 9 && sending === 3) {
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 3000);
@@ -217,9 +217,9 @@ const How = ({
 
   useEffect(() => {
     if (sending === 1) {
-      setCurrentStep(8);
+      setCurrentStep(9);
     } else if (sending === 2) {
-      setCurrentStep(7);
+      setCurrentStep(8);
       setSending(0);
     }
   }, [sending]);
@@ -230,7 +230,7 @@ const How = ({
           Namada will use its on-chain Public Goods Funding (PGF) to reward Coin
           Center donors with NAM. There are{" "}
           <span style={{ color: "#80fffa" }}>required steps</span> involved to
-          become eligible, so make sure to follow along as we guide you through
+          be recognized, so make sure to follow along as we guide you through
           the process.
         </>
       ),
@@ -254,6 +254,46 @@ const How = ({
     },
     {
       bubble: (
+        <div style={{ fontSize: "0.9rem" }}>
+          <h4 style={{ textAlign: "center" }}>
+            Beware: nobody from Namada will be handling donations!
+          </h4>
+          <ul className={styles.table}>
+            <li>Anyone is free to donate as usual</li>
+            <li>Namada and its community are not an intermediary</li>
+            <li>Coin Center is not involved in this campaign</li>
+            <li>
+              A recorded donation does not mean recognized–the Namada community
+              will do this (so don’t bot!)
+            </li>
+          </ul>
+          <p>
+            It's literally just: send ETH to coincenter.eth with your tnam
+            address in the memo so that the Namada community can see and
+            recognize it.
+          </p>
+        </div>
+      ),
+      imageContainer: <IoWarning size='3rem' color='#ffff00' />,
+      subscript: (
+        <>
+          Since we are not handling donations, we cannot refund your donation,
+          even if you make a mistake. Anyone trying to convince you to do
+          anything but send ETH to 0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3{" "}
+          <i>or</i> coincenter.eth is likely scamming you.
+          <br />
+          <br />
+          We have no control over anything you send, so participate at your own
+          risk 💀
+        </>
+      ),
+      backOnClick: () => {
+        setCurrentStep(currentStep - 2);
+      },
+      relative: true,
+    },
+    {
+      bubble: (
         <>
           <ul className={styles.timetable}>
             <li>
@@ -269,24 +309,21 @@ const How = ({
               </span>{" "}
             </li>
           </ul>
-          The drop will be on a{" "}
+          Participants in the Donation Drop will be recognized on a{" "}
           <span style={{ color: "rgb(128 255 209)" }}>
-            First Come First Serve basis (FCFS)
+            First Come First Serve basis
           </span>
           . So once the goal of <FaEthereum />
           <span style={{ color: "rgb(123 199 217)" }}>
             {ethToString(TARGET_ETH)} ETH
           </span>{" "}
-          is reached, the window will close.
+          is reached, the donation recognition period will end.
         </>
       ),
       imageContainer: <IoIosClock size='3rem' />,
       subscript: (
-        <>Donations falling outside this window won&#39;t be considered.</>
+        <>Donations falling outside this period won&#39;t be recognized.</>
       ),
-      backOnClick: () => {
-        setCurrentStep(currentStep - 2);
-      },
     },
     {
       bubble: (
@@ -294,14 +331,13 @@ const How = ({
           <ul className={styles.timetable}></ul>A participant has to have
           donated a{" "}
           <span style={{ color: "rgb(123 199 217)" }}>
-            minimum of <FaEthereum /> 0.03 ETH
+            minimum of <FaEthereum /> 0.03 ETH.
           </span>{" "}
-          and a{" "}
+          Feel free to donate more, but we will recognize a{" "}
           <span style={{ color: "rgb(123 199 217)" }}>
             maximum of <FaEthereum /> 0.30 ETH
           </span>
-          . This means that donating more won&#39;t increase your allocation of
-          NAM.
+          .
           <div style={{ width: "90%", margin: "0 auto" }}>
             <DonationProgress
               value={ethers.parseEther(ethInput.toString())}
@@ -361,7 +397,7 @@ const How = ({
       imageContainer: (
         <span
           className={`${styles.rocket} ${
-            currentStep === 4 ? styles.animate : ""
+            currentStep === 5 ? styles.animate : ""
           }`}
         >
           <IoRocket size='3rem' />
@@ -441,7 +477,6 @@ const How = ({
       ),
       imageContainer: <FaCommentAlt size='3rem' />,
       nextTitle: "SKIP",
-      relative: true,
       nextOnClick: () => {
         setCurrentStep(currentStep + 2);
       },
@@ -494,21 +529,42 @@ const How = ({
       backOnClick: () => {
         setCurrentStep(currentStep - 2);
       },
+      subscript: (
+        <>
+          We have no control over anything you send, so participate at your own
+          risk 💀.
+        </>
+      ),
     },
     {
       bubble: (
         <>
-          That&#39;s it! If you followed these steps and your donation is on
-          time, you should be eligible! Head over to the Account page to see
-          whether your donation got included.
+          That&#39;s it! If you follow these steps during the donation
+          recognition period, you should be eligible! Head over to the{" "}
+          <span
+            className={styles.account}
+            onClick={() => {
+              setActiveSlide(3);
+            }}
+          >
+            Account page
+          </span>{" "}
+          to see whether your donation was recorded.
         </>
       ),
       imageContainer: <GiPartyPopper color='#dbdbdb' size='3rem' />,
       nextOnClick: () => {
-        setCurrentStep(0);
+        // setCurrentStep(0);
         setActiveSlide(3);
       },
       nextTitle: "FINISH",
+      subscript: (
+        <>
+          Please participate with one ETH address & don't bot 🤖. The Namada
+          community will use a PGF governance proposal to distribute NAM to
+          recognized addresses.
+        </>
+      ),
     },
   ];
 

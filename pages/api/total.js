@@ -24,11 +24,7 @@ export default async function handler(req, res) {
 
     try {
       const result = await pool.query(query, [startDate, endDate]);
-      console.log(result);
       const totalSum = parseFloat(result.rows[0].total_sum);
-
-      // Cap the final sum at 27 ETH
-      // const finalSum = totalSum > 27 ? 27 : totalSum;
 
       res.status(200).json({ totalSum: totalSum });
     } catch (error) {

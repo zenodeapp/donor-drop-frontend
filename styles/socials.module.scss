@@ -45,13 +45,14 @@
 
 .statusIndicator {
   display: flex;
-  align-items: center;
   position: absolute;
   bottom: 15px;
   right: 15px;
-  gap: 0.5rem;
+  gap: 2px;
   transition: transform 0.5s;
   z-index: 1005;
+  align-items: flex-end;
+  flex-direction: column;
 
   @media screen and (max-width: 1320px) {
     bottom: initial;

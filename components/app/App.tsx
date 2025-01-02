@@ -113,7 +113,6 @@ const Input = () => {
         max={TARGET_ETH}
         min={ethers.parseEther("0")}
         status={<Countdown />}
-        showActual={true}
         showSuperscript={true}
         decimals={2}
       />
@@ -123,7 +122,7 @@ const Input = () => {
         setOtherSlidesLocked={setOtherSlidesLocked}
         tabIndex={!showApp || isMobileView ? -1 : undefined}
       />
-      <Slider slides={slides} relativeIndex={2} />
+      <Slider slides={slides} relativeIndex={3} />
     </>
   );
 };

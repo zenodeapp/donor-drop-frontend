@@ -190,9 +190,24 @@
 
 .visualInfo {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "block1 block2"
+    "block3 block3";
+  gap: 5px;
   margin: 20px 0;
+}
+
+.visualItem:nth-child(1) {
+  grid-area: block1;
+}
+
+.visualItem:nth-child(2) {
+  grid-area: block2;
+}
+
+.visualItem:nth-child(3) {
+  grid-area: block3;
 }
 
 .visualItem {
@@ -247,4 +262,124 @@
   &:hover {
     color: #4bceb6;
   }
+}
+
+.table {
+  list-style: disc;
+  // margin-left: 25px;
+  padding-left: 25px;
+  & .text {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+  @media screen and (max-width: 768px) {
+    padding-left: 15px;
+  }
+}
+
+.targetEnd {
+  margin-top: 5px;
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.callToActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding-top: 5px;
+  button {
+    display: inline-block;
+    background-color: #00a1ff;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    min-width: 150px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    height: 50px;
+
+    &:hover {
+      background-color: #1fc3ff;
+      transform: scale(1.05);
+    }
+
+    &:focus {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+  }
+
+  & div {
+    display: inline-block;
+    background: transparent;
+    color: #ffffff;
+
+    padding: 2px;
+    height: 50px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #ffffff;
+    color: #191919;
+    user-select: none;
+    max-width: 224px;
+    border: 1px solid #141414;
+    background-color: #0f0f0f;
+    color: #e6e6e5;
+  }
+
+  @media screen and (max-width: 768px) {
+    & div,
+    & button {
+      height: 35px;
+      padding: 2px 10px;
+    }
+  }
+}
+
+.innerRightContainer {
+  // padding-right: 11px;
+  // padding-left: 11px;
+  flex-grow: 1;
+  max-height: 400px;
+  overflow: overlay; /* Makes scrollbars overlay the content instead of pushing it */
+  // scrollbar-width: thin; /* Thin scrollbar */
+  // scrollbar-color: #bfbfbf rgb(24, 20, 10); /* Thumb color and track color */
+
+  & p,
+  & .table {
+    padding-right: 11px;
+  }
+  @media screen and (max-height: 1080px) {
+    max-height: 220px;
+  }
+}
+.speechBubble {
+  position: relative;
+  color: #333; /* Text color */
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: center;
+  z-index: 1;
+}
+
+.speechBubble::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 2px; /* Position of the triangle */
+  right: -8px; /* Center the triangle */
+  transform: translateX(50%) rotate(270deg);
+  border-width: 10px; /* Size of the triangle */
+  border-style: solid;
+  border-color: #0f0f0f transparent transparent transparent; /* Triangle color matches the speech bubble */
 }

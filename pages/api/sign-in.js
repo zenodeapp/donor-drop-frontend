@@ -52,6 +52,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error finding NAM address:", error);
-    res.status(500).json({ error: "Failed to find NAM address" });
+    res.status(500).json({ error: "Failed to find NAM address." });
   }
 }

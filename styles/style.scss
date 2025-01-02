@@ -212,6 +212,7 @@ footer {
   }
 }
 
+/* For WebKit browsers (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -229,6 +230,18 @@ footer {
 
 ::-webkit-scrollbar-corner {
   background: rgb(91, 91, 91);
+}
+/* For Firefox */
+@-moz-document url-prefix() {
+  html {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #bfbfbf rgb(24, 20, 10); /* Thumb color and track color */
+  }
+}
+
+/* To handle other browsers gracefully */
+body {
+  overflow: overlay; /* Makes scrollbars overlay the content instead of pushing it */
 }
 
 header {

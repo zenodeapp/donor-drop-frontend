@@ -212,6 +212,12 @@
 
 .rightContainer {
   flex-grow: 1;
+  max-height: initial;
+  overflow: auto;
+
+  @media screen and (max-height: 1080px) {
+    max-height: 220px;
+  }
 }
 
 .header {
@@ -419,5 +425,24 @@
   }
   100% {
     transform: rotate(0deg) translateY(0) translateX(0);
+  }
+}
+
+.table {
+  list-style: disc;
+  margin-left: 25px;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 15px;
+  }
+}
+
+.account {
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: rgb(235, 235, 135);
   }
 }

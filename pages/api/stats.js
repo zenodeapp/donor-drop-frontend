@@ -25,12 +25,10 @@ export default async function handler(req, res) {
     // Return the counts
     const { donation_count, participant_count } = result.rows[0];
 
-    res
-      .status(200)
-      .json({
-        donationCount: donation_count,
-        participantCount: participant_count,
-      });
+    res.status(200).json({
+      donationCount: donation_count,
+      participantCount: participant_count,
+    });
   } catch (error) {
     console.error("Error fetching donations:", error);
     res.status(500).json({ error: "Failed to fetch donations" });

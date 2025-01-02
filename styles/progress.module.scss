@@ -59,6 +59,10 @@
   width: 92%;
   margin: 25px auto 0;
   max-width: 700px;
+
+  @media screen and (max-width: 1005px) {
+    max-width: 77%;
+  }
 }
 
 .progressBarContainer {

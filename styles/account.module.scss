@@ -349,9 +349,8 @@
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: block;
+  text-align: justify;
 }
 
 .tip.warning {
@@ -362,10 +361,16 @@
 }
 
 .tip.note {
-  background-color: rgba(0, 122, 255, 0.1); /* Subtle blue glow */
-  border: 1px solid rgba(0, 122, 255, 0.6);
-  color: #007aff;
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.4); /* Soft glow */
+  background-color: rgb(4 4 4 / 26%);
+  border: 1px solid rgb(0 177 227 / 60%);
+  color: #36e3ed;
+  background-color: rgba(4, 4, 4, 0.26);
+  border: 1px solid rgb(227 220 0 / 60%);
+  color: #e3e053;
+  & .title {
+    color: #e7c200;
+    font-weight: 600;
+  }
 }
 
 .myDonations {

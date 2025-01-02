@@ -62,7 +62,14 @@ const Countdown = () => {
 
   return (
     <div className={styles.countdownContainer}>
-      <h5 className={styles.countdownTitle}>
+      <h5
+        className={`${styles.countdownTitle} ${
+          phase === DonationPhases.STATUS_ENDED ||
+          phase === DonationPhases.STATUS_FILLED
+            ? styles.ended
+            : ""
+        }`}
+      >
         {phase === DonationPhases.STATUS_NOT_LIVE
           ? `CAMPAIGN STARTS IN`
           : phase === DonationPhases.STATUS_FILLED ||

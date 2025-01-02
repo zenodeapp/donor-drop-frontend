@@ -72,7 +72,7 @@ const Account = ({
       </button>
       {accountPhase !== AccountPhases.STATUS_NOT_CONNECTED && (
         <div className={getClassNameByStyle(styles, `wallet active`)}>
-          <h2 className={styles.header}>ETH ADDRESS</h2>
+          <h2 className={styles.header}>ETH ADDRESS CHECKER</h2>
           <p className={styles.text}>{ethAddress}</p>
           <DonationProgress
             value={ethDonated.eligible}
@@ -137,7 +137,7 @@ const Account = ({
       </button>
       {accountPhase !== AccountPhases.STATUS_NOT_SIGNED && (
         <div className={getClassNameByStyle(styles, `wallet active`)}>
-          <h2 className={styles.header}>NAM ADDRESS</h2>
+          <h2 className={styles.header}>NAM ADDRESS CHECKER</h2>
           <p
             className={getClassNameByStyle(styles, `text`)}
             style={{
@@ -220,6 +220,24 @@ const Account = ({
         )}
       >
         {renderNamSection()}
+      </div>
+      <div
+        className={`${styles.container} ${styles.tip} ${styles.note}`}
+        style={{
+          transition: "opacity 0.3s",
+          opacity: accountPhase === AccountPhases.STATUS_NOT_CONNECTED ? 0 : 1,
+          pointerEvents:
+            accountPhase === AccountPhases.STATUS_NOT_CONNECTED
+              ? "none"
+              : undefined,
+        }}
+      >
+        <span className={styles.title} style={{ display: "inline-block" }}>
+          NOTE:
+        </span>{" "}
+        Recorded donations will be recognized by the Namada community (so don’t
+        bot!) and distributed using a PGF governance proposal. The goal is to
+        reward donors within 14 days of the conclusion of the Donor Drop.
       </div>
     </div>
   );
