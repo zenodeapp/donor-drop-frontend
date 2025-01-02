@@ -61,7 +61,7 @@ const Connect = ({
           ? "Disconnect"
           : "Connect"
         : web3Connections.connections[web3UI.selectedWallet].isMobile
-        ? "Open app"
+        ? "Open wallet"
         : "Install"}
     </button>
   );

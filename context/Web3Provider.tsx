@@ -26,8 +26,8 @@ const Web3Provider = ({
   children,
 }: IWeb3Provider) => {
   const [state, dispatch] = React.useReducer(Web3Reducer, {
-    selectedWallet: "",
-    selectedNetwork: "",
+    selectedWallet: "metamask",
+    selectedNetwork: "ethereum",
     wallets,
     networks,
     providers: {},
@@ -306,12 +306,6 @@ const Web3Provider = ({
 
       if (_provider.setNetworkId) _provider.setNetworkId(state.selectedNetwork);
 
-      web3Wallets.wallets.map((walletId) => {
-        if (walletId !== "ethers") {
-          web3Connections.disconnect(walletId);
-        }
-      });
-
       if (!response?.error) response = await _provider.connect();
       else setConnected(walletId, false);
 
@@ -384,7 +378,7 @@ const Web3Provider = ({
       } else {
         notify({
           type: "success",
-          message: `Signed!`,
+          message: `Signature signed successfully!`,
           options: { id: walletId, Icon: walletIcon, duration: 3000 },
         });
       }
@@ -509,8 +503,10 @@ const Web3Provider = ({
 
   // Initialize wallet providers
   React.useEffect(() => {
-    const providers = web3Providers.init();
-    web3Connections.init(providers);
+    setTimeout(() => {
+      const providers = web3Providers.init();
+      web3Connections.init(providers);
+    }, 500);
   }, []);
 
   // Add and remove event handlers for every connected wallet.

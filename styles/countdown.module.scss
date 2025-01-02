@@ -1,0 +1,93 @@
+.countdownContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  color: #ffffff;
+  border-radius: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.timer {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.timerBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0px 0px;
+  width: 59px;
+  background: rgba(47, 47, 31, 0.21);
+
+  &:nth-child(2),
+  &:nth-child(3) {
+  }
+  @media screen and (max-width: 768px) {
+    width: 45px;
+  }
+}
+
+.time {
+  font-size: 1rem;
+  color: rgb(255, 250, 234);
+  width: 24px;
+
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+    width: 15px;
+  }
+}
+
+.label {
+  font-size: 0.7rem;
+  color: #d9d983;
+}
+
+.phaseText {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #61bedb;
+}
+
+.endedText {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
+.dates {
+  font-size: 12px;
+  color: #cccccc;
+
+  .dateLabel {
+    display: block;
+  }
+
+  span {
+    color: #888888;
+  }
+}
+
+.countdownTitle {
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.9rem;
+  // color: #d5ffd5;
+  user-select: none;
+  &.ended {
+    color: #ffd7d7;
+    background: rgb(255 47 47 / 34%);
+    border-radius: 4px;
+    border: 1px solid red;
+    padding: 2px 10px;
+  }
+}

@@ -5,20 +5,20 @@ import walletStyle from "../../styles/wallet.module.scss";
 import globalStyle from "../../styles/global.module.scss";
 import defaultWalletStyle from "../../styles/default.module.scss";
 
-import { SiteUrl } from "../../layout.config";
 import { useWeb3 } from "../../context/Web3Provider";
 import Connect from "./Connect";
 import Wallets from "./Wallets";
 import { getClassNameByStyle } from "../../helpers/layout";
 
 import inputStyle from "../../styles/input.module.scss";
+import OpenApp from "./OpenApp";
 
 const WalletScreen = () => {
   const { web3UI, web3Wallets } = useWeb3();
   const currentSelected = web3Wallets.wallets.findIndex(
     (walletId) => walletId === web3UI.selectedWallet
   );
-  const { showApp, isCollapsed, isMobileView } = useTheme();
+  const { showApp, isMobileView } = useTheme();
 
   return (
     <div
@@ -52,9 +52,10 @@ const WalletScreen = () => {
           <div id={walletStyle["connect-button"]}>
             <Connect
               styleModule={defaultWalletStyle}
-              tabIndex={showApp || isCollapsed || isMobileView ? -1 : undefined}
-              deeplink={`https://metamask.app.link/dapp/${SiteUrl}`}
+              tabIndex={showApp || isMobileView ? -1 : undefined}
+              deeplink={`https://metamask.app.link/dapp/${process.env.NEXT_PUBLIC_SITE_URL}`}
             />
+            <OpenApp />
           </div>
         </div>
       </div>

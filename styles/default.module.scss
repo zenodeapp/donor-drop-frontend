@@ -34,6 +34,15 @@
       width: 3rem;
       transition: opacity 0.3s;
       opacity: 0.5;
+
+      @media screen and (max-width: 768px) {
+        width: 4.4rem;
+        height: 4.4rem;
+      }
+      @media screen and (max-width: 428px) {
+        width: 4rem;
+        height: 4rem;
+      }
     }
   }
 

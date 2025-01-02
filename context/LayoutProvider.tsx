@@ -10,7 +10,7 @@ const LayoutContext = React.createContext<ILayoutContext | undefined>(
 );
 
 const LayoutProvider = ({ config, children }: ILayoutProvider) => {
-  const { appTitle, defaultMeta, menu, socials } = config;
+  const { appTitle, defaultMeta, menu } = config;
 
   const [state, dispatch] = React.useReducer(LayoutReducer, {
     displayMode: "browser",
@@ -19,11 +19,17 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     appTitle,
     defaultMeta,
     menu,
-    socials,
+    activeSlide: 0,
+    sidebarExpanded: false,
   });
 
-  const { setIsMobile, setDisplayMode, setPreventOverscroll } =
-    LayoutDispatch(dispatch);
+  const {
+    setIsMobile,
+    setDisplayMode,
+    setPreventOverscroll,
+    setActiveSlide,
+    setSidebarExpanded,
+  } = LayoutDispatch(dispatch);
 
   React.useEffect(() => {
     const _isMobile = isMobile();
@@ -72,6 +78,59 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     };
   }, [state.preventOverscroll]);
 
+  React.useEffect(() => {
+    toggleClass(
+      bodyStyle["ascended-state"],
+      state.activeSlide === 0 ||
+        state.activeSlide === 1 ||
+        state.activeSlide === 2 ||
+        state.activeSlide === 3
+    );
+
+    return () => {
+      toggleClass(bodyStyle["ascended-state"], false);
+    };
+  }, [state.activeSlide]);
+
+  React.useEffect(() => {
+    toggleClass(
+      bodyStyle["sidebar-expanded"],
+
+      state.sidebarExpanded
+    );
+
+    return () => {
+      toggleClass(bodyStyle["sidebar-expanded"], false);
+    };
+  }, [state.sidebarExpanded]);
+
+  React.useEffect(() => {
+    const largeScreenQuery = window.matchMedia("(min-width: 1005px)");
+
+    const onChange = () => {
+      setSidebarExpanded(largeScreenQuery.matches);
+      setPreventOverscroll(!largeScreenQuery.matches);
+    };
+
+    onChange();
+
+    largeScreenQuery.addEventListener("change", onChange);
+
+    return () => {
+      largeScreenQuery.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  // React.useEffect(() => {
+  //   if (state.sidebarExpanded) {
+  //     const mediaQuery = window.matchMedia("(min-width: 1005px)");
+
+  //     if (!mediaQuery.matches) {
+  //       setPreventOverscroll(true);
+  //     }
+  //   }
+  // }, [state.sidebarExpanded]);
+
   return (
     <LayoutContext.Provider
       value={{
@@ -81,9 +140,11 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
         appTitle: state.appTitle,
         defaultMeta: state.defaultMeta,
         menu: state.menu,
-        socials: state.socials,
-
+        activeSlide: state.activeSlide,
+        sidebarExpanded: state.sidebarExpanded,
+        setActiveSlide,
         setPreventOverscroll,
+        setSidebarExpanded,
       }}
     >
       {children}

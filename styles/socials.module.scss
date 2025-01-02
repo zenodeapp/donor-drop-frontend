@@ -1,0 +1,124 @@
+@value sidebar-expanded, show-app from "body.module.scss";
+
+.social-icons {
+  margin-top: 8px;
+
+  & .social-icon {
+    display: inline-block;
+    font-size: 0.8rem;
+    margin: 3px 7px;
+
+    &:nth-child(1) {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    & h4 {
+      font-size: 0.8rem;
+    }
+
+    & a {
+      padding: 0;
+      transition: opacity 0.3s;
+      opacity: 0.3;
+
+      & svg {
+        color: rgb(185 196 255);
+        width: 1.8rem;
+        height: 1.8rem;
+      }
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    text-align: center;
+
+    & .social-icon:nth-child(1) {
+      margin-left: 7px;
+      margin-right: 7px;
+    }
+  }
+}
+
+.statusIndicator {
+  display: flex;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  gap: 2px;
+  transition: transform 0.5s;
+  z-index: 1005;
+  align-items: flex-end;
+  flex-direction: column;
+
+  @media screen and (max-width: 1320px) {
+    bottom: initial;
+    top: 43px;
+    right: 18px;
+  }
+
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px transparent;
+    background: white;
+  }
+
+  .shareButton {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    color: #e5e59f;
+    & svg {
+      color: #ffffff;
+    }
+    transition: transform 0.25s;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &.not_live .statusCircle {
+    background-color: rgb(219, 189, 189);
+    box-shadow: 0 0 3px 1px rgb(127, 27, 27);
+  }
+
+  &.live .statusCircle {
+    background-color: rgb(189, 219, 194);
+    box-shadow: 0 0 3px 1px rgb(55, 218, 107);
+  }
+
+  &.ended .statusCircle {
+    background-color: rgb(222, 222, 222);
+    box-shadow: 0 0 3px 1px rgb(188, 188, 188);
+  }
+}
+
+body:global(.sidebar-expanded) {
+  & .statusIndicator {
+    transform: translateX(-400px);
+  }
+
+  @media screen and (max-width: 1005px) {
+    & .statusIndicator {
+      transform: translateX(0);
+    }
+  }
+}
+
+body:global(.sidebar-expanded):not(:global(.show-app)) {
+  & .statusIndicator {
+    transform: translateX(0);
+  }
+}

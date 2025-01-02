@@ -27,6 +27,22 @@ const LayoutDispatch = (dispatch: React.Dispatch<ILayoutActions>) => {
 
       return preventOverscroll;
     },
+    setActiveSlide: (activeSlide: number) => {
+      dispatch({
+        type: LayoutActions.SET_ACTIVE_SLIDE,
+        payload: activeSlide,
+      });
+
+      return activeSlide;
+    },
+    setSidebarExpanded: (sidebarExpanded: boolean) => {
+      dispatch({
+        type: LayoutActions.SET_SIDEBAR_EXPANDED,
+        payload: sidebarExpanded,
+      });
+
+      return sidebarExpanded;
+    },
   };
 };
 
@@ -41,6 +57,10 @@ const LayoutReducer = (
       return { ...state, displayMode: action.payload };
     case LayoutActions.SET_PREVENT_OVERSCROLL:
       return { ...state, preventOverscroll: action.payload };
+    case LayoutActions.SET_ACTIVE_SLIDE:
+      return { ...state, activeSlide: action.payload };
+    case LayoutActions.SET_SIDEBAR_EXPANDED:
+      return { ...state, sidebarExpanded: action.payload };
     default:
       return state;
   }

@@ -55,11 +55,11 @@ const ThemeReducer = (
       return {
         ...state,
         showApp: action.payload,
-        signedIn: !action.payload ? false : state.signedIn,
       };
     case ThemeActions.SET_IS_CONNECTED:
       return {
         ...state,
+        showApp: action.payload ? true : state.showApp,
         isConnected: action.payload,
       };
     case ThemeActions.SET_SIGNED_IN:

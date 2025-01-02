@@ -7,12 +7,7 @@
   position: relative;
   margin-top: 150px;
   margin-top: 129px;
-  filter: saturate(0) brightness(3);
   white-space: nowrap;
-
-  body:global(.is-connected) & {
-    filter: none;
-  }
 
   & h1 {
     overflow: hidden;
@@ -24,22 +19,24 @@
     margin-top: 150px;
     animation: FloatLarge 2s 1s infinite alternate;
     position: absolute;
-    bottom: -33px;
+    bottom: -18px;
     right: 0;
     left: 0;
     z-index: 2;
     pointer-events: none;
-    cursor: pointer;
     animation-play-state: paused;
     margin: 0 auto;
 
+    filter: saturate(0) brightness(3);
+    white-space: nowrap;
+
     body:global(.is-connected) & {
+      filter: none;
       animation-play-state: running;
-      pointer-events: all;
     }
 
-    body:global(.show-app) & {
-      pointer-events: none;
+    @media screen and (max-width: 768px) {
+      bottom: -18px;
     }
   }
 
@@ -77,21 +74,27 @@
 
   & .logo-icon {
     display: block;
-    max-width: 96px;
+    // max-width: 96px;
     height: auto;
     margin: 0 auto;
     margin-bottom: 50px;
     margin-right: auto;
     margin-left: auto;
-    width: 6rem;
+    width: 14rem;
     padding-left: 7px;
     transform: translateY(30px);
     transition: transform 0.4s, filter 0.4s;
     transition-delay: 0.7s, 0.7s;
+    cursor: pointer;
+    pointer-events: all;
 
     body:global(.show-app) & {
       transform: translateY(-50px);
       transition-delay: 0s, 0s;
+
+      @media screen and (max-width: 768px) {
+        transform: translateY(-30px);
+      }
     }
   }
 
@@ -124,7 +127,7 @@
 
   &::before {
     content: "";
-    border-bottom: 1px dashed rgb(255, 255, 255);
+    border-bottom: 1px solid rgb(255, 255, 255);
     width: 70%;
     position: absolute;
     left: 30%;
@@ -139,7 +142,7 @@
 
   &::after {
     content: "";
-    border-bottom: 1px dashed rgb(196, 194, 72);
+    border-bottom: 1px solid rgb(196, 194, 72);
     width: 75%;
     position: absolute;
     left: 0;

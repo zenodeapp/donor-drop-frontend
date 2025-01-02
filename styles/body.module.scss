@@ -3,7 +3,9 @@
 .show-app,
 .is-connected,
 body.notification-visible,
-body.display-browser {
+body.display-browser,
+body.sidebar-expanded,
+body.ascended-state {
   position: relative;
 }
 

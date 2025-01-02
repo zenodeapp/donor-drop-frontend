@@ -6,7 +6,6 @@ export type IBackground = {
 
 export type IHeader = {
   title?: string;
-  showSocials?: boolean;
   children?: React.ReactNode;
 };
 

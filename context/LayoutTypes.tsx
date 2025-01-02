@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { IconType } from "react-icons";
 import { IMeta } from "../components/layout/_types";
 
@@ -20,8 +20,7 @@ export type IPage = {
 };
 
 export type ISocials = {
-  className?: string;
-  liClassName?: string;
+  socials: Array<ISocialButton>;
 };
 
 export type INavigationIcon = {
@@ -41,11 +40,14 @@ export type ILayoutState = {
   appTitle: string;
   defaultMeta: IMeta;
   menu?: IMenuRecord;
-  socials?: Array<ISocialButton>;
+  activeSlide: number;
+  sidebarExpanded: boolean;
 };
 
 export type ILayoutContext = ILayoutState & {
   setPreventOverscroll: (preventOverscroll: boolean) => boolean;
+  setActiveSlide: (activeSlide: number) => number;
+  setSidebarExpanded: (sidebarExpanded: boolean) => boolean;
 };
 
 export type ILayoutProvider = {
@@ -53,7 +55,6 @@ export type ILayoutProvider = {
     appTitle: string;
     defaultMeta: IMeta;
     menu?: IMenuRecord;
-    socials?: Array<ISocialButton>;
     pages?: IPageRecord;
   };
   children: React.ReactNode;
@@ -63,6 +64,8 @@ export enum LayoutActions {
   SET_IS_MOBILE = "SET_IS_MOBILE",
   SET_DISPLAY_MODE = "SET_DISPLAY_MODE",
   SET_PREVENT_OVERSCROLL = "SET_PREVENT_OVERSCROLL",
+  SET_ACTIVE_SLIDE = "SET_ACTIVE_SLIDE",
+  SET_SIDEBAR_EXPANDED = "SET_SIDEBAR_EXPANDED",
 }
 
 export type ILayoutActions =
@@ -76,6 +79,14 @@ export type ILayoutActions =
     }
   | {
       type: LayoutActions.SET_PREVENT_OVERSCROLL;
+      payload: boolean;
+    }
+  | {
+      type: LayoutActions.SET_ACTIVE_SLIDE;
+      payload: number;
+    }
+  | {
+      type: LayoutActions.SET_SIDEBAR_EXPANDED;
       payload: boolean;
     };
 

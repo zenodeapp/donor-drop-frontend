@@ -5,11 +5,14 @@ import sliderStyle from "../../styles/slider.module.scss";
 import buttonStyle from "../../styles/button.module.scss";
 import globalStyle from "../../styles/global.module.scss";
 import { getClassNameByStyle } from "../../helpers/layout";
+import { useLayout } from "../../context/LayoutProvider";
+import { useNotification } from "../../context/NotificationProvider";
+import { IoAccessibilitySharp } from "react-icons/io5";
+import { FaBullseye } from "react-icons/fa";
 
 const Navigation = ({
   tabs,
-  activeSlide,
-  setActiveSlide,
+  ghostSlide,
   setOtherSlidesLocked,
   tabIndex,
 }: {
@@ -18,12 +21,15 @@ const Navigation = ({
     Icon: IconType;
     color: string;
     children?: React.ReactNode;
+    disabled?: boolean;
   }>;
-  activeSlide: number;
-  setActiveSlide: React.Dispatch<React.SetStateAction<number>>;
+  ghostSlide: number;
   setOtherSlidesLocked: React.Dispatch<React.SetStateAction<boolean>>;
   tabIndex?: number;
 }) => {
+  const { activeSlide, setActiveSlide } = useLayout();
+  const { notify } = useNotification();
+
   return (
     <nav className={sliderStyle["slider-header-wrapper"]}>
       <div className={sliderStyle["slider-header"]}>
@@ -45,11 +51,28 @@ const Navigation = ({
               key={i}
               className={`${getClassNameByStyle(buttonStyle, "holo")} ${
                 globalStyle["no-tap-highlight"]
-              }${activeSlide === i ? ` ${sliderStyle.active}` : ""}`}
+              }${activeSlide === i ? ` ${sliderStyle.active}` : ""}${
+                i <= ghostSlide && activeSlide !== i
+                  ? ` ${sliderStyle.ghost}`
+                  : ""
+              }`}
               onClick={(e) => {
                 e.preventDefault();
-                setActiveSlide(i);
+                if (!tab.disabled) {
+                  setActiveSlide(i);
+                } else {
+                  // notify({
+                  //   type: "error",
+                  //   message: "The donor drop has already ended!",
+                  //   options: {
+                  //     id: "inaccessible",
+                  //     Icon: FaBullseye,
+                  //     duration: 5000,
+                  //   },
+                  // });
+                }
               }}
+              style={{ opacity: tab.disabled ? 0.2 : undefined }}
               onFocus={() => {
                 setOtherSlidesLocked(true);
               }}
