@@ -214,8 +214,8 @@ const Target = ({
                       >
                         {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
                       </a>
-                    </span>
-                    .
+                    </span>{" "}
+                    on {process.env.NEXT_PUBLIC_DONOR_NETWORK}.
                   </li>
                   <li className={styles.text}>
                     <span

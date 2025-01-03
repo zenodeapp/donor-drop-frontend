@@ -519,7 +519,8 @@ const Donate = ({
               {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
             </a>
           </span>{" "}
-          and make sure to type your TNAM address in the Hex data field.
+          on the {process.env.NEXT_PUBLIC_DONOR_NETWORK} and make sure to type
+          your TNAM address in the Hex data field.
         </>
       ),
       image: {
