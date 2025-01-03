@@ -3,7 +3,7 @@ import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import styles from "../../../styles/live.module.scss";
 
-const LiveStatus = () => {
+const LiveIndicator = () => {
   const { phase } = useDonation();
 
   return (
@@ -35,4 +35,4 @@ const LiveStatus = () => {
   );
 };
 
-export default LiveStatus;
+export default LiveIndicator;

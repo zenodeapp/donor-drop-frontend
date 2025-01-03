@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useTheme } from "../../../context/ThemeProvider";
 import { useDonation } from "../../../context/DonationProvider";
 import { getClassNameByStyle } from "../../../helpers/layout";
@@ -33,9 +33,8 @@ const Account = ({
 }) => {
   const { web3Connections } = useWeb3();
   const { isConnected, signedIn, setShowApp } = useTheme();
-  const { userExists, namAddress, ethDonated, setEthDonated, signIn } =
-    useDonation();
-  const [accountPhase, setAccountPhase] = useState<AccountPhases>(
+  const { userExists, namAddress, userTotal, signIn } = useDonation();
+  const [accountPhase, setAccountPhase] = React.useState<AccountPhases>(
     AccountPhases.STATUS_NOT_CONNECTED
   );
 
@@ -44,7 +43,8 @@ const Account = ({
     ? web3Connections.connections[wallet].address
     : undefined;
 
-  useEffect(() => {
+  // Fix account phase
+  React.useEffect(() => {
     if (!isConnected)
       return setAccountPhase(AccountPhases.STATUS_NOT_CONNECTED);
     if (!signedIn) return setAccountPhase(AccountPhases.STATUS_NOT_SIGNED);
@@ -75,29 +75,29 @@ const Account = ({
           <h2 className={styles.header}>ETH ADDRESS CHECKER</h2>
           <p className={styles.text}>{ethAddress}</p>
           <DonationProgress
-            value={ethDonated.eligible}
+            value={userTotal.eligible}
             max={MAX_ETH_PER_ADDRESS}
             min={MIN_ETH_PER_ADDRESS}
             status={""}
             showActual={false}
             decimals={2}
-            colorBasedOn={ethDonated.total}
+            colorBasedOn={userTotal.total}
           />
           <div className={styles.donationInfo}>
             <span>
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
-                {truncateEth(ethDonated.total, 2)} ETH{" "}
-                {ethDonated.eligible !== 0n ? "💛" : "😌"}
+                {truncateEth(userTotal.total, 2)} ETH{" "}
+                {userTotal.eligible !== 0n ? "💛" : "😌"}
               </span>{" "}
               —
             </span>
             <span style={{ display: "block", fontSize: "0.8rem" }}>
-              {ethDonated.eligible !== ethDonated.total ? (
+              {userTotal.eligible !== userTotal.total ? (
                 <>
                   — eligible{" "}
                   <span style={{ color: "#e2ebff" }}>
-                    {ethToFloat(ethDonated.eligible)} ETH
+                    {ethToFloat(userTotal.eligible)} ETH
                   </span>{" "}
                   —
                 </>
@@ -154,26 +154,26 @@ const Account = ({
           <div className={styles.donationInfo}>
             <span>
               —{" "}
-              {ethDonated.eligible < MIN_ETH_PER_ADDRESS
+              {userTotal.eligible < MIN_ETH_PER_ADDRESS
                 ? "not eligible for any rewards "
                 : `will receive min. `}
               <span style={{ color: "#e2ebff" }}>
-                {ethDonated.eligible >= MIN_ETH_PER_ADDRESS
+                {userTotal.eligible >= MIN_ETH_PER_ADDRESS
                   ? `${(
                       (parseFloat(
-                        ethDonated.eligible > MAX_ETH_PER_ADDRESS
+                        userTotal.eligible > MAX_ETH_PER_ADDRESS
                           ? MAX_ETH_PER_ADDRESS.toString()
-                          : ethDonated.eligible.toString()
+                          : userTotal.eligible.toString()
                       ) /
                         parseFloat(TARGET_ETH.toString())) *
                       REWARD_NAM
                     ).toFixed(2)} NAM `
                   : ""}
-                {ethDonated.eligible >= MAX_ETH_PER_ADDRESS
+                {userTotal.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : ethDonated.eligible < MIN_ETH_PER_ADDRESS
+                  : userTotal.eligible < MIN_ETH_PER_ADDRESS
                   ? "😥"
-                  : parseFloat(ethDonated.eligible.toString()) <
+                  : parseFloat(userTotal.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2
                   ? "😇"
                   : "🥰"}
@@ -185,6 +185,30 @@ const Account = ({
       )}
     </div>
   );
+
+  const renderNoteSection = () => {
+    return (
+      <div
+        className={`${styles.container} ${styles.tip} ${styles.note}`}
+        style={{
+          transition: "opacity 0.3s",
+          opacity: accountPhase === AccountPhases.STATUS_NOT_CONNECTED ? 0 : 1,
+          pointerEvents:
+            accountPhase === AccountPhases.STATUS_NOT_CONNECTED
+              ? "none"
+              : undefined,
+        }}
+      >
+        <span className={styles.title} style={{ display: "inline-block" }}>
+          NOTE:
+        </span>{" "}
+        Recorded donations will be recognized by the Namada community (so
+        don&#39;t bot!) and distributed using a PGF governance proposal. The
+        goal is to reward donors within 14 days of the conclusion of the Donor
+        Drop.
+      </div>
+    );
+  };
 
   return (
     <div
@@ -221,25 +245,7 @@ const Account = ({
       >
         {renderNamSection()}
       </div>
-      <div
-        className={`${styles.container} ${styles.tip} ${styles.note}`}
-        style={{
-          transition: "opacity 0.3s",
-          opacity: accountPhase === AccountPhases.STATUS_NOT_CONNECTED ? 0 : 1,
-          pointerEvents:
-            accountPhase === AccountPhases.STATUS_NOT_CONNECTED
-              ? "none"
-              : undefined,
-        }}
-      >
-        <span className={styles.title} style={{ display: "inline-block" }}>
-          NOTE:
-        </span>{" "}
-        Recorded donations will be recognized by the Namada community (so
-        don&#39;t bot!) and distributed using a PGF governance proposal. The
-        goal is to reward donors within 14 days of the conclusion of the Donor
-        Drop.
-      </div>
+      {renderNoteSection()}
     </div>
   );
 };

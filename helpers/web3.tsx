@@ -26,15 +26,12 @@ const stringToEth = (value: string) => {
 };
 
 const truncateEth = (value: bigint, decimals: number): string => {
-  // Shift the decimal point by (18)
   const factor = 10n ** 18n;
-  const truncated = value / factor; // Integer division truncates the value
+  const truncated = value / factor;
 
-  // Convert the integer part to string
   const integerPart = truncated.toString();
 
-  // Handle the decimal part
-  const remainder = value % factor; // Get the remainder
+  const remainder = value % factor;
   const decimalPart = remainder.toString().padStart(18, "0").slice(0, decimals);
   return `${integerPart}.${decimalPart}`;
 };

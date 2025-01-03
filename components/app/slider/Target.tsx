@@ -7,15 +7,17 @@ import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import {
   END_DATE,
-  MAX_ETH_PER_ADDRESS,
   REWARD_NAM,
   START_DATE,
   TARGET_ETH,
 } from "../../../donations.config";
 import { truncateEth } from "../../../helpers/web3";
-import { formatNumber, formatUTCDate } from "../../../helpers/format";
+import {
+  formatDuration,
+  formatNumber,
+  formatUTCDate,
+} from "../../../helpers/format";
 import { useLayout } from "../../../context/LayoutProvider";
-import { FaHandHoldingHeart } from "react-icons/fa";
 import { ethers } from "ethers";
 
 const Target = ({
@@ -25,22 +27,8 @@ const Target = ({
   isActive: boolean;
   onFocus: React.FocusEventHandler<HTMLAnchorElement>;
 }) => {
-  const { phase, totalDonated, donations, stats } = useDonation();
+  const { phase, total, donations, stats } = useDonation();
   const { setActiveSlide } = useLayout();
-
-  const formatDuration = (start: Date, end: Date) => {
-    const ms = end.getTime() - start.getTime();
-    const totalSeconds = Math.floor(ms / 1000);
-    const days = Math.floor(totalSeconds / 86400).toString();
-    const hours = Math.floor((totalSeconds % 86400) / 3600)
-      .toString()
-      .padStart(2, "0");
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-      .toString()
-      .padStart(2, "0");
-    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  };
 
   const results = (
     <div className={styles.visualInfo}>
@@ -48,10 +36,9 @@ const Target = ({
         { value: `${stats.participantCount}`, label: "Participants" },
         { value: `${stats.donationCount}`, label: "Donations" },
         {
-          value: `${truncateEth(
-            totalDonated || 0n,
-            2
-          )} ETH / ${ethers.formatEther(TARGET_ETH)} ETH`,
+          value: `${truncateEth(total || 0n, 2)} ETH / ${ethers.formatEther(
+            TARGET_ETH
+          )} ETH`,
           label: "Total Donated",
         },
       ].map((item, index) => (
@@ -230,12 +217,7 @@ const Target = ({
                     </span>
                     .
                   </li>
-                  <li
-                    className={styles.text}
-                    // style={{
-                    //   borderBottom: "1px solid #353535",
-                    // }}
-                  >
+                  <li className={styles.text}>
                     <span
                       style={{
                         background: "#262626",
@@ -248,14 +230,7 @@ const Target = ({
                     governance 👀.
                   </li>
                 </ul>
-                <div
-                  className={styles.callToActions}
-                  style={
-                    {
-                      // borderTop: "1px solid #353535",
-                    }
-                  }
-                >
+                <div className={styles.callToActions}>
                   <div className={styles.speechBubble}>
                     Please participate with one ETH address & don&#39;t bot 🤖!
                   </div>

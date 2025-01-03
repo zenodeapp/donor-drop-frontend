@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import { END_DATE, START_DATE, TARGET_ETH } from "../../../donations.config";
 import styles from "../../../styles/countdown.module.scss";
+import { formatTimeRemaining } from "../../../helpers/format";
 
 const Countdown = () => {
-  const { phase, setPhase, totalDonated } = useDonation();
-  const [timeRemaining, setTimeRemaining] = useState<number | undefined>(
+  const { phase, setPhase, total } = useDonation();
+  const [timeRemaining, setTimeRemaining] = React.useState<number | undefined>(
     undefined
   );
 
-  useEffect(() => {
+  // This countdown makes sure to check every second in what phase we are
+  React.useEffect(() => {
     const fixPhase = () => {
       const now = Date.now();
       if (now < START_DATE.getTime()) {
         setPhase(DonationPhases.STATUS_NOT_LIVE);
         setTimeRemaining(START_DATE.getTime() - now);
-      } else if (totalDonated && totalDonated >= TARGET_ETH) {
+      } else if (total && total >= TARGET_ETH) {
         setPhase(DonationPhases.STATUS_FILLED);
         clearInterval(timer);
-      } else if (now < END_DATE.getTime() && totalDonated !== undefined) {
+      } else if (now < END_DATE.getTime() && total !== undefined) {
         setPhase(DonationPhases.STATUS_LIVE);
         setTimeRemaining(END_DATE.getTime() - now);
       } else if (now >= END_DATE.getTime()) {
@@ -38,27 +40,9 @@ const Countdown = () => {
 
     return () => clearInterval(timer);
     //eslint-disable-next-line
-  }, [totalDonated]);
+  }, [total]);
 
-  const formatTime = (ms: number | undefined) => {
-    if (ms === undefined) {
-      return { days: "?", hours: "?", minutes: "?", seconds: "?" };
-    }
-    const totalSeconds = Math.floor(ms / 1000);
-    const days = Math.floor(totalSeconds / 86400)
-      .toString()
-      .padStart(2, "0");
-    const hours = Math.floor((totalSeconds % 86400) / 3600)
-      .toString()
-      .padStart(2, "0");
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-      .toString()
-      .padStart(2, "0");
-    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-    return { days, hours, minutes, seconds };
-  };
-
-  const { days, hours, minutes, seconds } = formatTime(timeRemaining);
+  const { days, hours, minutes, seconds } = formatTimeRemaining(timeRemaining);
 
   return (
     <div className={styles.countdownContainer}>
@@ -76,9 +60,7 @@ const Countdown = () => {
             phase === DonationPhases.STATUS_ENDED
           ? `CAMPAIGN ENDED
             `
-          : // : phase === DonationPhases.STATUS_LIVE
-            // ? `CAMPAIGN IS LIVE`
-            ""}
+          : ""}
       </h5>
       {phase !== DonationPhases.STATUS_ENDED &&
         phase !== DonationPhases.STATUS_FILLED && (

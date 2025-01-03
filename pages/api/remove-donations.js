@@ -1,3 +1,5 @@
+// Temporary endpoint for V1 - will delete this later
+
 import { pool } from "../../lib/db";
 
 export default async function handler(req, res) {

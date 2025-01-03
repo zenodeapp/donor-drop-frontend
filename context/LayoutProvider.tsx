@@ -121,16 +121,6 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     };
   }, []);
 
-  // React.useEffect(() => {
-  //   if (state.sidebarExpanded) {
-  //     const mediaQuery = window.matchMedia("(min-width: 1005px)");
-
-  //     if (!mediaQuery.matches) {
-  //       setPreventOverscroll(true);
-  //     }
-  //   }
-  // }, [state.sidebarExpanded]);
-
   return (
     <LayoutContext.Provider
       value={{

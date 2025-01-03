@@ -130,29 +130,6 @@ const SidebarHeader = ({
           <br />
         </button>
       </div>
-
-      {/* <h5
-        className={styles.startTime}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          borderRadius: "50%",
-          overflow: "hidden",
-          opacity: 0.3,
-        }}
-      >
-        {phase === DonationPhases.STATUS_NOT_LIVE
-          ? `STARTS ${formatUTCDate(START_DATE)}`
-          : phase === DonationPhases.STATUS_LIVE
-          ? `ENDS ${formatUTCDate(END_DATE)}`
-          : phase === DonationPhases.STATUS_ENDED
-          ? `ENDED ON ${formatUTCDate(END_DATE)}`
-          : phase === DonationPhases.STATUS_FILLED
-          ? `ENDED ON ${formatUTCDate(new Date(donations[0].timestamp))}`
-          : ""}
-      </h5> */}
     </div>
   );
 };

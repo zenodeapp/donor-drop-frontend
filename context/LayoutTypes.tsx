@@ -19,10 +19,6 @@ export type IPage = {
   children?: React.ReactNode;
 };
 
-export type ISocials = {
-  socials: Array<ISocialButton>;
-};
-
 export type INavigationIcon = {
   Icon: IconType;
   title?: string;
@@ -109,10 +105,3 @@ export type IMenuItem = {
 
 export type IMenuItems = Array<IMenuItem>;
 export type IMenuRecord = Record<string, IMenuItems>;
-
-export type ISocialButton = {
-  id: string;
-  url: string;
-  Logo: IconType;
-  title?: string;
-};

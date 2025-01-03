@@ -28,8 +28,8 @@ export type IDonationState = {
   visibleDonations: IVisibleDonations;
   filterOn: boolean;
   namAddress: string;
-  ethDonated: EthDonated;
-  totalDonated?: bigint;
+  userTotal: EthDonated;
+  total?: bigint;
   userExists: boolean;
   phase: DonationPhases;
   myDonationCount: number;
@@ -61,8 +61,8 @@ export type IDonationContext = IDonationState & {
   >;
   signIn: () => Promise<string>;
   setNamAddress: (namAddress: string) => string;
-  setEthDonated: (ethDonated: EthDonated) => EthDonated;
-  setTotalDonated: (totalDonated?: bigint) => bigint | undefined;
+  setUserTotal: (userTotal: EthDonated) => EthDonated;
+  setTotal: (total?: bigint) => bigint | undefined;
   setUserExists: (userExists: boolean) => boolean;
   setPhase: (phase: DonationPhases) => DonationPhases;
   setDonations: (donations: Array<ITransaction>) => Array<ITransaction>;
@@ -106,8 +106,8 @@ export enum DonationActions {
   SET_TOP_DONATIONS = "SET_TOP_DONATIONS",
   SET_BOTTOM_DONATIONS = "SET_BOTTOM_DONATIONS",
   SET_NAM_ADDRESS = "SET_NAM_ADDRESS",
-  SET_ETH_DONATED = "SET_ETH_DONATED",
-  SET_TOTAL_DONATED = "SET_TOTAL_DONATED",
+  SET_USER_TOTAL = "SET_USER_TOTAL",
+  SET_TOTAL = "SET_TOTAL",
   SET_USER_EXISTS = "SET_USER_EXISTS",
   SET_PHASE = "SET_PHASE",
   SET_FILTER_ON = "SET_FILTER_ON",
@@ -137,11 +137,11 @@ export type IDonationActions =
       payload: string;
     }
   | {
-      type: DonationActions.SET_ETH_DONATED;
+      type: DonationActions.SET_USER_TOTAL;
       payload: EthDonated;
     }
   | {
-      type: DonationActions.SET_TOTAL_DONATED;
+      type: DonationActions.SET_TOTAL;
       payload: bigint | undefined;
     }
   | {

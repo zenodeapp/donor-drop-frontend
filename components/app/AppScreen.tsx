@@ -3,7 +3,7 @@ import { useTheme } from "../../context/ThemeProvider";
 import { getClassNameByStyle } from "../../helpers/layout";
 import inputStyle from "../../styles/input.module.scss";
 
-const Input = dynamic(() => import("./App"));
+const App = dynamic(() => import("./App"));
 
 const AppScreen = () => {
   const { showApp, appScreenLoaded } = useTheme();
@@ -17,7 +17,7 @@ const AppScreen = () => {
             `app${showApp ? " active" : ""}`
           )}
         >
-          <Input />
+          <App />
         </div>
       )}
     </>

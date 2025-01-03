@@ -1,11 +1,10 @@
+// This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/findNamAddress.js
+// Adapted and added additional checks to serve this frontend's needs.
+
 import { pool } from "../../lib/db";
-import dotenv from "dotenv";
-dotenv.config();
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 
-const endDate = process.env.NEXT_PUBLIC_END_DATE;
-
-/// This api endpoint finds the corresponding nam address for a given eth address
+/// This api endpoint finds the corresponding nam address for a given eth address (if a valid signature is provided)
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res
@@ -19,7 +18,7 @@ export default async function handler(req, res) {
     if (!signature || !message) {
       return res
         .status(400)
-        .json({ error: "Missing required parameter: ethAddress" });
+        .json({ error: "Missing required parameters: signature and message" });
     }
 
     // Validate the timestamp
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
 
     const result = await pool.query(query, [
       recoveredAddress.toLowerCase(),
-      endDate || "infinity",
+      process.env.NEXT_PUBLIC_END_DATE || "infinity",
     ]);
 
     if (result.rows.length === 0) {

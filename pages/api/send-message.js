@@ -1,13 +1,11 @@
-import { pool } from "../../lib/db"; // Assuming DB connection in lib/db.js
+import { pool } from "../../lib/db";
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 
-// API handler
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const { ethAddress, message, signature, signedMessage } = req.body;
 
-      // Validate input
       if (!ethAddress || !message || !signature || !signedMessage) {
         return res.status(400).json({
           error:
@@ -32,19 +30,19 @@ export default async function handler(req, res) {
       );
 
       if (existingMessageResult.rows.length > 0) {
-        // If exists, update the message without changing the created_at
+        // If exists, update the message without changing the value for created_at
         const updateResult = await pool.query(
           "UPDATE temporary_messages SET message = $1, created_at = $2 WHERE from_address = $3 RETURNING *",
           [message, new Date(), recoveredAddress]
         );
-        return res.status(200).json(updateResult.rows[0]); // Respond with the updated entry
+        return res.status(200).json(updateResult.rows[0]);
       } else {
-        // If does not exist, insert a new record
+        // If it does not exist, insert a new record
         const insertResult = await pool.query(
           "INSERT INTO temporary_messages (from_address, message, created_at) VALUES ($1, $2, $3) RETURNING *",
           [recoveredAddress, message, new Date()]
         );
-        return res.status(201).json(insertResult.rows[0]); // Respond with the inserted entry
+        return res.status(201).json(insertResult.rows[0]);
       }
     } catch (error) {
       console.error("Error verifying signature or handling request:", error);

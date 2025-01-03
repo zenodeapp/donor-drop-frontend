@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Step 7: Expose port 3000 for the Next.js app
-EXPOSE 35436
+EXPOSE 3000
 
 # Step 8: Run the Next.js app in production mode
-CMD ["npm", "run", "start", "--", "--port", "35436"]
+CMD ["npm", "run", "start", "--", "--port", "3000"]

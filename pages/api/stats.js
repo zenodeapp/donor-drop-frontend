@@ -1,5 +1,7 @@
 import { pool } from "../../lib/db";
 
+// TODO: this stats endpoint could be improved by adding the actual eligibleDonationCount and eligibleParticipantsCount.
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);

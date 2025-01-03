@@ -1,17 +1,3 @@
-// const formatUTCDate = (date: Date) =>
-//   date
-//     .toLocaleString("en-US", {
-//       month: "short",
-//       day: "numeric",
-//       year: "numeric",
-//       hour: "2-digit",
-//       minute: "2-digit",
-//       hour12: true,
-//       timeZone: "UTC",
-//       timeZoneName: "short",
-//     })
-//     .toUpperCase();
-
 const formatUTCDate = (date: Date) => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -35,6 +21,38 @@ const formatUTCDate = (date: Date) => {
   return `${month} ${day}, ${year} at ${hour}:${minute} UTC`;
 };
 
+const formatTimeRemaining = (ms: number | undefined) => {
+  if (ms === undefined) {
+    return { days: "?", hours: "?", minutes: "?", seconds: "?" };
+  }
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400)
+    .toString()
+    .padStart(2, "0");
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
+    .toString()
+    .padStart(2, "0");
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+  return { days, hours, minutes, seconds };
+};
+
+const formatDuration = (start: Date, end: Date) => {
+  const ms = end.getTime() - start.getTime();
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400).toString();
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
+    .toString()
+    .padStart(2, "0");
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
+
 const formatNumber = (num: number) => {
   if (num >= 1_000_000) {
     return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
@@ -45,4 +63,4 @@ const formatNumber = (num: number) => {
   }
 };
 
-export { formatUTCDate, formatNumber };
+export { formatUTCDate, formatTimeRemaining, formatDuration, formatNumber };

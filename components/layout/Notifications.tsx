@@ -32,9 +32,6 @@ const Notifications = ({ id }: { id?: string }) => {
             <span className={notificationsStyle["notification-message"]}>
               {notification.message}
             </span>
-            {/* {notification.dismissable && notification.duration === Infinity && (
-              <span className={notificationsStyle.arrow}></span>
-            )} */}
           </li>
         );
       })}

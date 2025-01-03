@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  MAX_ETH_PER_ADDRESS,
-  MIN_ETH_PER_ADDRESS,
-} from "../../../donations.config";
-import { shortenAddress, truncateEth } from "../../../helpers/web3";
-import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import TimeAgo from "../elements/TimeAgo";
-import { DonationPhases, ITransaction } from "../../../context/DonationTypes";
+import { DonationPhases } from "../../../context/DonationTypes";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import { GiCricket } from "react-icons/gi";
 import { useDonation } from "../../../context/DonationProvider";
@@ -14,74 +7,19 @@ import { useDonation } from "../../../context/DonationProvider";
 import styles from "../../../styles/sidebar.module.scss";
 import { useWeb3 } from "../../../context/Web3Provider";
 import { useTheme } from "../../../context/ThemeProvider";
+import DonationListItem from "./DonationListItem";
 
-// Animation goes like this:
-// 1. Transactions get fetched from the server via getTransactions, this gets stored in the donations list.
-// 2. We check which transactions are new and add it to the upperTransactions list and make this list spawn above out of sight.
-// 3. Now it pushes down the lowerTransactions list by the amount of new transactions found in step 2.
-// 4. When the animation stops, all the transactions from the upperTransactions get prepended to the lowerTransactions
-// 5. upperTransactions gets emptied.
-// 5. Now we contact the server for more transactions and repeat this process.
-const Donation = ({ transaction }: { transaction: ITransaction }) => {
-  return (
-    <div key={transaction.hash} className={styles.transaction}>
-      <div className={styles.transactionTop}>
-        <a
-          href={`https://etherscan.io/advanced-filter?tadd=${process.env.NEXT_PUBLIC_DONOR_ADDRESS}&txntype=0&fadd=${transaction.address}&qt=1`}
-          target='_blank'
-          rel='noopener noreferrer'
-          className={styles.shortenedAddress}
-        >
-          <Jazzicon
-            diameter={24}
-            seed={jsNumberForAddress(transaction.address)}
-          />{" "}
-          <span className={styles.address}>
-            {shortenAddress(transaction.address)}
-          </span>
-        </a>
-        <div
-          style={{
-            display: "flex",
-
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <strong className={styles.amount}>
-            {truncateEth(transaction.amount, 3)} ETH{" "}
-            {transaction.amount >= MAX_ETH_PER_ADDRESS
-              ? "🐳"
-              : transaction.amount >= MAX_ETH_PER_ADDRESS / 2n
-              ? "🐬"
-              : transaction.amount >= MIN_ETH_PER_ADDRESS
-              ? "💛"
-              : "🐑"}
-          </strong>
-          <a
-            style={{
-              fontSize: "0.8rem",
-            }}
-            className={styles.hash}
-            href={`https://etherscan.io/tx/${transaction.hash}`}
-            target='_blank'
-            rel='noreferrer'
-          >
-            {shortenAddress(transaction.hash)}
-          </a>
-        </div>
-      </div>
-      <div className={styles.transactionCard}>
-        <p>{transaction.message}</p>
-      </div>
-      <p className={styles.timestamp}>
-        <TimeAgo date={new Date(transaction.timestamp)} />
-      </p>
-    </div>
-  );
-};
-
+// Animation in a nutshell:
+// 1. Transactions get fetched via getDonations, this returns an object with 'all' and 'new' transactions.
+// 2. We add the 'new' transactions to visibleDonations.top which is drawn above visibleDonations.bottom (this list is at this point populated with the 'current' donations minus 'new').
+// 3. We let visibleDonations.top spawn out of sight (disable animations here)
+// 4. Now we turn animation on for both lists and let them both slide down by the amount of new donations (found in step 2).
+// 5. When the animation stops (event transitionend), all the transactions from the visibleDonations.top get prepended to visibleDonations.bottom.
+// 6. visibleDonations.top gets emptied.
+// 7. Now we return back to step 1.
 const DonationList = () => {
+  const DONATION_ITEM_HEIGHT = 115;
+
   const elementRef = React.useRef<HTMLDivElement>(null); // Create a ref to hold the DOM element
   const {
     visibleDonations,
@@ -99,16 +37,17 @@ const DonationList = () => {
   const { isConnected } = useTheme();
   const { donations, isFetching } = useDonation();
   const ethAddress = web3Connections.connections["metamask"].address;
-  const TRANSACTION_HEIGHT = 115;
 
   React.useEffect(() => {
     if (timeoutId) clearTimeout(timeoutId);
 
     const fetchTransactions = async () => {
       if (isFetching.current) return;
+      // Step 1 - get donations via an api call, this will continuously loop if no new transactions are found
       const transactions = await getDonations(5, 2000);
 
       if (init) setInit(false);
+      // Step 2 - add the new transactions to visibleDonations.top
       setTopDonations(transactions.new);
     };
 
@@ -126,10 +65,10 @@ const DonationList = () => {
     //eslint-disable-next-line
   }, [visibleDonations.bottom, donations]);
 
-  // When new transactions get added to the upper transactions
+  // Gets triggered when top donations change
   React.useEffect(() => {
     if (visibleDonations.top.length > 0) {
-      // Step 2 - Make the upper transactions spawn above
+      // Step 3 - Make visibleDonations.top spawn out of view
       setVisibleDonations({
         ...visibleDonations,
         animation: { top: false, bottom: true },
@@ -140,10 +79,10 @@ const DonationList = () => {
               (tx) =>
                 !filterOn ||
                 tx.address.toLowerCase() === ethAddress.toLowerCase()
-            ).length * TRANSACTION_HEIGHT,
+            ).length * DONATION_ITEM_HEIGHT,
         },
       });
-      // Step 3 - After 500ms slide down
+      // Step 4 - After 500ms slide both top and bottom down
       setTimeout(() => {
         setVisibleDonations({
           ...visibleDonations,
@@ -154,7 +93,7 @@ const DonationList = () => {
                 (tx) =>
                   !filterOn ||
                   tx.address.toLowerCase() === ethAddress.toLowerCase()
-              ).length * TRANSACTION_HEIGHT,
+              ).length * DONATION_ITEM_HEIGHT,
             top: 0,
           },
         });
@@ -170,28 +109,19 @@ const DonationList = () => {
 
     const handleTransitionEnd = (event: TransitionEvent) => {
       if (event.propertyName === "transform") {
-        // Step 4 & 5 - Prepend upper transactions to lower and reset the placement
+        // Step 5 & 6 - prepend .top to .bottom and empty .top.
         setVisibleDonations({
           bottom: [...visibleDonations.top, ...visibleDonations.bottom],
           top: [],
           animation: { top: false, bottom: false },
           translateY: { bottom: 0, top: -3000 },
         });
+
+        // Step 7 - now that bottom changes, step 1 gets triggered again.
       }
     };
 
-    // Add event listener when component mounts
     element.addEventListener("transitionend", handleTransitionEnd);
-
-    // // Ensure fallback in case no visible animation occurs
-    // const timeoutId = setTimeout(() => {
-    //   setVisibleDonations({
-    //     bottom: [...visibleDonations.top, ...visibleDonations.bottom],
-    //     top: [],
-    //     animation: { top: false, bottom: false },
-    //     translateY: { bottom: 0, top: -3000 },
-    //   });
-    // }, 500); // Timeout to match animation duration
 
     return () => {
       element.removeEventListener("transitionend", handleTransitionEnd);
@@ -199,6 +129,7 @@ const DonationList = () => {
     //eslint-disable-next-line
   }, [visibleDonations.top, visibleDonations.bottom]);
 
+  // Which transactions are we showing? Our own or all recent.
   let topTransactions =
     filterOn && isConnected
       ? visibleDonations.top.filter(
@@ -248,7 +179,7 @@ const DonationList = () => {
           }}
         >
           {topTransactions.slice(0, 50).map((transaction, i) => (
-            <Donation key={i} transaction={transaction} />
+            <DonationListItem key={i} transaction={transaction} />
           ))}
         </div>
         <div
@@ -263,25 +194,12 @@ const DonationList = () => {
           ref={elementRef}
         >
           {bottomTransactions.slice(0, 50).map((transaction, i) => (
-            <Donation key={i} transaction={transaction} />
+            <DonationListItem key={i} transaction={transaction} />
           ))}
         </div>
-        {/* <div
-          className={styles.lowerTransactions}
-          style={{
-            opacity: 1,
-            height: "115px",
-            transform: `translateY(${visibleDonations.translateY.bottom}px)`,
-            transition: `opacity 0.3s 0.3s, transform ${0.5}s`,
-          }}
-          ref={elementRef}
-        >
-          Test
-        </div> */}
       </div>
     </div>
   );
 };
 
-export { Donation };
 export default DonationList;

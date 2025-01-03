@@ -1,14 +1,14 @@
 import React from "react";
-import styles from "../../styles/socials.module.scss";
+import styles from "../../../styles/socials.module.scss";
 import { FaXTwitter } from "react-icons/fa6";
-import { useDonation } from "../../context/DonationProvider";
-import { DonationPhases } from "../../context/DonationTypes";
+import { useDonation } from "../../../context/DonationProvider";
+import { DonationPhases } from "../../../context/DonationTypes";
 import { FaDiscord } from "react-icons/fa";
 
-const handleShareOnTwitter = (phase: DonationPhases) => {
+const shareOnTwitter = (phase: DonationPhases) => {
   const tweet = `The @namada community is hosting the world's first Donor Drop! 🫴❣️ ${window.location.href}\n\nNamada's on-chain PGF will be used to recognize and reward donors to Coin Center's ethereum address.`;
 
-  // In case we want to change the tweet based on status.
+  // TODO: In case we want to change the tweet based on status.
   switch (phase) {
     case DonationPhases.STATUS_FILLED:
       break;
@@ -26,7 +26,7 @@ const handleShareOnTwitter = (phase: DonationPhases) => {
   window.open(twitterShareUrl, "_blank");
 };
 
-const ShareOnX = () => {
+const SocialButtons = () => {
   const { phase } = useDonation();
 
   return (
@@ -35,7 +35,7 @@ const ShareOnX = () => {
         title={"Share on X"}
         className={styles.shareButton}
         onClick={() => {
-          handleShareOnTwitter(phase);
+          shareOnTwitter(phase);
         }}
       >
         share on <FaXTwitter size='1rem' />
@@ -52,4 +52,4 @@ const ShareOnX = () => {
   );
 };
 
-export default ShareOnX;
+export default SocialButtons;

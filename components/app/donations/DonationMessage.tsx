@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useDonation } from "../../../context/DonationProvider";
 import { useTheme } from "../../../context/ThemeProvider";
-import styles from "../../../styles/donation-message.module.scss"; // Import the CSS module
+import styles from "../../../styles/donation-message.module.scss";
 import { useNotification } from "../../../context/NotificationProvider";
 import { IoMdWarning } from "react-icons/io";
 
-// A simple profanity filter (you can replace this with a library like "bad-words")
+// TODO: profanity filter
 const profanityFilter = (message: string) => {
-  const profanityList = ["badword1", "badword2", "badword3"]; // Add more words as needed
+  const profanityList = ["badword1", "badword2", "badword3"];
   const regex = new RegExp(profanityList.join("|"), "gi");
   return message.replace(regex, "[censored]");
 };

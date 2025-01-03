@@ -1,6 +1,7 @@
+// This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/calculate.js
+// Adapted and added additional checks to serve this frontend's needs.
+
 import { pool } from "../../lib/db";
-import dotenv from "dotenv";
-dotenv.config();
 
 const startDate = process.env.NEXT_PUBLIC_START_DATE;
 const endDate = process.env.NEXT_PUBLIC_END_DATE;
@@ -24,9 +25,9 @@ export default async function handler(req, res) {
 
     try {
       const result = await pool.query(query, [startDate, endDate]);
-      const totalSum = parseFloat(result.rows[0].total_sum);
+      const total = parseFloat(result.rows[0].total_sum);
 
-      res.status(200).json({ totalSum: totalSum });
+      res.status(200).json({ total });
     } catch (error) {
       console.error("Error calculating sum:", error);
       res.status(500).json({ error: "Failed to calculate total" });

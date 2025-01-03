@@ -1,12 +1,12 @@
 import React from "react";
-import styles from "../../../styles/about.module.scss";
+import styles from "../../../styles/home.module.scss";
 import { FaDiscord, FaGlobe, FaParachuteBox } from "react-icons/fa";
-import Socials from "../../layout/Socials";
 import { FaXTwitter } from "react-icons/fa6";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import { useLayout } from "../../../context/LayoutProvider";
+import SocialItems from "../elements/SocialItems";
 
-const About = ({
+const Home = ({
   isActive,
   onFocus,
 }: {
@@ -50,23 +50,6 @@ const About = ({
               NAM. It&#39;s a simple yet meaningful way to join our community as
               a contributor!
             </p>
-            {/* <p className={styles.text}>
-              Read about our{" "}
-              <span
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveSlide(1);
-                }}
-              >
-                target
-              </span>{" "}
-              to learn more. <br />
-              Learn about{" "}
-              <a href='https://namada.net' target='_blank'>
-                Namada here
-              </a>
-              .
-            </p> */}
             <div className={styles.callToActions}>
               <a href='https://namada.net' target='_blank'>
                 Learn about Namada
@@ -80,7 +63,7 @@ const About = ({
                 Read about our target
               </button>
             </div>
-            <Socials
+            <SocialItems
               socials={[
                 {
                   id: "web",
@@ -110,4 +93,4 @@ const About = ({
   );
 };
 
-export default About;
+export default Home;

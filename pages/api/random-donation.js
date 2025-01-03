@@ -1,3 +1,5 @@
+// Temporary endpoint for V1 - will delete this later
+
 import { saveTransaction } from "../../lib/db";
 
 const tnamList = [

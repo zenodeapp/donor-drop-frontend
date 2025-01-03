@@ -10,6 +10,7 @@ const MAX_ETH_PER_ADDRESS = ethers.parseEther(
   process.env.NEXT_PUBLIC_MAX_ETH_PER_ADDRESS || "0.3"
 );
 const REWARD_NAM = parseInt(process.env.NEXT_PUBLIC_REWARD_NAM) || 1000000;
+
 const START_DATE = new Date(
   process.env.NEXT_PUBLIC_START_DATE || "2024-01-03T15:00:00Z"
 );

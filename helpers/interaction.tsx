@@ -14,6 +14,7 @@ const copyToClipboard = async (
   }
 };
 
+// Hacky way to allow copying to clipboard using the old way (execCommand). This allowed copying to clipboard on Metamask in the past, not sure if it still works :).
 const fallbackCopyToClipboard = (
   data: string,
   onSuccess: (value: void) => void | PromiseLike<void>

@@ -1,8 +1,19 @@
 import React from "react";
-import { ISocials } from "../../context/LayoutTypes";
-import styles from "../../styles/socials.module.scss";
+import styles from "../../../styles/socials.module.scss";
+import { IconType } from "react-icons";
 
-const Socials = ({
+type ISocials = {
+  socials: Array<ISocialButton>;
+};
+
+type ISocialButton = {
+  id: string;
+  url: string;
+  Logo: IconType;
+  title?: string;
+};
+
+const SocialItems = ({
   socials,
   onFocus,
 }: ISocials & { onFocus?: React.FocusEventHandler }) => {
@@ -27,4 +38,4 @@ const Socials = ({
   );
 };
 
-export default Socials;
+export default SocialItems;

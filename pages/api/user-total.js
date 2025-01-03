@@ -1,6 +1,6 @@
+// This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/checkDonation.js
+
 import { pool } from "../../lib/db";
-import dotenv from "dotenv";
-dotenv.config();
 
 async function findCutoffTimestamp() {
   const query = "SELECT cutoff_timestamp FROM donation_stats";

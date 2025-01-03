@@ -35,11 +35,11 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     },
     filterOn: false,
     namAddress: "",
-    ethDonated: {
+    userTotal: {
       total: 0n,
       eligible: 0n,
     },
-    totalDonated: undefined,
+    total: undefined,
     userExists: false,
     phase: DonationPhases.STATUS_UNKNOWN,
     myDonationCount: 0,
@@ -57,8 +57,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     setTopDonations,
     setBottomDonations,
     setNamAddress,
-    setEthDonated,
-    setTotalDonated,
+    setUserTotal,
+    setTotal,
     setUserExists,
     setPhase,
     setFilterOn,
@@ -82,7 +82,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   };
 
-  // Returns sign in data
   const signIn = async () => {
     try {
       const request = await requestSignature();
@@ -168,35 +167,12 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   React.useEffect(() => {
     setSignedIn(false);
-    // if (isConnected) signIn();
   }, [
     web3Connections.connections[
       web3Connections.getConnectedWallet() || "metamask"
     ].address,
     isConnected,
   ]);
-
-  // const calculateTotalDonated = () => {
-  //   let total = 0n;
-  //   state.donations.map((donation) => {
-  //     total = total.add(donation.amount);
-  //   });
-
-  //   return total;
-  // };
-
-  // const calculateEthDonated = (address: string) => {
-  //   let total = 0n;
-  //   state.donations
-  //     .filter(
-  //       (donation) => donation.address.toLowerCase() === address.toLowerCase()
-  //     )
-  //     .map((donation) => {
-  //       total = total.add(donation.amount);
-  //     });
-
-  //   return total;
-  // };
 
   React.useEffect(() => {
     setMyDonationCount(
@@ -256,16 +232,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       const request = await requestSignature();
 
       if (request) {
-        // notify({
-        //   type: "success",
-        //   message: `Attempting to verify your signature...`,
-        //   options: {
-        //     id: web3UI.selectedWallet,
-        //     Icon: IoIosClock,
-        //     duration: 3000,
-        //   },
-        // });
-
         const response = await fetch("/api/send-message", {
           method: "POST",
           headers: {
@@ -427,15 +393,15 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         }),
       });
       if (response.ok) {
-        const result = await response.json(); // Parse the JSON response
-        return result; // Return the specific property
+        const result = await response.json();
+        return result;
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
       }
     } catch (error) {
       console.error("Failed to fetch total for user:", error);
     }
-    return { cutoffTimestamp: null, ethAddress: { total: 0, eligible: 0 } }; // Return undefined if the request fails
+    return { cutoffTimestamp: null, ethAddress: { total: 0, eligible: 0 } };
   };
 
   React.useEffect(() => {
@@ -452,7 +418,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           total: ethers.parseEther(userTotal.ethAddress.total.toString()),
           eligible: ethers.parseEther(userTotal.ethAddress.eligible.toString()),
         };
-        setEthDonated(weiValues);
+        setUserTotal(weiValues);
       }
     };
 
@@ -483,23 +449,24 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   const getTotal = async (): Promise<number | undefined> => {
     try {
-      const response = await fetch("/api/total"); // Ensure the URL is correct
+      const response = await fetch("/api/total");
       if (response.ok) {
-        const result = await response.json(); // Parse the JSON response
-        return result.totalSum; // Return the specific property
+        const result = await response.json();
+        return result.total;
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
       }
     } catch (error) {
       console.error("Failed to fetch total sum:", error);
     }
-    return undefined; // Return undefined if the request fails
+    return undefined;
   };
 
   const fetchTotal = async () => {
-    const total = await getTotal();
-    const weiValue = total ? ethers.parseEther(total.toString()) : 0n;
-    setTotalDonated(weiValue);
+    const result = await getTotal();
+    const weiValue = result ? ethers.parseEther(result.toString()) : 0n;
+
+    setTotal(weiValue);
   };
 
   React.useEffect(() => {
@@ -529,9 +496,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       const response = await fetch("/api/stats");
 
       if (response.ok) {
-        const result = await response.json(); // Parse the JSON response
-        console.log(result);
-        return result; // Return the specific property
+        const result = await response.json();
+        return result;
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
       }
@@ -564,16 +530,16 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         visibleDonations: state.visibleDonations,
         filterOn: state.filterOn,
         namAddress: state.namAddress,
-        ethDonated: state.ethDonated,
-        totalDonated: state.totalDonated,
+        userTotal: state.userTotal,
+        total: state.total,
         userExists: state.userExists,
         phase: state.phase,
         myDonationCount: state.myDonationCount,
         stats: state.stats,
         isFetching: isFetching,
         setNamAddress,
-        setEthDonated,
-        setTotalDonated,
+        setUserTotal,
+        setTotal,
         setDonations,
         setVisibleDonations,
         setTopDonations,
@@ -581,11 +547,9 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         setFilterOn,
         setPhase,
         requestSignature,
-        // verifySignature,
         setUserExists,
         signIn,
         getDonations,
-        // getUserDonations,
         transactionsFrom,
         sendMessage,
         setMyDonationCount,

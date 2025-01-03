@@ -1,15 +1,13 @@
 import React from "react";
-
 import Slider from "./slider/_Slider";
-
+import Account from "./slider/Account";
+import Home from "./slider/Home";
+import Donate from "./slider/Donate";
+import Target from "./slider/Target";
 import sliderStyle from "../../styles/slider.module.scss";
 import { useTheme } from "../../context/ThemeProvider";
 import { FaBullseye, FaHandHoldingHeart, FaHome, FaUser } from "react-icons/fa";
-import Account from "./slider/Account";
 import Navigation from "../layout/Navigation";
-import About from "./slider/About";
-import HowTo from "./slider/How";
-import Target from "./slider/Target";
 import DonationProgress from "./donations/DonationProgress";
 import { ethers } from "ethers";
 import { TARGET_ETH } from "../../donations.config";
@@ -21,7 +19,7 @@ import Countdown from "./elements/Countdown";
 const Input = () => {
   const [otherSlidesLocked, setOtherSlidesLocked] = React.useState(false);
   const { showApp, isMobileView, setAppScreenLoaded } = useTheme();
-  const { totalDonated, phase } = useDonation();
+  const { total, phase } = useDonation();
   const { activeSlide, setActiveSlide } = useLayout();
 
   const setSlide = (index: number, e: React.FocusEvent<Element, Element>) => {
@@ -37,6 +35,7 @@ const Input = () => {
     setOtherSlidesLocked(false);
   };
 
+  // TODO or deprecated?
   const setTabIndex = (index: number) => {
     if (!showApp || isMobileView) return -1;
 
@@ -77,7 +76,7 @@ const Input = () => {
   ];
 
   const slides = [
-    <About
+    <Home
       key={0}
       isActive={activeSlide === 0}
       onFocus={(e) => setSlide(0, e)}
@@ -87,7 +86,7 @@ const Input = () => {
       isActive={activeSlide === 1}
       onFocus={(e) => setSlide(1, e)}
     />,
-    <HowTo
+    <Donate
       key={2}
       isActive={activeSlide === 2}
       onFocus={(e) => setSlide(2, e)}
@@ -108,7 +107,7 @@ const Input = () => {
   return (
     <>
       <DonationProgress
-        value={totalDonated}
+        value={total}
         max={TARGET_ETH}
         min={ethers.parseEther("0")}
         status={<Countdown />}

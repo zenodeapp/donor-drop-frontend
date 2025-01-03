@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "../../../styles/how.module.scss";
+import styles from "../../../styles/donate.module.scss";
 import Image from "next/image";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import { FaCommentAlt, FaEthereum } from "react-icons/fa";
@@ -21,6 +21,8 @@ import DonationProgress from "../donations/DonationProgress";
 import { ethers } from "ethers";
 import { FaShield } from "react-icons/fa6";
 import DonationMessage from "../donations/DonationMessage";
+
+// TODO: this component is a mess and needs refactoring
 
 type IStepBubble = {
   bubble: React.ReactNode;
@@ -178,7 +180,7 @@ const StepBubble = ({
   );
 };
 
-const How = ({
+const Donate = ({
   isActive,
   onFocus,
 }: {
@@ -207,7 +209,6 @@ const How = ({
       }, 3000);
     }
 
-    // Cleanup function to clear the timeout if `currentStep` changes or component unmounts
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -610,4 +611,4 @@ const How = ({
   );
 };
 
-export default How;
+export default Donate;

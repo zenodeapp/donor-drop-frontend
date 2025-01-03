@@ -6,9 +6,6 @@ import buttonStyle from "../../styles/button.module.scss";
 import globalStyle from "../../styles/global.module.scss";
 import { getClassNameByStyle } from "../../helpers/layout";
 import { useLayout } from "../../context/LayoutProvider";
-import { useNotification } from "../../context/NotificationProvider";
-import { IoAccessibilitySharp } from "react-icons/io5";
-import { FaBullseye } from "react-icons/fa";
 
 const Navigation = ({
   tabs,
@@ -28,7 +25,6 @@ const Navigation = ({
   tabIndex?: number;
 }) => {
   const { activeSlide, setActiveSlide } = useLayout();
-  const { notify } = useNotification();
 
   return (
     <nav className={sliderStyle["slider-header-wrapper"]}>
@@ -60,16 +56,6 @@ const Navigation = ({
                 e.preventDefault();
                 if (!tab.disabled) {
                   setActiveSlide(i);
-                } else {
-                  // notify({
-                  //   type: "error",
-                  //   message: "The donor drop has already ended!",
-                  //   options: {
-                  //     id: "inaccessible",
-                  //     Icon: FaBullseye,
-                  //     duration: 5000,
-                  //   },
-                  // });
                 }
               }}
               style={{ opacity: tab.disabled ? 0.2 : undefined }}

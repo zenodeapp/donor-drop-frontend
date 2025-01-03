@@ -23,8 +23,7 @@ const Footer = () => {
         >
           NAMADA
         </a>
-        {" DONOR DROP"}
-        {/* </span> */} — design by{" "}
+        {" DONOR DROP"} — design by{" "}
         <a
           href='https://zenode.app'
           title='ZENODE'
@@ -33,8 +32,7 @@ const Footer = () => {
           tabIndex={isMobileView ? -1 : undefined}
         >
           ZENODE
-        </a>{" "}
-        {/* <span className={appStyle["footer-powered-by"]}> */}
+        </a>
       </div>
     </footer>
   );

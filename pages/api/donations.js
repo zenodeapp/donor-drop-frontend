@@ -1,8 +1,8 @@
-import { pool } from "../../lib/db";
-import dotenv from "dotenv";
-dotenv.config();
+// This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/recentdonation.js
+// Adapted and added additional checks to serve this frontend's needs.
 
-const defaultDate = new Date("2024-12-27T00:00:00.000Z");
+import { pool } from "../../lib/db";
+import { START_DATE } from "../../donations.config";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -12,15 +12,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Ensure the timestamp is valid or use the default if invalid
+    // Ensure the timestamp is valid or use the default START_DATE if invalid
     let afterTimestamp = req.query.timestamp
       ? new Date(Number(req.query.timestamp))
-      : defaultDate;
+      : START_DATE;
 
-    // If the timestamp is invalid, fallback to default date
+    // If the timestamp is invalid, fallback to START_DATE
     if (isNaN(afterTimestamp.getTime())) {
       console.warn("Invalid timestamp provided, using default date");
-      afterTimestamp = defaultDate;
+      afterTimestamp = START_DATE;
     }
 
     // Convert to ISO format string

@@ -52,21 +52,21 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return namAddress;
     },
-    setEthDonated: (ethDonated: EthDonated) => {
+    setUserTotal: (userTotal: EthDonated) => {
       dispatch({
-        type: DonationActions.SET_ETH_DONATED,
-        payload: ethDonated,
+        type: DonationActions.SET_USER_TOTAL,
+        payload: userTotal,
       });
 
-      return ethDonated;
+      return userTotal;
     },
-    setTotalDonated: (totalDonated?: bigint) => {
+    setTotal: (total?: bigint) => {
       dispatch({
-        type: DonationActions.SET_TOTAL_DONATED,
-        payload: totalDonated,
+        type: DonationActions.SET_TOTAL,
+        payload: total,
       });
 
-      return totalDonated;
+      return total;
     },
     setUserExists: (userExists: boolean) => {
       dispatch({
@@ -135,10 +135,10 @@ const DonationReducer = (state: IDonationState, action: IDonationActions) => {
       };
     case DonationActions.SET_NAM_ADDRESS:
       return { ...state, namAddress: action.payload };
-    case DonationActions.SET_ETH_DONATED:
-      return { ...state, ethDonated: action.payload };
-    case DonationActions.SET_TOTAL_DONATED:
-      return { ...state, totalDonated: action.payload };
+    case DonationActions.SET_USER_TOTAL:
+      return { ...state, userTotal: action.payload };
+    case DonationActions.SET_TOTAL:
+      return { ...state, total: action.payload };
     case DonationActions.SET_USER_EXISTS:
       return { ...state, userExists: action.payload };
     case DonationActions.SET_PHASE:
