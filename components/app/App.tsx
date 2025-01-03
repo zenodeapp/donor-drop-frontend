@@ -24,7 +24,6 @@ const Input = () => {
   const { totalDonated, phase } = useDonation();
   const { activeSlide, setActiveSlide } = useLayout();
 
-  // TODO: fix tabbing with this logic some day
   const setSlide = (index: number, e: React.FocusEvent<Element, Element>) => {
     if (activeSlide !== index) {
       setActiveSlide(index);
