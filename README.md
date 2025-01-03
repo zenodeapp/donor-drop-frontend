@@ -2,7 +2,7 @@
 
 Frontend implementation of the Donor Drop app.
 
-This has been written by ZENODE and is licensed under the ?-license (see [LICENSE](./LICENSE)).
+This has been written by ZENODE and is licensed under the APACHE 2.0-license (see [LICENSE](./LICENSE)).
 
 ## Installation
 
