@@ -10,7 +10,7 @@ import {
 } from "./DonationTypes";
 import DonationReducer, { DonationDispatch } from "./DonationReducer";
 import { useNotification } from "./NotificationProvider";
-import { IoIosClock, IoMdWarning } from "react-icons/io";
+import { IoIosClock, IoIosWarning, IoMdWarning } from "react-icons/io";
 import { IoCheckmark } from "react-icons/io5";
 import { shortenAddress } from "../helpers/web3";
 import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
@@ -522,6 +522,20 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       fetchStats();
     }
   }, [state.phase]);
+
+  React.useEffect(() => {
+    if (process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true")
+      notify({
+        type: "warning",
+        message: `This is a test environment - do not donate yet!`,
+        options: {
+          id: "test",
+          Icon: IoIosWarning,
+          duration: Infinity,
+          dismissable: false,
+        },
+      });
+  }, []);
 
   return (
     <DonationContext.Provider
