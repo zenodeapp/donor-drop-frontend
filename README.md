@@ -32,6 +32,7 @@ POSTGRES_DB='postgres'
 NEXT_PUBLIC_SITE_URL='site_where_this_gets_hosted' # this is for SEO (see pages/_document) and MetaMask deeplinking.
 NEXT_PUBLIC_DONOR_ADDRESS='ethereum_address'
 NEXT_PUBLIC_DONOR_ADDRESS_ENS='ethereum_address_ens'
+NEXT_PUBLIC_DONOR_NETWORK='Ethereum Mainnet'
 NEXT_PUBLIC_TARGET_ETH=27
 NEXT_PUBLIC_MIN_ETH_PER_ADDRESS=0.03
 NEXT_PUBLIC_MAX_ETH_PER_ADDRESS=0.3
