@@ -9,7 +9,7 @@ const DefaultMeta = {
   suffix: "Namada PGF Donor Drop",
   title: "",
   separator: " - ",
-  description: "Donor Drop. Built by ZENODE; powered by Namada.",
+  description: "Namada Donor Drop - design by ZENODE.",
 };
 
 const MyConfig = {

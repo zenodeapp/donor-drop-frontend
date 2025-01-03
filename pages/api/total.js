@@ -2,8 +2,8 @@ import { pool } from "../../lib/db";
 import dotenv from "dotenv";
 dotenv.config();
 
-const startDate = process.env.SCANNING_START_DATE;
-const endDate = process.env.SCANNING_END_DATE;
+const startDate = process.env.NEXT_PUBLIC_START_DATE;
+const endDate = process.env.NEXT_PUBLIC_END_DATE;
 
 export default async function handler(req, res) {
   if (req.method === "GET") {

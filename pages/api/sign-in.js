@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 
-const endDate = process.env.SCANNING_END_DATE;
+const endDate = process.env.NEXT_PUBLIC_END_DATE;
 
 /// This api endpoint finds the corresponding nam address for a given eth address
 export default async function handler(req, res) {
