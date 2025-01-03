@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../../../styles/donate.module.scss";
 import Image from "next/image";
 import { getClassNameByStyle } from "../../../helpers/layout";
-import { FaCommentAlt, FaEthereum } from "react-icons/fa";
+import { FaCommentAlt, FaEthereum, FaHashtag } from "react-icons/fa";
 import { formatUTCDate } from "../../../helpers/format";
 import {
   END_DATE,
@@ -21,6 +21,7 @@ import DonationProgress from "../donations/DonationProgress";
 import { ethers } from "ethers";
 import { FaShield } from "react-icons/fa6";
 import DonationMessage from "../donations/DonationMessage";
+import AsciiToHex from "../elements/AsciiToHex";
 
 // TODO: this component is a mess and needs refactoring
 
@@ -203,7 +204,7 @@ const Donate = ({
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 2000);
-    } else if (currentStep === 9 && sending === 3) {
+    } else if (currentStep === 10 && sending === 3) {
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 3000);
@@ -218,9 +219,9 @@ const Donate = ({
 
   useEffect(() => {
     if (sending === 1) {
-      setCurrentStep(9);
+      setCurrentStep(10);
     } else if (sending === 2) {
-      setCurrentStep(8);
+      setCurrentStep(9);
       setSending(0);
     }
   }, [sending]);
@@ -255,7 +256,7 @@ const Donate = ({
     },
     {
       bubble: (
-        <div style={{ fontSize: "0.9rem" }}>
+        <div style={{ fontSize: "0.9rem", padding: "15px 0" }}>
           <h4 style={{ textAlign: "center" }}>
             Beware: nobody from Namada will be handling donations!
           </h4>
@@ -439,6 +440,22 @@ const Donate = ({
       stepNumber: 2,
       bubble: (
         <>
+          Paste your TNAM address here to get its{" "}
+          <span style={{ color: "#5cefef" }}>Hex value</span> and copy it to
+          your clipboard.
+          <AsciiToHex />
+        </>
+      ),
+      imageContainer: <FaHashtag size='3rem' />,
+      subscript: (
+        <>This Hex value is essential for completing the donation process.</>
+      ),
+      nextTitle: "NEXT",
+    },
+    {
+      stepNumber: 3,
+      bubble: (
+        <>
           Open MetaMask, go to{" "}
           <span style={{ color: "#ab91e5" }}>Settings {">"} Advanced</span> and
           toggle <span style={{ color: "#ab91e5" }}>Show Hex Data</span> to
@@ -468,6 +485,7 @@ const Donate = ({
       ),
       nextTitle: "NEXT",
     },
+
     {
       stepNumber: "OPTIONAL STEP",
       bubble: (
@@ -503,7 +521,7 @@ const Donate = ({
       ),
     },
     {
-      stepNumber: 3,
+      stepNumber: 4,
       bubble: (
         <>
           Finally, transfer between <FaEthereum />
@@ -520,7 +538,7 @@ const Donate = ({
             </a>
           </span>{" "}
           on the {process.env.NEXT_PUBLIC_DONOR_NETWORK} and make sure to type
-          your TNAM address in the Hex data field.
+          the hex variant of your TNAM address in the Hex data field.
         </>
       ),
       image: {

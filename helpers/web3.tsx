@@ -36,4 +36,18 @@ const truncateEth = (value: bigint, decimals: number): string => {
   return `${integerPart}.${decimalPart}`;
 };
 
-export { shortenAddress, ethToString, ethToFloat, stringToEth, truncateEth };
+const convertToHex = (_ascii: string) => {
+  return `0x${_ascii
+    .split("")
+    .map((char) => char.charCodeAt(0).toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
+export {
+  shortenAddress,
+  ethToString,
+  ethToFloat,
+  stringToEth,
+  truncateEth,
+  convertToHex,
+};

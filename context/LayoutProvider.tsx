@@ -79,13 +79,7 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
   }, [state.preventOverscroll]);
 
   React.useEffect(() => {
-    toggleClass(
-      bodyStyle["ascended-state"],
-      state.activeSlide === 0 ||
-        state.activeSlide === 1 ||
-        state.activeSlide === 2 ||
-        state.activeSlide === 3
-    );
+    toggleClass(bodyStyle["ascended-state"], state.activeSlide === 1);
 
     return () => {
       toggleClass(bodyStyle["ascended-state"], false);

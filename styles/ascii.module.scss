@@ -1,0 +1,106 @@
+.asciiConverter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: white;
+}
+
+.asciiConverter label {
+  position: relative;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+  text-align: left;
+  margin: 10px 0;
+  position: relative;
+}
+
+.asciiConverter > div {
+  position: relative;
+}
+
+.asciiConverter label input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid white;
+  color: white;
+  font-size: 1rem;
+  padding: 5px 0;
+  outline: none;
+  transition: border-color 0.3s ease;
+  padding-right: 40px;
+}
+
+.asciiConverter label input:focus {
+  border-bottom: 2px solid cyan;
+}
+.asciiConverter label input#ascii:focus {
+  border-bottom: 2px solid #ffffa8;
+}
+
+.asciiConverter label input:focus + label,
+.asciiConverter label input:not(:placeholder-shown) + label {
+  transform: translateY(-20px);
+  font-size: 1rem;
+  color: cyan;
+}
+
+.asciiConverter .hexWrapper input {
+  flex-grow: 1;
+}
+
+.asciiConverter .hexWrapper button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-35%) scale(1);
+  padding: 5px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.asciiConverter .hexWrapper button:hover {
+  & svg {
+    color: rgb(200, 254, 254);
+  }
+  transform: translateY(-35%) scale(1.2);
+}
+
+.asciiConverter .hexWrapper button:active {
+  transform: translateY(-35%) scale(1.3);
+}
+
+#ascii {
+  width: 100%;
+}
+
+#hex {
+  padding-right: 40px;
+}
+
+.error {
+  font-size: 0.9rem;
+  color: rgb(255, 153, 153);
+}
+
+.invalidIcon {
+  color: #ff6d6d;
+}
+
+.validIcon {
+  color: rgb(49, 209, 49);
+}
+
+.statusIcon {
+  position: absolute;
+  margin: 5px;
+  padding: 5px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-35%);
+}

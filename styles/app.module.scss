@@ -87,6 +87,10 @@ body:global(.show-app):global(.expand) #page-content .content {
   // transform: translateY(-22%);
 }
 
-body:global(.ascended-state):global(.show-app) .content {
+body .content {
   transform: translateY(-100px);
+}
+
+body:global(.ascended-state):global(.show-app) .content {
+  transform: translateY(-150px);
 }
