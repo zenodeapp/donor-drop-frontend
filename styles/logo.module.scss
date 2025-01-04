@@ -6,8 +6,12 @@
   pointer-events: none;
   position: relative;
   margin-top: 150px;
-  margin-top: 129px;
+  margin-top: 90px;
   white-space: nowrap;
+
+  @media screen and (max-height: 700px) and (min-width: 769px) {
+    margin-top: 175px;
+  }
 
   & h1 {
     overflow: hidden;

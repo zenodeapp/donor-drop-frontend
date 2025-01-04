@@ -1,27 +1,54 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import sliderStyle from "../../../styles/slider.module.scss";
 import { useLayout } from "../../../context/LayoutProvider";
 
-const Slider = ({
-  slides,
-  relativeIndex,
-}: {
-  slides: Array<React.ReactNode>;
-  relativeIndex: number;
-}) => {
+const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
   const { activeSlide } = useLayout();
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [sliderHeight, setSliderHeight] = useState<number>(0);
+  const [isMobileView, setIsMobileView] = useState<boolean>(false);
+
+  // TODO: temporary fix
+  const setSlideHeight = () => {
+    if (sliderRef.current) {
+      // Update the slider height based on the active slide
+      const activeSlideElement = sliderRef.current.children[activeSlide];
+      if (activeSlideElement) {
+        setSliderHeight(activeSlideElement.clientHeight + 80);
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Set initial state based on window size
+    setSlideHeight();
+
+    // Add resize event listener
+    window.addEventListener("resize", setSlideHeight);
+
+    // Clean up event listener
+    return () => {
+      window.removeEventListener("resize", setSlideHeight);
+    };
+  }, [activeSlide]);
+
+  // useEffect(() => {
+  //   if (sliderRef.current) {
+  //     // Update the slider height based on the active slide
+  //     const activeSlideElement = sliderRef.current.children[activeSlide];
+  //     if (activeSlideElement) {
+  //       setSliderHeight(activeSlideElement.clientHeight + 80);
+  //     }
+  //   }
+  // }, [activeSlide]);
 
   return (
-    <div className={sliderStyle.slider}>
+    <div className={sliderStyle.slider} ref={sliderRef}>
       {slides.map((slide, i) => {
         return (
           <div
             key={i}
-            className={`${
-              relativeIndex === i
-                ? sliderStyle["slide-relative"]
-                : sliderStyle.slide
-            }`}
+            className={`${sliderStyle.slide}`}
             style={{
               transform: `translateX(${
                 (i + 1) * 100 - 100 * (activeSlide + 1)
@@ -32,6 +59,13 @@ const Slider = ({
           </div>
         );
       })}
+      <div
+        className={`${sliderStyle.ghostSlide} ${sliderStyle["slide-relative"]}`}
+        style={{
+          height: `${sliderHeight}px`,
+          visibility: `hidden`,
+        }}
+      ></div>
     </div>
   );
 };

@@ -19,7 +19,7 @@ const DonationMessage = ({
 }) => {
   const [message, setMessage] = useState("");
   const { sendMessage } = useDonation();
-  const { isConnected, setShowApp } = useTheme();
+  const { isConnected, smoothShowApp } = useTheme();
   const { notify } = useNotification();
 
   const handleSubmit = async () => {
@@ -59,7 +59,7 @@ const DonationMessage = ({
         setSending(2);
       }
     } else {
-      setShowApp(false);
+      smoothShowApp(false);
     }
   };
 

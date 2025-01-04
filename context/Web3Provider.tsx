@@ -320,7 +320,6 @@ const Web3Provider = ({
           options: { id: walletId, Icon: walletIcon, duration: 3000 },
         });
       } else {
-        disconnect("ethers");
         setConnected(walletId, true);
 
         notify({

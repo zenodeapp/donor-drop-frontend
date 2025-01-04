@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   position: absolute;
-  position: fixed;
+  // position: fixed;
   top: 20px;
   right: 20px;
   gap: 0.5rem;
@@ -42,20 +42,18 @@
   }
 }
 
-body:global(.sidebar-expanded) {
-  & .statusIndicator {
+html:global(.sidebar-expanded) {
+  & body .statusIndicator {
     transform: translateX(-400px);
-  }
 
-  @media screen and (max-width: 1005px) {
-    & .statusIndicator {
+    @media screen and (max-width: 1005px) {
       transform: translateX(0);
     }
   }
-}
 
-body:global(.sidebar-expanded):not(:global(.show-app)) {
-  & .statusIndicator {
-    transform: translateX(0);
+  & body:not(:global(.show-app)) {
+    & .statusIndicator {
+      transform: translateX(0);
+    }
   }
 }

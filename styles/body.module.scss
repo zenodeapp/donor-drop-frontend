@@ -4,12 +4,16 @@
 .is-connected,
 body.notification-visible,
 body.display-browser,
-body.sidebar-expanded,
 body.ascended-state {
   position: relative;
 }
-
-html.prevent-overscroll {
+html.sidebar-expanded {
+  position: relative;
+}
+html.sidebar-expanded.prevent-overscroll body {
+  overflow: hidden;
+}
+html.sidebar-expanded.prevent-overscroll {
   overscroll-behavior: contain;
 }
 body.prevent-overscroll {

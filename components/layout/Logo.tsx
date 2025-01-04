@@ -6,7 +6,7 @@ import logoStyle from "../../styles/logo.module.scss";
 import globalStyle from "../../styles/global.module.scss";
 
 const Logo = () => {
-  const { showApp, setShowApp, isMobileView } = useTheme();
+  const { showApp, smoothShowApp, isMobileView } = useTheme();
 
   return (
     <div className={logoStyle.logo}>
@@ -18,7 +18,7 @@ const Logo = () => {
         <span
           className={logoStyle["logo-icon"]}
           onClick={async () => {
-            setShowApp(!showApp);
+            smoothShowApp(!showApp);
           }}
         >
           <Image

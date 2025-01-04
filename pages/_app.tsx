@@ -40,6 +40,12 @@ export default function App({ Component, pageProps }: AppProps) {
                     #__next {
                       overflow: hidden;
                     }
+
+                    @media screen and (max-height: 700px) {
+                      #__next {
+                        overflow: auto;
+                      }
+                    }
                   `}</style>
                   <MyLayout>
                     <Component {...pageProps} />

@@ -1,5 +1,6 @@
 import React from "react";
 
+import appStyle from "../styles/app.module.scss";
 import bodyStyle from "../styles/body.module.scss";
 import { IThemeContext, IThemeProvider } from "./ThemeTypes";
 import ThemeReducer, { ThemeDispatch } from "./ThemeReducer";
@@ -52,6 +53,33 @@ const ThemeProvider = ({ children }: IThemeProvider) => {
     };
   }, [state.showApp]);
 
+  // TODO: this is likely a temporary fix to smooth things out when we're scrolled down.
+  const smoothShowApp = (showApp: boolean) => {
+    if (showApp) {
+      setShowApp(showApp);
+    } else {
+      const pageContentDiv = document.getElementById(appStyle["page-content"]);
+      if (pageContentDiv) {
+        if (pageContentDiv.scrollTop === 0) {
+          setShowApp(false);
+          return;
+        }
+
+        pageContentDiv.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+
+        const interval = setInterval(() => {
+          if (pageContentDiv.scrollTop <= 0) {
+            setShowApp(false);
+            clearInterval(interval);
+          }
+        }, 50);
+      }
+    }
+  };
+
   return (
     <ThemeContext.Provider
       value={{
@@ -66,6 +94,7 @@ const ThemeProvider = ({ children }: IThemeProvider) => {
         setSignedIn,
         setIsMobileView,
         setAppScreenLoaded,
+        smoothShowApp,
       }}
     >
       {children}

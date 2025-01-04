@@ -8,7 +8,7 @@ import walletStyle from "../../styles/wallet.module.scss";
 import { shortenAddress } from "../../helpers/web3";
 
 const WalletIcon = () => {
-  const { showApp, setShowApp, isMobileView } = useTheme();
+  const { showApp, smoothShowApp, isMobileView } = useTheme();
   const { web3Wallets, web3Connections, web3UI } = useWeb3();
 
   const connectedWallets = Object.keys(web3Connections.connections).filter(
@@ -31,9 +31,9 @@ const WalletIcon = () => {
       <button
         onClick={(e) => {
           if (!showApp && isConnected) {
-            setShowApp(true);
+            smoothShowApp(true);
           } else {
-            setShowApp(false);
+            smoothShowApp(false);
           }
         }}
         tabIndex={isConnected || !showApp || isMobileView ? -1 : undefined}
@@ -45,9 +45,9 @@ const WalletIcon = () => {
       <button
         onClick={(e) => {
           if (!showApp && isConnected) {
-            setShowApp(true);
+            smoothShowApp(true);
           } else {
-            setShowApp(false);
+            smoothShowApp(false);
           }
         }}
         tabIndex={!isConnected || !showApp || isMobileView ? -1 : undefined}

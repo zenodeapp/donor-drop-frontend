@@ -1,6 +1,7 @@
 import React from "react";
 import { IconType } from "react-icons";
 
+import appStyle from "../../styles/app.module.scss";
 import sliderStyle from "../../styles/slider.module.scss";
 import buttonStyle from "../../styles/button.module.scss";
 import globalStyle from "../../styles/global.module.scss";
@@ -24,7 +25,7 @@ const Navigation = ({
   setOtherSlidesLocked: React.Dispatch<React.SetStateAction<boolean>>;
   tabIndex?: number;
 }) => {
-  const { activeSlide, setActiveSlide } = useLayout();
+  const { activeSlide, smoothNavigate } = useLayout();
 
   return (
     <nav className={sliderStyle["slider-header-wrapper"]}>
@@ -54,8 +55,9 @@ const Navigation = ({
               }`}
               onClick={(e) => {
                 e.preventDefault();
+
                 if (!tab.disabled) {
-                  setActiveSlide(i);
+                  smoothNavigate(i);
                 }
               }}
               style={{ opacity: tab.disabled ? 0.2 : undefined }}

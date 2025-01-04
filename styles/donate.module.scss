@@ -215,8 +215,21 @@
   max-height: initial;
   overflow: auto;
 
-  @media screen and (max-height: 1080px) {
-    max-height: 220px;
+  &::-webkit-scrollbar-thumb {
+    background: #bfbfbf;
+    border-radius: 33px;
+  }
+  /* For Firefox */
+  @-moz-document url-prefix() {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #bfbfbf rgb(24, 20, 10); /* Thumb color and track color */
+  }
+
+  @media screen and (max-height: 1210px) {
+    // max-height: 400px;
+  }
+  @media screen and (max-height: 1210px) {
+    // max-height: 320px;
   }
 }
 

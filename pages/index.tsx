@@ -1,9 +1,7 @@
 import React from "react";
-
 import appStyle from "../styles/app.module.scss";
 import Logo from "../components/layout/Logo";
 import WalletIcon from "../components/web3/WalletIcon";
-import Footer from "../components/layout/Footer";
 import inputStyle from "../styles/input.module.scss";
 import Page from "../components/layout/Page";
 import Meta from "../components/layout/Meta";
@@ -23,7 +21,7 @@ const PageContent = () => {
   return (
     <div id={appStyle["page-content"]}>
       <WalletIcon />
-      <div className={appStyle["footer-gap"]}></div>
+      {/* <div className={appStyle["footer-gap"]}></div> */}
       <div className={appStyle["content"]}>
         <Logo />
         <div id={inputStyle["screens"]}>
@@ -31,8 +29,7 @@ const PageContent = () => {
           <AppScreen />
         </div>
       </div>
-      <div className={appStyle["footer-gap"]}></div>
-      <Footer />
+      {/* <div className={appStyle["footer-gap"]}></div> */}
     </div>
   );
 };

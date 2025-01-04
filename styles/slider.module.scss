@@ -109,8 +109,11 @@
   // border-top: 1px solid #192d37;
   margin-top: 11px;
   overflow: hidden;
-  min-height: 650px;
+  // min-height: 650px;
 
+  // @media screen and (max-width: 1005px) {
+  //   min-height: 450px;
+  // }
   .slide {
     width: 100%;
     position: absolute;
@@ -125,6 +128,16 @@
   .slide-relative {
     width: 100%;
     position: relative;
-    transition: transform 0.4s;
+    // transition: transform 0.4s;
+  }
+}
+
+.ghostSlide {
+  transition: transform 0.4s;
+  position: relative;
+  // min-height: 650px;
+
+  @media screen and (max-width: 1005px) {
+    // min-height: 600px;
   }
 }

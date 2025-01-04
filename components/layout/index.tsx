@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 import SidebarToggleButton from "./SidebarToggleButton";
 import LiveIndicator from "../app/elements/LiveIndicator";
 import SocialButtons from "../app/elements/SocialButtons";
+import Footer from "./Footer";
 
 const MyLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -26,6 +27,7 @@ const MyLayout = ({ children }: { children: React.ReactNode }) => {
       <SidebarToggleButton />
       <Sidebar />
       <Background />
+      <Footer />
     </>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import { ILayoutContext, ILayoutProvider } from "./LayoutTypes";
 
 import bodyStyle from "../styles/body.module.scss";
+import appStyle from "../styles/app.module.scss";
 import LayoutReducer, { LayoutDispatch } from "./LayoutReducer";
 import { getDisplayMode, isMobile, toggleClass } from "../helpers/layout";
 
@@ -90,11 +91,12 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     toggleClass(
       bodyStyle["sidebar-expanded"],
 
-      state.sidebarExpanded
+      state.sidebarExpanded,
+      "html"
     );
 
     return () => {
-      toggleClass(bodyStyle["sidebar-expanded"], false);
+      toggleClass(bodyStyle["sidebar-expanded"], false, "html");
     };
   }, [state.sidebarExpanded]);
 
@@ -115,6 +117,29 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     };
   }, []);
 
+  // TODO: this is likely a temporary fix to smooth things out when we're scrolled down.
+  const smoothNavigate = (to: number) => {
+    const pageContentDiv = document.getElementById(appStyle["page-content"]);
+    if (pageContentDiv) {
+      if (pageContentDiv.scrollTop === 0) {
+        setActiveSlide(to);
+        return;
+      }
+
+      pageContentDiv.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      const interval = setInterval(() => {
+        if (pageContentDiv.scrollTop <= 20) {
+          setActiveSlide(to);
+          clearInterval(interval);
+        }
+      }, 50);
+    }
+  };
+
   return (
     <LayoutContext.Provider
       value={{
@@ -129,6 +154,7 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
         setActiveSlide,
         setPreventOverscroll,
         setSidebarExpanded,
+        smoothNavigate,
       }}
     >
       {children}

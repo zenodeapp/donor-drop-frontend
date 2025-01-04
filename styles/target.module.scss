@@ -350,7 +350,7 @@
   // padding-left: 11px;
   flex-grow: 1;
   max-height: 500px;
-  overflow: overlay; /* Makes scrollbars overlay the content instead of pushing it */
+  // overflow: overlay; /* Makes scrollbars overlay the content instead of pushing it */
   // scrollbar-width: thin; /* Thin scrollbar */
   // scrollbar-color: #bfbfbf rgb(24, 20, 10); /* Thumb color and track color */
 
@@ -358,9 +358,9 @@
   & .table {
     padding-right: 11px;
   }
-  @media screen and (max-height: 1080px) {
-    max-height: 220px;
-  }
+  // @media screen and (max-height: 600px) {
+  //   max-height: 220px;
+  // }
 }
 .speechBubble {
   position: relative;

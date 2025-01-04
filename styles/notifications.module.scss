@@ -23,6 +23,7 @@
     //   rgb(11 210 252 / 19%)
     // );
     // box-shadow: 0px 2px 11px 1px rgb(25 19 101 / 55%);
+    pointer-events: all;
 
     & .notification-icon {
       background: transparent;
@@ -98,7 +99,9 @@
   text-align: center;
   max-width: 300px;
   top: 40px;
-  z-index: 1011;
+  z-index: 1000;
+  max-width: 470px;
+  pointer-events: none;
 
   @media screen and (max-width: 768px) {
     top: 20px;

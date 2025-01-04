@@ -120,7 +120,7 @@ const Input = () => {
         setOtherSlidesLocked={setOtherSlidesLocked}
         tabIndex={!showApp || isMobileView ? -1 : undefined}
       />
-      <Slider slides={slides} relativeIndex={3} />
+      <Slider slides={slides} />
     </>
   );
 };

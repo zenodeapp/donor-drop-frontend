@@ -39,6 +39,7 @@ type IStepBubble = {
   nextOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   backOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   ghost?: boolean;
+  maxHeight?: string;
 };
 
 const NavigationButtons = ({
@@ -114,6 +115,7 @@ const StepBubble = ({
   navEnabled = true,
   ghost,
   onFocus,
+  maxHeight,
 }: IStepBubble & {
   max: number;
   currentStep: number;
@@ -153,7 +155,10 @@ const StepBubble = ({
             </div>
           )}
         </div>
-        <div className={styles.rightContainer}>
+        <div
+          className={styles.rightContainer}
+          style={{ maxHeight: maxHeight || undefined }}
+        >
           {stepNumber && (
             <h3 className={styles.header}>
               {typeof stepNumber === "string"
@@ -189,7 +194,7 @@ const Donate = ({
   onFocus: React.FocusEventHandler;
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const { setActiveSlide } = useLayout();
+  const { smoothNavigate } = useLayout();
   const [ethInput, setEthInput] = useState(0.03);
   const [sending, setSending] = useState(0);
 
@@ -256,7 +261,12 @@ const Donate = ({
     },
     {
       bubble: (
-        <div style={{ fontSize: "0.9rem", padding: "15px 0" }}>
+        <div
+          style={{
+            fontSize: "0.9rem",
+            padding: "0px 0 15px 0",
+          }}
+        >
           <h4 style={{ textAlign: "center" }}>
             Beware: nobody from Namada will be handling donations!
           </h4>
@@ -294,6 +304,7 @@ const Donate = ({
         setCurrentStep(currentStep - 2);
       },
       relative: true,
+      maxHeight: "235px",
     },
     {
       bubble: (
@@ -565,7 +576,7 @@ const Donate = ({
           <span
             className={styles.account}
             onClick={() => {
-              setActiveSlide(3);
+              smoothNavigate(3);
             }}
           >
             Account page
@@ -576,7 +587,7 @@ const Donate = ({
       imageContainer: <GiPartyPopper color='#dbdbdb' size='3rem' />,
       nextOnClick: () => {
         // setCurrentStep(0);
-        setActiveSlide(3);
+        smoothNavigate(3);
       },
       nextTitle: "FINISH",
       subscript: (
@@ -623,6 +634,7 @@ const Donate = ({
             backOnClick={step.backOnClick}
             ghost={step.ghost}
             onFocus={onFocus}
+            maxHeight={step.maxHeight}
           />
         ))}
       </div>

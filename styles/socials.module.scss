@@ -46,7 +46,7 @@
 .statusIndicator {
   display: flex;
   position: absolute;
-  position: fixed;
+  // position: fixed;
   bottom: 15px;
   right: 15px;
   gap: 2px;
@@ -54,7 +54,7 @@
   z-index: 1005;
   align-items: flex-end;
   flex-direction: column;
-
+  overflow: hidden;
   @media screen and (max-width: 1320px) {
     bottom: initial;
     top: 43px;
@@ -88,6 +88,24 @@
     &:hover {
       transform: scale(1.1);
     }
+
+    &:nth-child(2) {
+      & .text {
+        transition-delay: 200ms;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1320px) {
+    & .text {
+      display: block;
+      overflow: hidden;
+      transition: transform 0.4s;
+    }
+
+    &.scrolled .text {
+      transform: translateX(150px);
+    }
   }
 
   &.not_live .statusCircle {
@@ -106,7 +124,7 @@
   }
 }
 
-body:global(.sidebar-expanded) {
+html:global(.sidebar-expanded) {
   & .statusIndicator {
     transform: translateX(-400px);
   }
@@ -118,7 +136,7 @@ body:global(.sidebar-expanded) {
   }
 }
 
-body:global(.sidebar-expanded):not(:global(.show-app)) {
+html:global(.sidebar-expanded) body:not(:global(.show-app)) {
   & .statusIndicator {
     transform: translateX(0);
   }

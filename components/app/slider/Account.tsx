@@ -32,7 +32,7 @@ const Account = ({
   onFocus: React.FocusEventHandler;
 }) => {
   const { web3Connections } = useWeb3();
-  const { isConnected, signedIn, setShowApp } = useTheme();
+  const { isConnected, signedIn, smoothShowApp } = useTheme();
   const { userExists, namAddress, userTotal, signIn } = useDonation();
   const [accountPhase, setAccountPhase] = React.useState<AccountPhases>(
     AccountPhases.STATUS_NOT_CONNECTED
@@ -64,7 +64,7 @@ const Account = ({
             accountPhase === AccountPhases.STATUS_NOT_CONNECTED ? " active" : ""
           }`
         )}
-        onClick={() => setShowApp(false)}
+        onClick={() => smoothShowApp(false)}
         onFocus={onFocus}
       >
         <IoWalletOutline size='2rem' />

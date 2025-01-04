@@ -12,6 +12,7 @@ export type IThemeContext = IThemeState & {
   setSignedIn: (signedIn: boolean) => boolean;
   setIsMobileView: (isMobileView: boolean) => boolean;
   setAppScreenLoaded: (appScreenLoaded: boolean) => boolean;
+  smoothShowApp: (showApp: boolean) => void;
 };
 
 export type IThemeProvider = {

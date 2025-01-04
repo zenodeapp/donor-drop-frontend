@@ -3,12 +3,12 @@ import { useTheme } from "../../context/ThemeProvider";
 import styles from "../../styles/wallet.module.scss";
 
 const OpenApp = ({}: {}) => {
-  const { setShowApp } = useTheme();
+  const { smoothShowApp } = useTheme();
   return (
     <button
       id={styles["return-to-app"]}
       onClick={() => {
-        setShowApp(true);
+        smoothShowApp(true);
       }}
     >
       return to app

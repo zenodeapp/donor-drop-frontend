@@ -44,6 +44,7 @@ export type ILayoutContext = ILayoutState & {
   setPreventOverscroll: (preventOverscroll: boolean) => boolean;
   setActiveSlide: (activeSlide: number) => number;
   setSidebarExpanded: (sidebarExpanded: boolean) => boolean;
+  smoothNavigate: (to: number) => void;
 };
 
 export type ILayoutProvider = {

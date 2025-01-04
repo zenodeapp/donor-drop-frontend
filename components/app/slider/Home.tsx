@@ -13,7 +13,7 @@ const Home = ({
   isActive: boolean;
   onFocus: React.FocusEventHandler;
 }) => {
-  const { setActiveSlide } = useLayout();
+  const { smoothNavigate } = useLayout();
   return (
     <>
       <div
@@ -57,7 +57,7 @@ const Home = ({
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  setActiveSlide(1);
+                  smoothNavigate(1);
                 }}
               >
                 Read about our target

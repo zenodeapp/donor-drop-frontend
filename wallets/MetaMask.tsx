@@ -77,16 +77,21 @@ const MetaMaskProvider: IWalletProvider = (_, dispatchers, data): IProvider => {
   const address = () => provider()?.selectedAddress || "";
 
   const signMessage = async (message: string) => {
-    const _address = address();
+    // Recommended in the Metamask docs
+    const _address = await connect();
 
-    const request = await provider()
-      ?.request({
-        method: "personal_sign",
-        params: [message, _address],
-      })
-      .catch((error: MetaMaskError) => getErrorId(error));
+    if (!_address?.error) {
+      const request = await provider()
+        ?.request({
+          method: "personal_sign",
+          params: [message, _address[0]],
+        })
+        .catch((error: MetaMaskError) => getErrorId(error));
 
-    return request;
+      return request;
+    } else {
+      return _address;
+    }
   };
 
   const handleConnect = (connectInfo: { chainId: string }) => {};

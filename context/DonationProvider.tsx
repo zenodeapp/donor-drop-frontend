@@ -24,7 +24,7 @@ const DonationContext = React.createContext<IDonationContext | undefined>(
 
 const DonationProvider = ({ children }: IDonationProvider) => {
   const { web3Connections, web3UI } = useWeb3();
-  const { setActiveSlide, activeSlide } = useLayout();
+  const { smoothNavigate, activeSlide } = useLayout();
   const [state, dispatch] = React.useReducer(DonationReducer, {
     donations: [],
     visibleDonations: {
@@ -189,7 +189,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       state.phase === DonationPhases.STATUS_FILLED ||
       state.phase === DonationPhases.STATUS_ENDED
     ) {
-      setActiveSlide(1);
+      smoothNavigate(1);
       notify({
         type: "warning",
         message: "The campaign ended!",
@@ -201,7 +201,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         },
       });
     } else if (state.phase === DonationPhases.STATUS_LIVE) {
-      // setActiveSlide(2);
+      // smoothNavigate(2);
       notify({
         type: "success",
         message: "The campaign is live!",
@@ -527,7 +527,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     if (process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true")
       notify({
         type: "warning",
-        message: `This is a test environment - do not donate yet!`,
+        message: `This is a test environment!`,
         options: {
           id: "test",
           Icon: IoIosWarning,

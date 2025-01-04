@@ -28,7 +28,7 @@ const Target = ({
   onFocus: React.FocusEventHandler<HTMLAnchorElement>;
 }) => {
   const { phase, total, donations, stats } = useDonation();
-  const { setActiveSlide } = useLayout();
+  const { smoothNavigate } = useLayout();
 
   const results = (
     <div className={styles.visualInfo}>
@@ -237,7 +237,7 @@ const Target = ({
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveSlide(2);
+                      smoothNavigate(2);
                     }}
                   >
                     Continue to donate
