@@ -496,7 +496,6 @@ const Donate = ({
       ),
       nextTitle: "NEXT",
     },
-
     {
       stepNumber: "OPTIONAL STEP",
       bubble: (

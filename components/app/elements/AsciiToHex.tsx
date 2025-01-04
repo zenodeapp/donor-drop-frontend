@@ -36,8 +36,9 @@ export default function AsciiToHex() {
   };
 
   const handleInputChange = (value: string) => {
-    setAscii(value);
-    const validAddress = validateNamadaAddress(value);
+    const lcValue = value.toLowerCase();
+    setAscii(lcValue);
+    const validAddress = validateNamadaAddress(lcValue);
     if (validAddress) {
       setHex(convertToHex(validAddress));
     } else {
