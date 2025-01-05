@@ -29,7 +29,7 @@ POSTGRES_HOST='localhost'
 POSTGRES_PORT=5434
 POSTGRES_DB='postgres'
 
-NEXT_PUBLIC_SITE_URL='site_where_this_gets_hosted' # this is for SEO (see pages/_document) and MetaMask deeplinking.
+NEXT_PUBLIC_SITE_URL='site_where_this_gets_hosted' # this is for SEO (see pages/_document) and MetaMask Deeplinking.
 NEXT_PUBLIC_DONOR_ADDRESS='ethereum_address'
 NEXT_PUBLIC_DONOR_ADDRESS_ENS='ethereum_address_ens'
 NEXT_PUBLIC_DONOR_NETWORK='Ethereum Mainnet'
@@ -39,7 +39,11 @@ NEXT_PUBLIC_MAX_ETH_PER_ADDRESS=0.3
 NEXT_PUBLIC_REWARD_NAM=1000000
 NEXT_PUBLIC_START_DATE="2025-01-01T15:00:00Z"
 NEXT_PUBLIC_END_DATE="2025-01-09T15:00:00Z"
-NEXT_PUBLIC_TEST_ENVIRONMENT=true # this will show a permanent notification on-screen that this deployment is a test
+
+# Setting this to true will let the site connect to Sepolia instead of Mainnet.
+# It will always overwrite whatever is said in NEXT_PUBLIC_DONOR_NETWORK with 'Sepolia Testnet' (to prevent people from donating to the real network).
+# Also shows a permanent notification on-screen that this deployment is a test. 
+NEXT_PUBLIC_TEST_ENVIRONMENT=true
 ```
 
 > Make sure that the POSTGRES_PORT matches the port in the backend's `./docker-compose.yml`
