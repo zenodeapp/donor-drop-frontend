@@ -4,6 +4,7 @@ import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import { shortenAddress, truncateEth } from "../../../helpers/web3";
 import TimeAgo from "../elements/TimeAgo";
 import {
+  EXPLORER_LINK,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
 } from "../../../donations.config";
@@ -15,7 +16,7 @@ const DonationListItem = ({ transaction }: { transaction: ITransaction }) => {
     <div key={transaction.hash} className={styles.transaction}>
       <div className={styles.transactionTop}>
         <a
-          href={`https://etherscan.io/advanced-filter?tadd=${process.env.NEXT_PUBLIC_DONOR_ADDRESS}&txntype=0&fadd=${transaction.address}&qt=1`}
+          href={`${EXPLORER_LINK}/advanced-filter?tadd=${process.env.NEXT_PUBLIC_DONOR_ADDRESS}&txntype=0&fadd=${transaction.address}&qt=1`}
           target='_blank'
           rel='noopener noreferrer'
           className={styles.shortenedAddress}
@@ -51,7 +52,7 @@ const DonationListItem = ({ transaction }: { transaction: ITransaction }) => {
               fontSize: "0.8rem",
             }}
             className={styles.hash}
-            href={`https://etherscan.io/tx/${transaction.hash}`}
+            href={`${EXPLORER_LINK}/tx/${transaction.hash}`}
             target='_blank'
             rel='noreferrer'
           >

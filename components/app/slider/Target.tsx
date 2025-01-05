@@ -8,6 +8,7 @@ import { DonationPhases } from "../../../context/DonationTypes";
 import {
   DONOR_NETWORK,
   END_DATE,
+  EXPLORER_LINK,
   REWARD_NAM,
   START_DATE,
   TARGET_ETH,
@@ -99,7 +100,7 @@ const Target = ({
                 end results for our donor drop to{" "}
                 <a
                   className={styles.coinCenterLink}
-                  href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
@@ -131,7 +132,7 @@ const Target = ({
                 results for our donor drop to{" "}
                 <a
                   className={styles.coinCenterLink}
-                  href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
@@ -196,7 +197,7 @@ const Target = ({
                     <span style={{ background: "#262626", color: "white" }}>
                       <a
                         className={styles.coinCenterLink}
-                        href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                        href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
                         target='_blank'
                         rel='noreferrer'
                         onFocus={onFocus}
@@ -208,7 +209,7 @@ const Target = ({
                     <span style={{ background: "#262626", color: "white" }}>
                       <a
                         className={styles.coinCenterLink}
-                        href={`https://etherscan.io/name-lookup-search?id=${process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}`}
+                        href={`${EXPLORER_LINK}/name-lookup-search?id=${process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}`}
                         target='_blank'
                         rel='noreferrer'
                         onFocus={onFocus}

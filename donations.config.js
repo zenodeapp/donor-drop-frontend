@@ -24,6 +24,11 @@ const DONOR_NETWORK =
     ? Networks["sepolia"].name
     : process.env.NEXT_PUBLIC_DONOR_NETWORK;
 
+const EXPLORER_LINK =
+  process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+    ? "https://sepolia.etherscan.io"
+    : "https://etherscan.io";
+
 export {
   TARGET_ETH,
   MAX_ETH_PER_ADDRESS,
@@ -32,4 +37,5 @@ export {
   END_DATE,
   REWARD_NAM,
   DONOR_NETWORK,
+  EXPLORER_LINK,
 };
