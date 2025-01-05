@@ -22,6 +22,7 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     menu,
     activeSlide: 0,
     sidebarExpanded: false,
+    sliderHeight: 0,
   });
 
   const {
@@ -30,6 +31,7 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     setPreventOverscroll,
     setActiveSlide,
     setSidebarExpanded,
+    setSliderHeight,
   } = LayoutDispatch(dispatch);
 
   React.useEffect(() => {
@@ -151,10 +153,12 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
         menu: state.menu,
         activeSlide: state.activeSlide,
         sidebarExpanded: state.sidebarExpanded,
+        sliderHeight: state.sliderHeight,
         setActiveSlide,
         setPreventOverscroll,
         setSidebarExpanded,
         smoothNavigate,
+        setSliderHeight,
       }}
     >
       {children}

@@ -43,6 +43,14 @@ const LayoutDispatch = (dispatch: React.Dispatch<ILayoutActions>) => {
 
       return sidebarExpanded;
     },
+    setSliderHeight: (sliderHeight: number) => {
+      dispatch({
+        type: LayoutActions.SET_SLIDER_HEIGHT,
+        payload: sliderHeight,
+      });
+
+      return sliderHeight;
+    },
   };
 };
 
@@ -61,6 +69,8 @@ const LayoutReducer = (
       return { ...state, activeSlide: action.payload };
     case LayoutActions.SET_SIDEBAR_EXPANDED:
       return { ...state, sidebarExpanded: action.payload };
+    case LayoutActions.SET_SLIDER_HEIGHT:
+      return { ...state, sliderHeight: action.payload };
     default:
       return state;
   }

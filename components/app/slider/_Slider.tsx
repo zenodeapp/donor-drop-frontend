@@ -3,10 +3,8 @@ import sliderStyle from "../../../styles/slider.module.scss";
 import { useLayout } from "../../../context/LayoutProvider";
 
 const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
-  const { activeSlide } = useLayout();
+  const { activeSlide, sliderHeight, setSliderHeight } = useLayout();
   const sliderRef = useRef<HTMLDivElement>(null);
-  const [sliderHeight, setSliderHeight] = useState<number>(0);
-  const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   // TODO: temporary fix
   const setSlideHeight = () => {
@@ -32,16 +30,6 @@ const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
     };
     // eslint-disable-next-line
   }, [activeSlide]);
-
-  // useEffect(() => {
-  //   if (sliderRef.current) {
-  //     // Update the slider height based on the active slide
-  //     const activeSlideElement = sliderRef.current.children[activeSlide];
-  //     if (activeSlideElement) {
-  //       setSliderHeight(activeSlideElement.clientHeight + 80);
-  //     }
-  //   }
-  // }, [activeSlide]);
 
   return (
     <div className={sliderStyle.slider} ref={sliderRef}>

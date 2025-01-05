@@ -38,6 +38,7 @@ export type ILayoutState = {
   menu?: IMenuRecord;
   activeSlide: number;
   sidebarExpanded: boolean;
+  sliderHeight: number;
 };
 
 export type ILayoutContext = ILayoutState & {
@@ -45,6 +46,7 @@ export type ILayoutContext = ILayoutState & {
   setActiveSlide: (activeSlide: number) => number;
   setSidebarExpanded: (sidebarExpanded: boolean) => boolean;
   smoothNavigate: (to: number) => void;
+  setSliderHeight: (sliderHeight: number) => number;
 };
 
 export type ILayoutProvider = {
@@ -63,6 +65,7 @@ export enum LayoutActions {
   SET_PREVENT_OVERSCROLL = "SET_PREVENT_OVERSCROLL",
   SET_ACTIVE_SLIDE = "SET_ACTIVE_SLIDE",
   SET_SIDEBAR_EXPANDED = "SET_SIDEBAR_EXPANDED",
+  SET_SLIDER_HEIGHT = "SET_SLIDER_HEIGHT",
 }
 
 export type ILayoutActions =
@@ -85,6 +88,10 @@ export type ILayoutActions =
   | {
       type: LayoutActions.SET_SIDEBAR_EXPANDED;
       payload: boolean;
+    }
+  | {
+      type: LayoutActions.SET_SLIDER_HEIGHT;
+      payload: number;
     };
 
 export type IPageItem = {

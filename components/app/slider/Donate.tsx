@@ -304,7 +304,6 @@ const Donate = ({
       backOnClick: () => {
         setCurrentStep(currentStep - 2);
       },
-      relative: true,
       maxHeight: "235px",
     },
     {
@@ -462,6 +461,7 @@ const Donate = ({
       subscript: (
         <>This Hex value is essential for completing the donation process.</>
       ),
+      relative: true,
       nextTitle: "NEXT",
     },
     {
