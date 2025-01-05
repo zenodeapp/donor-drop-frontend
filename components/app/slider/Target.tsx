@@ -6,6 +6,7 @@ import { GiRadarSweep } from "react-icons/gi";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import {
+  DONOR_NETWORK,
   END_DATE,
   REWARD_NAM,
   START_DATE,
@@ -217,7 +218,7 @@ const Target = ({
                     </span>{" "}
                     on{" "}
                     <span style={{ background: "#262626", color: "white" }}>
-                      {process.env.NEXT_PUBLIC_DONOR_NETWORK}
+                      {DONOR_NETWORK}
                     </span>
                     .
                   </li>

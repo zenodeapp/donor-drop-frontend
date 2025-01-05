@@ -25,7 +25,14 @@ export default function App({ Component, pageProps }: AppProps) {
       <LayoutProvider config={MyConfig}>
         <NotificationProvider options={{ limit: 5 }}>
           <ThemeProvider>
-            <Web3Provider wallets={["metamask"]} networks={["ethereum"]}>
+            <Web3Provider
+              wallets={["metamask"]}
+              networks={
+                process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+                  ? ["sepolia"]
+                  : ["ethereum"]
+              }
+            >
               <DonationProvider>
                 <>
                   <style jsx global>{`

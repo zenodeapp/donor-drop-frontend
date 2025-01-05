@@ -30,6 +30,7 @@ const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
     return () => {
       window.removeEventListener("resize", setSlideHeight);
     };
+    // eslint-disable-next-line
   }, [activeSlide]);
 
   // useEffect(() => {

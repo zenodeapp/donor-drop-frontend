@@ -27,7 +27,9 @@ const Web3Provider = ({
 }: IWeb3Provider) => {
   const [state, dispatch] = React.useReducer(Web3Reducer, {
     selectedWallet: "metamask",
-    selectedNetwork: "ethereum",
+    selectedNetwork: process.env.NEXT_PUBLIC_TEST_ENVIRONMENT
+      ? "sepolia"
+      : "ethereum",
     wallets,
     networks,
     providers: {},

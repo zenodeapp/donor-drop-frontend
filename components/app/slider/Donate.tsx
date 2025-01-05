@@ -5,6 +5,7 @@ import { getClassNameByStyle } from "../../../helpers/layout";
 import { FaCommentAlt, FaEthereum, FaHashtag } from "react-icons/fa";
 import { formatUTCDate } from "../../../helpers/format";
 import {
+  DONOR_NETWORK,
   END_DATE,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
@@ -549,7 +550,7 @@ const Donate = ({
           </span>{" "}
           on the{" "}
           <span style={{ background: "#262626", color: "white" }}>
-            {process.env.NEXT_PUBLIC_DONOR_NETWORK}
+            {DONOR_NETWORK}
           </span>{" "}
           and make sure to type the hex variant of your TNAM address in the Hex
           data field.

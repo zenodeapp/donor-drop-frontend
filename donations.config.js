@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { Networks } from "./wallets/web3.config";
 
 const TARGET_ETH = ethers.parseEther(
   process.env.NEXT_PUBLIC_TARGET_ETH || "27"
@@ -18,6 +19,11 @@ const END_DATE = new Date(
   process.env.NEXT_PUBLIC_END_DATE || "2024-01-04T15:00:00Z"
 );
 
+const DONOR_NETWORK =
+  process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+    ? Networks["sepolia"].name
+    : process.env.NEXT_PUBLIC_DONOR_NETWORK;
+
 export {
   TARGET_ETH,
   MAX_ETH_PER_ADDRESS,
@@ -25,4 +31,5 @@ export {
   START_DATE,
   END_DATE,
   REWARD_NAM,
+  DONOR_NETWORK,
 };
