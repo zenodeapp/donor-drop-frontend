@@ -1,5 +1,9 @@
+import { ITransaction } from "../context/DonationTypes";
+import { DONATIONS_CACHE_VERSION } from "../donations.config";
+
 const COOKIE_CONNECTED_NAME = "zen.isConnected";
 const COOKIE_NETWORK_NAME = "zen.network";
+const COOKIE_DONATIONS_NAME = `zen.donations`;
 
 const getConnectedCookie = (walletId: string): boolean =>
   localStorage.getItem(`${COOKIE_CONNECTED_NAME}.${walletId}`) === "true";
@@ -19,6 +23,54 @@ const setNetworkCookie = (walletId: string, networkId: string) =>
     networkId.toString()
   );
 
+const getDonationsCookie = (): Array<ITransaction> => {
+  const item = localStorage.getItem(
+    `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`
+  );
+
+  if (item !== null) {
+    try {
+      const donations = JSON.parse(item, (key, value) =>
+        key === "amount" && typeof value === "string"
+          ? BigInt(value)
+          : key === "timestamp" && typeof value === "string"
+          ? new Date(value)
+          : value
+      );
+      return donations;
+    } catch {
+      console.error("Failed to parse donations cookie.");
+    }
+  }
+
+  return [];
+};
+
+const setDonationsCookie = (donations: Array<ITransaction>) => {
+  const serializedDonations = JSON.stringify(donations, (key, value) =>
+    key === "amount" ? value.toString() : value
+  );
+  localStorage.setItem(
+    `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`,
+    serializedDonations
+  );
+};
+
+const purgeDonationCookies = () => {
+  const excludeKey = `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`;
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (
+      key !== null &&
+      key.startsWith(COOKIE_DONATIONS_NAME) &&
+      key !== excludeKey
+    ) {
+      localStorage.removeItem(key);
+    }
+  }
+};
+
 export {
   COOKIE_CONNECTED_NAME,
   COOKIE_NETWORK_NAME,
@@ -26,4 +78,7 @@ export {
   setConnectedCookie,
   getNetworkCookie,
   setNetworkCookie,
+  getDonationsCookie,
+  setDonationsCookie,
+  purgeDonationCookies,
 };

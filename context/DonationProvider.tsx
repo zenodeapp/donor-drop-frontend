@@ -17,6 +17,7 @@ import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { GiStopSign } from "react-icons/gi";
+import { getDonationsCookie, purgeDonationCookies } from "../helpers/cookies";
 
 const DonationContext = React.createContext<IDonationContext | undefined>(
   undefined
@@ -46,10 +47,17 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     stats: { donationCount: 0, participantCount: 0 },
   });
 
-  const GET_USER_TOTAL_INTERVAL = 10000;
-  const GET_TOTAL_INTERVAL = 10000;
-  const GET_DONATIONS_INTERVAL = 5000;
-  const GET_DONATIONS_MAX_INTERVAL = 10000;
+  const GET_USER_TOTAL_INTERVAL = parseInt(
+    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+  );
+  const GET_TOTAL_INTERVAL = parseInt(
+    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+  );
+  const GET_DONATIONS_INTERVAL = parseInt(
+    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+  );
+  const GET_DONATIONS_MAX_INTERVAL =
+    parseInt(process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000") * 2;
 
   const {
     setDonations,
@@ -72,7 +80,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   const requestSignature = async () => {
     try {
-      const timestamp = new Date().getTime();
+      const timestamp = new Date().toISOString();
       const message = `Sign this message to verify your address: ${timestamp}`;
       const signature = await web3Connections.signMessage(message);
 
@@ -284,12 +292,23 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     timestamp: Date,
     transactions: Array<ITransaction>
   ) => {
-    return transactions.filter(
-      (tx) => tx.timestamp.getTime() > timestamp.getTime()
-    );
+    return transactions.filter((tx) => tx.timestamp > timestamp);
   };
 
   const isFetching = React.useRef(false); // Prevent duplicate calls
+
+  const getCachedDonations = () => {
+    purgeDonationCookies();
+    const cachedDonations = getDonationsCookie();
+    const cacheFound = cachedDonations.length > 0;
+
+    if (cacheFound) {
+      setDonations(cachedDonations);
+      setTopDonations(cachedDonations);
+      console.log("Loaded donations from cache.");
+    }
+    return cacheFound;
+  };
 
   const getDonations = async (): Promise<{
     all: Array<ITransaction>;
@@ -313,7 +332,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
           const response = await fetch(
             `/api/donations${
-              timestamp ? `?timestamp=${timestamp.getTime().toString()}` : ""
+              timestamp ? `?timestamp=${timestamp.toISOString()}` : ""
             }`
           );
 
@@ -422,15 +441,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       }
     };
 
-    if (
-      isConnected &&
-      addr &&
-      activeSlide === 3 &&
-      !(
-        state.phase === DonationPhases.STATUS_ENDED ||
-        state.phase === DonationPhases.STATUS_FILLED
-      )
-    ) {
+    if (isConnected && addr && activeSlide === 3) {
       fetchUserTotal();
 
       const intervalId = setInterval(fetchUserTotal, GET_USER_TOTAL_INTERVAL);
@@ -444,7 +455,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     ].address,
     isConnected,
     activeSlide,
-    state.phase,
   ]);
 
   const getTotal = async (): Promise<number | undefined> => {
@@ -471,18 +481,18 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   React.useEffect(() => {
     // Set the interval only when necessary
-    if (
-      !(
-        state.phase === DonationPhases.STATUS_ENDED ||
-        state.phase === DonationPhases.STATUS_FILLED
-      )
-    ) {
-      const intervalId = setInterval(fetchTotal, GET_TOTAL_INTERVAL);
+    // if (
+    //   !(
+    //     state.phase === DonationPhases.STATUS_ENDED ||
+    //     state.phase === DonationPhases.STATUS_FILLED
+    //   )
+    // ) {
+    const intervalId = setInterval(fetchTotal, GET_TOTAL_INTERVAL);
 
-      // Cleanup the interval when the phase changes or the component unmounts
-      return () => clearInterval(intervalId);
-    }
-  }, [state.phase]);
+    // Cleanup the interval when the phase changes or the component unmounts
+    return () => clearInterval(intervalId);
+    // }
+  }, []);
 
   React.useEffect(() => {
     fetchTotal();
@@ -516,12 +526,13 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     };
 
     if (
-      state.phase === DonationPhases.STATUS_ENDED ||
-      state.phase === DonationPhases.STATUS_FILLED
+      (state.phase === DonationPhases.STATUS_ENDED ||
+        state.phase === DonationPhases.STATUS_FILLED) &&
+      activeSlide === 1
     ) {
       fetchStats();
     }
-  }, [state.phase]);
+  }, [state.phase, activeSlide]);
 
   React.useEffect(() => {
     if (process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true")
@@ -568,6 +579,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         sendMessage,
         setMyDonationCount,
         setStats,
+        getCachedDonations,
       }}
     >
       {children}

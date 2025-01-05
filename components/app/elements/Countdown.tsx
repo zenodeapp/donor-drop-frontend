@@ -14,17 +14,17 @@ const Countdown = () => {
   // This countdown makes sure to check every second in what phase we are
   React.useEffect(() => {
     const fixPhase = () => {
-      const now = Date.now();
-      if (now < START_DATE.getTime()) {
+      const now = new Date();
+      if (now < START_DATE) {
         setPhase(DonationPhases.STATUS_NOT_LIVE);
-        setTimeRemaining(START_DATE.getTime() - now);
+        setTimeRemaining(START_DATE.getTime() - now.getTime());
       } else if (total && total >= TARGET_ETH) {
         setPhase(DonationPhases.STATUS_FILLED);
         clearInterval(timer);
-      } else if (now < END_DATE.getTime() && total !== undefined) {
+      } else if (now < END_DATE && total !== undefined) {
         setPhase(DonationPhases.STATUS_LIVE);
-        setTimeRemaining(END_DATE.getTime() - now);
-      } else if (now >= END_DATE.getTime()) {
+        setTimeRemaining(END_DATE.getTime() - now.getTime());
+      } else if (now >= END_DATE) {
         setPhase(DonationPhases.STATUS_ENDED);
         clearInterval(timer);
       } else {

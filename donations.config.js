@@ -1,6 +1,10 @@
 import { ethers } from "ethers";
 import { Networks } from "./wallets/web3.config";
 
+// We cache the recent donations in localStorage, if for whatever reason this needs to hard reset change this version.
+// (Example: if you reset the database and frontends should disregard caches that do not match this version).
+const DONATIONS_CACHE_VERSION = "1.0";
+
 const TARGET_ETH = ethers.parseEther(
   process.env.NEXT_PUBLIC_TARGET_ETH || "27"
 );
@@ -30,6 +34,7 @@ const EXPLORER_LINK =
     : "https://etherscan.io";
 
 export {
+  DONATIONS_CACHE_VERSION,
   TARGET_ETH,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,

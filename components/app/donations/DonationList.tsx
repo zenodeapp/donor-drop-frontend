@@ -35,7 +35,7 @@ const DonationList = () => {
   const [_fetch, _setFetch] = React.useState(true);
   const { web3Connections } = useWeb3();
   const { isConnected } = useTheme();
-  const { donations, isFetching } = useDonation();
+  const { donations, isFetching, getCachedDonations } = useDonation();
   const ethAddress = web3Connections.connections["metamask"].address;
 
   React.useEffect(() => {
@@ -53,7 +53,12 @@ const DonationList = () => {
 
     const scheduleFetch = () => {
       if (init) {
-        fetchTransactions();
+        const cacheFound = getCachedDonations();
+        if (cacheFound) {
+          setInit(false);
+        } else {
+          fetchTransactions();
+        }
       } else {
         const _timeoutId = setTimeout(fetchTransactions, 5000);
         setTimeoutId(_timeoutId);

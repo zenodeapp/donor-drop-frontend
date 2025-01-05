@@ -9,6 +9,7 @@ import {
   ITransaction,
   IVisibleDonations,
 } from "./DonationTypes";
+import { setDonationsCookie } from "../helpers/cookies";
 
 const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
   return {
@@ -114,6 +115,8 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 const DonationReducer = (state: IDonationState, action: IDonationActions) => {
   switch (action.type) {
     case DonationActions.SET_DONATIONS:
+      setDonationsCookie(action.payload);
+
       return {
         ...state,
         donations: action.payload,

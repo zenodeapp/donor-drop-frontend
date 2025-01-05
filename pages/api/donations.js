@@ -12,19 +12,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Ensure the timestamp is valid or use the default START_DATE if invalid
-    let afterTimestamp = req.query.timestamp
-      ? new Date(Number(req.query.timestamp))
-      : START_DATE;
-
-    // If the timestamp is invalid, fallback to START_DATE
-    if (isNaN(afterTimestamp.getTime())) {
-      console.warn("Invalid timestamp provided, using default date");
-      afterTimestamp = START_DATE;
-    }
-
-    // Convert to ISO format string
-    const formattedTimestamp = afterTimestamp.toISOString();
+    let timestamp = req.query.timestamp || START_DATE.toISOString();
 
     const query = `
       SELECT 
@@ -40,7 +28,7 @@ export default async function handler(req, res) {
       ORDER BY timestamp DESC
     `;
 
-    const result = await pool.query(query, [formattedTimestamp]);
+    const result = await pool.query(query, [new Date(timestamp)]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ donations: [] });

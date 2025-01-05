@@ -77,6 +77,7 @@ export type IDonationContext = IDonationState & {
     retries: number,
     delay: number
   ) => Promise<{ all: Array<ITransaction>; new: Array<ITransaction> }>;
+  getCachedDonations: () => boolean;
   transactionsFrom: (
     timestamp: Date,
     transactions: Array<ITransaction>
