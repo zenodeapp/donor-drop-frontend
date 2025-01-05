@@ -304,7 +304,7 @@ const Donate = ({
       backOnClick: () => {
         setCurrentStep(currentStep - 2);
       },
-      maxHeight: "235px",
+      maxHeight: "216px",
     },
     {
       bubble: (
