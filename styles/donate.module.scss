@@ -214,6 +214,7 @@
   flex-grow: 1;
   max-height: initial;
   overflow: auto;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar-thumb {
     background: #bfbfbf;
