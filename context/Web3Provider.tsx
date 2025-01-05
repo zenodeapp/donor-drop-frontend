@@ -27,9 +27,10 @@ const Web3Provider = ({
 }: IWeb3Provider) => {
   const [state, dispatch] = React.useReducer(Web3Reducer, {
     selectedWallet: "metamask",
-    selectedNetwork: process.env.NEXT_PUBLIC_TEST_ENVIRONMENT
-      ? "sepolia"
-      : "ethereum",
+    selectedNetwork:
+      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+        ? "sepolia"
+        : "ethereum",
     wallets,
     networks,
     providers: {},
@@ -539,6 +540,14 @@ const Web3Provider = ({
 
     if (!isEqual) setConnectedWallets(_wallets);
   }, [state.connections]);
+
+  React.useEffect(() => {
+    setSelectedNetwork(
+      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+        ? "sepolia"
+        : "ethereum"
+    );
+  }, []);
 
   return (
     <Web3Context.Provider
