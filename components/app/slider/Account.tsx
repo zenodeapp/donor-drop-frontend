@@ -88,7 +88,7 @@ const Account = ({
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
                 {truncateEth(userTotal.total, 2)} ETH{" "}
-                {userTotal.eligible !== 0n ? "💛" : "😌"}
+                {userTotal.total !== 0n ? "💛" : "😌"}
               </span>{" "}
               —
             </span>
@@ -97,7 +97,8 @@ const Account = ({
                 <>
                   — eligible{" "}
                   <span style={{ color: "#e2ebff" }}>
-                    {ethToFloat(userTotal.eligible)} ETH
+                    {ethToFloat(userTotal.eligible)} ETH{" "}
+                    {userTotal.eligible === 0n ? "😥" : ""}
                   </span>{" "}
                   —
                 </>
@@ -156,7 +157,7 @@ const Account = ({
               —{" "}
               {userTotal.eligible < MIN_ETH_PER_ADDRESS
                 ? "not eligible for any rewards "
-                : `will receive min. `}
+                : `will receive `}
               <span style={{ color: "#e2ebff" }}>
                 {userTotal.eligible >= MIN_ETH_PER_ADDRESS
                   ? `${(

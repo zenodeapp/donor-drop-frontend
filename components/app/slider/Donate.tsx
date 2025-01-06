@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react";
 import styles from "../../../styles/donate.module.scss";
 import Image from "next/image";
 import { getClassNameByStyle } from "../../../helpers/layout";
-import { FaCommentAlt, FaEthereum, FaHashtag } from "react-icons/fa";
+import {
+  FaClipboard,
+  FaCommentAlt,
+  FaCopy,
+  FaEthereum,
+  FaExclamation,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 import { formatUTCDate } from "../../../helpers/format";
 import {
   DONOR_NETWORK,
   END_DATE,
+  EXPLORER_LINK,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
@@ -23,6 +31,8 @@ import { ethers } from "ethers";
 import { FaShield } from "react-icons/fa6";
 import DonationMessage from "../donations/DonationMessage";
 import AsciiToHex from "../elements/AsciiToHex";
+import { copyToClipboard } from "../../../helpers/interaction";
+import { useNotification } from "../../../context/NotificationProvider";
 
 // TODO: this component is a mess and needs refactoring
 
@@ -198,6 +208,7 @@ const Donate = ({
   const { smoothNavigate } = useLayout();
   const [ethInput, setEthInput] = useState(0.03);
   const [sending, setSending] = useState(0);
+  const { notify } = useNotification();
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
@@ -210,7 +221,7 @@ const Donate = ({
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 2000);
-    } else if (currentStep === 10 && sending === 3) {
+    } else if (currentStep === 7 && sending === 3) {
       timeoutId = setTimeout(() => {
         setCurrentStep(currentStep + 1);
       }, 3000);
@@ -225,9 +236,9 @@ const Donate = ({
 
   useEffect(() => {
     if (sending === 1) {
-      setCurrentStep(10);
+      setCurrentStep(7);
     } else if (sending === 2) {
-      setCurrentStep(9);
+      setCurrentStep(6);
       setSending(0);
     }
   }, [sending]);
@@ -323,7 +334,7 @@ const Donate = ({
               </span>{" "}
             </li>
           </ul>
-          Participants in the Donation Drop will be recognized on a{" "}
+          Participants in the Donor Drop will be recognized on a{" "}
           <span style={{ color: "rgb(128 255 209)" }}>
             First Come First Serve basis
           </span>
@@ -352,7 +363,7 @@ const Donate = ({
             maximum of <FaEthereum /> 0.30 ETH
           </span>
           .
-          <div style={{ width: "90%", margin: "0 auto" }}>
+          <div style={{ width: "87%", margin: "0 auto" }}>
             <DonationProgress
               value={ethers.parseEther(ethInput.toString())}
               min={MIN_ETH_PER_ADDRESS}
@@ -419,90 +430,10 @@ const Donate = ({
       ),
     },
     {
-      stepNumber: 1,
+      stepNumber: "BUT FIRST...",
       bubble: (
         <>
-          Have your <span style={{ color: "#ffffa8" }}>TNAM address</span> ready
-          for the donation.
-        </>
-      ),
-      subscript: (
-        <>
-          If you don&#39;t own a TNAM address,{" "}
-          <a
-            href='https://namada.net/keychain'
-            target='_blank'
-            rel='noreferrer'
-            className={styles.extension}
-            onFocus={onFocus}
-          >
-            download the extension
-          </a>{" "}
-          and create a new wallet.
-        </>
-      ),
-      image: { src: "/icon_x192.png", alt: "Namada", width: 96, height: 96 },
-      nextTitle: "NEXT",
-      backOnClick: () => {
-        setCurrentStep(currentStep - 2);
-      },
-    },
-    {
-      stepNumber: 2,
-      bubble: (
-        <>
-          Paste your TNAM address here to get its{" "}
-          <span style={{ color: "#5cefef" }}>Hex value</span> and copy it to
-          your clipboard.
-          <AsciiToHex />
-        </>
-      ),
-      imageContainer: <FaHashtag size='3rem' />,
-      subscript: (
-        <>This Hex value is essential for completing the donation process.</>
-      ),
-      relative: true,
-      nextTitle: "NEXT",
-    },
-    {
-      stepNumber: 3,
-      bubble: (
-        <>
-          Open MetaMask, go to{" "}
-          <span style={{ color: "#ab91e5" }}>Settings {">"} Advanced</span> and
-          toggle <span style={{ color: "#ab91e5" }}>Show Hex Data</span> to
-          enable it.
-        </>
-      ),
-      image: {
-        src: "/logos/metamask.png",
-        alt: "MetaMask",
-        width: 96,
-        height: 96,
-      },
-      subscript: (
-        <>
-          This step is required for attaching data to a transfer.{" "}
-          <span style={{ color: "#cdcdcd" }}>Don&#39;t use MetaMask?</span> Then{" "}
-          <a
-            href='https://www.myetherwallet.com/blog/how-to-send-a-message-onchain/'
-            target='_blank'
-            rel='noreferrer'
-            onFocus={onFocus}
-          >
-            click here
-          </a>{" "}
-          for a guide on how to do this using MyEtherWallet.
-        </>
-      ),
-      nextTitle: "NEXT",
-    },
-    {
-      stepNumber: "OPTIONAL STEP",
-      bubble: (
-        <>
-          Before continuing, would you like to attach a message to your
-          donation?
+          Would you like to attach a message to your donation?
           <DonationMessage setSending={setSending} />
         </>
       ),
@@ -511,13 +442,16 @@ const Donate = ({
       nextOnClick: () => {
         setCurrentStep(currentStep + 2);
       },
+      backOnClick: () => {
+        setCurrentStep(currentStep - 2);
+      },
     },
     {
       bubble:
         sending === 3 ? (
           <>Message sent successfully!</>
         ) : (
-          <>Trying to send your message...</>
+          <>Trying to send your message (check your wallet)...</>
         ),
       ghost: true,
       navEnabled: false,
@@ -532,38 +466,224 @@ const Donate = ({
       ),
     },
     {
+      stepNumber: 1,
+      bubble: (
+        <>
+          Open MetaMask, go to{" "}
+          <span style={{ color: "#ab91e5" }}>Settings {">"} Advanced</span> and
+          toggle <span style={{ color: "#ab91e5" }}>Show Hex Data</span> on.
+        </>
+      ),
+      image: {
+        src: "/logos/metamask.png",
+        alt: "MetaMask",
+        width: 96,
+        height: 96,
+      },
+      subscript: (
+        <>
+          <span style={{ color: "#cdcdcd" }}>Don&#39;t use MetaMask?</span> Then{" "}
+          <a
+            href='https://www.myetherwallet.com/blog/how-to-send-a-message-onchain/'
+            target='_blank'
+            rel='noreferrer'
+            onFocus={onFocus}
+          >
+            click here
+          </a>{" "}
+          for a guide on how to do this using MyEtherWallet.
+        </>
+      ),
+      nextTitle: "NEXT",
+      backOnClick: () => {
+        setCurrentStep(currentStep - 2);
+      },
+    },
+    {
+      stepNumber: 2,
+      bubble: (
+        <>
+          Open your MetaMask wallet in a dedicated tab (
+          <span style={{ color: "#ab91e5" }}>Expand View</span>) and prepare to
+          send{" ETH "}
+          <span style={{ color: "#d1d1d1" }}>
+            (<FaEthereum />
+            {process.env.NEXT_PUBLIC_MIN_ETH_PER_ADDRESS}-
+            <FaEthereum />
+            {process.env.NEXT_PUBLIC_MAX_ETH_PER_ADDRESS})
+          </span>{" "}
+          to{" "}
+          <button
+            className={styles.copyButton}
+            onFocus={onFocus}
+            onClick={() => {
+              if (process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS) {
+                copyToClipboard(
+                  process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS,
+                  () => {
+                    notify({
+                      type: "success",
+                      message: "Copied ENS domain to clipboard!",
+                      options: {
+                        duration: 4000,
+                        Icon: FaClipboard,
+                      },
+                    });
+                  },
+                  () => {
+                    notify({
+                      type: "error",
+                      message: "Failed to copy ENS domain to clipboard!",
+                      options: {
+                        duration: 4000,
+                        Icon: FaExclamation,
+                      },
+                    });
+                  }
+                );
+              } else {
+                notify({
+                  type: "error",
+                  message: "Failed to copy the ENS domain to clipboard!",
+                  options: {
+                    duration: 4000,
+                    Icon: FaExclamation,
+                  },
+                });
+              }
+            }}
+          >
+            {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} <FaCopy />
+          </button>{" "}
+          on the{" "}
+          <span style={{ background: "#262626", color: "white" }}>
+            {DONOR_NETWORK}
+          </span>
+          .
+        </>
+      ),
+      subscript: (
+        <>
+          Do not transfer yet! ENS domains not working?
+          <button
+            className={styles.copyButtonSmall}
+            onFocus={onFocus}
+            onClick={() => {
+              if (process.env.NEXT_PUBLIC_DONOR_ADDRESS) {
+                copyToClipboard(
+                  process.env.NEXT_PUBLIC_DONOR_ADDRESS,
+                  () => {
+                    notify({
+                      type: "success",
+                      message: "Copied address to clipboard!",
+                      options: {
+                        duration: 4000,
+                        Icon: FaClipboard,
+                      },
+                    });
+                  },
+                  () => {
+                    notify({
+                      type: "error",
+                      message: "Failed to copy the address to clipboard!",
+                      options: {
+                        duration: 4000,
+                        Icon: FaExclamation,
+                      },
+                    });
+                  }
+                );
+              } else {
+                notify({
+                  type: "error",
+                  message: "Failed to copy the address to clipboard!",
+                  options: {
+                    duration: 4000,
+                    Icon: FaExclamation,
+                  },
+                });
+              }
+            }}
+          >
+            {process.env.NEXT_PUBLIC_DONOR_ADDRESS} <FaCopy />
+          </button>
+          <br />
+        </>
+      ),
+      // imageContainer: <FaEthereum size='3rem' color='#70f7ff' />,
+      image: {
+        src: "/logos/metamask.png",
+        alt: "MetaMask",
+        width: 96,
+        height: 96,
+      },
+      nextTitle: "NEXT",
+    },
+    {
+      stepNumber: 3,
+      bubble: (
+        <>
+          Use the{" "}
+          <a
+            href='https://namada.net/keychain'
+            target='_blank'
+            rel='noreferrer'
+            className={styles.extension}
+            onFocus={onFocus}
+          >
+            Namada extension <FaExternalLinkAlt size={"0.7rem"} />{" "}
+          </a>{" "}
+          to view your keys and paste your Transparent address here to get its{" "}
+          <span style={{ color: "#5cefef" }}>Hex value</span>.
+          <AsciiToHex />
+        </>
+      ),
+      image: { src: "/icon_x192.png", alt: "Namada", width: 96, height: 96 },
+      // imageContainer: <FaHashtag size='3rem' />,
+      subscript: (
+        <>
+          If you don&#39;t own a transparent address,{" "}
+          <a
+            href='https://namada.net/keychain'
+            target='_blank'
+            rel='noreferrer'
+            className={styles.extension}
+            onFocus={onFocus}
+          >
+            download the extension
+          </a>{" "}
+          and create new keys.
+        </>
+      ),
+      nextTitle: "NEXT",
+      relative: true,
+    },
+    {
       stepNumber: 4,
       bubble: (
         <>
-          Finally, transfer between <FaEthereum />
-          0.03 ETH and <FaEthereum />
-          0.30 ETH to{" "}
-          <span style={{ color: "rgb(239 183 132)" }}>
+          Finally, in MetaMask, paste the{" "}
+          <span style={{ color: "#5cefef" }}>Hex value</span> into the{" "}
+          <span style={{ color: "#ab91e5" }}>Hex Data</span>-field and send your
+          donation to{" "}
+          <span className={styles.donorLink}>
             <a
-              href={`https://etherscan.io/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+              href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
               target='_blank'
               rel='noreferrer'
               onFocus={onFocus}
             >
               {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
             </a>
-          </span>{" "}
-          on the{" "}
-          <span style={{ background: "#262626", color: "white" }}>
-            {DONOR_NETWORK}
-          </span>{" "}
-          and make sure to type the hex variant of your TNAM address in the Hex
-          data field.
+          </span>
+          .
         </>
       ),
       image: {
-        src: "/logos/coin_center.png",
-        alt: "Coin Center",
-        width: 400,
-        height: 400,
-      },
-      backOnClick: () => {
-        setCurrentStep(currentStep - 2);
+        src: "/logos/metamask.png",
+        alt: "MetaMask",
+        width: 96,
+        height: 96,
       },
       subscript: (
         <>
@@ -596,7 +716,7 @@ const Donate = ({
       nextTitle: "FINISH",
       subscript: (
         <>
-          Please participate with one ETH address & don&#39;t bot 🤖. The Namada
+          Please participate with one address & don&#39;t bot 🤖. The Namada
           community will use a PGF governance proposal to distribute NAM to
           recognized addresses.
         </>

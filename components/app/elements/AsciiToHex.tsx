@@ -50,7 +50,7 @@ export default function AsciiToHex() {
     <div className={styles.asciiConverter}>
       <div>
         <label htmlFor='ascii'>
-          TNAM address
+          Transparent address
           <input
             id='ascii'
             type='text'
@@ -77,7 +77,7 @@ export default function AsciiToHex() {
             type='text'
             value={hex}
             readOnly
-            placeholder='Type a valid address in the TNAM address-field.'
+            placeholder='Type a valid address in the field above.'
           />
         </label>
         <button

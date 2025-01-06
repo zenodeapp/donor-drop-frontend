@@ -24,6 +24,7 @@ const TimeAgo = ({ date }: { date: Date }) => {
         setValue(`${days} day${days > 1 ? "s" : ""} ago`);
       }
     }
+    //eslint-disable-next-line
   }, [currentTimePerMin]);
 
   return <span>{value}</span>;
