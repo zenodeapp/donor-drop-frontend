@@ -2,7 +2,7 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-import { START_DATE } from "../../donations.config";
+import { END_DATE, START_DATE } from "../../donations.config";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -12,8 +12,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    let timestamp = req.query.timestamp || START_DATE.toISOString();
-
     const query = `
       SELECT 
         transaction_hash,
@@ -24,11 +22,14 @@ export default async function handler(req, res) {
         message,
         timestamp
       FROM donations 
-      WHERE timestamp > $1
+      WHERE timestamp BETWEEN $1 AND $2
       ORDER BY timestamp DESC
     `;
 
-    const result = await pool.query(query, [new Date(timestamp)]);
+    const result = await pool.query(query, [
+      req.query.timestamp ? new Date(req.query.timestamp) : START_DATE,
+      END_DATE,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ donations: [] });
@@ -39,7 +40,6 @@ export default async function handler(req, res) {
       hash: row.transaction_hash,
       address: row.from_address,
       amount: parseFloat(row.amount_eth),
-      // namadaKey: row.namada_key,
       message: row.message,
       timestamp: row.timestamp,
     }));

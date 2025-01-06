@@ -2,9 +2,7 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-
-const startDate = process.env.NEXT_PUBLIC_START_DATE || "2024-12-27T15:00:00Z";
-const endDate = process.env.NEXT_PUBLIC_END_DATE || "2025-01-09T15:00:00Z";
+import { END_DATE, START_DATE } from "../../donations.config";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
@@ -24,10 +22,7 @@ export default async function handler(req, res) {
     `;
 
     try {
-      const result = await pool.query(query, [
-        new Date(startDate),
-        new Date(endDate),
-      ]);
+      const result = await pool.query(query, [START_DATE, END_DATE]);
       const total = parseFloat(result.rows[0].total_sum);
 
       res.status(200).json({ total });

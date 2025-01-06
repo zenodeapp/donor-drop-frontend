@@ -1,9 +1,8 @@
 // This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/checkDonation.js
+// Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-
-const startDate = process.env.NEXT_PUBLIC_START_DATE || "2024-12-27T15:00:00Z";
-const endDate = process.env.NEXT_PUBLIC_END_DATE || "2025-01-09T15:00:00Z";
+import { END_DATE, START_DATE } from "../../donations.config";
 
 async function findCutoffTimestamp() {
   const query = "SELECT cutoff_timestamp FROM donation_stats";
@@ -36,8 +35,8 @@ async function checkEthAddress(ethAddress, cutoffTimestamp) {
   const result = await pool.query(query, [
     ethAddress.toLowerCase(),
     cutoffTimestamp || "infinity",
-    new Date(startDate),
-    new Date(endDate),
+    START_DATE,
+    END_DATE,
   ]);
 
   return {
