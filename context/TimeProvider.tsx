@@ -9,11 +9,11 @@ function TimeProvider({ children }: { children: React.ReactNode }) {
   const [currentTimePerMin, setCurrentTimePerMin] = React.useState(new Date());
 
   React.useEffect(() => {
-    setInterval(() => {
+    const interval = setInterval(() => {
       setCurrentTimePerMin(new Date());
     }, 60000); // Update every minute
 
-    // return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
 
   return (

@@ -123,7 +123,7 @@ const Target = ({
                     START_DATE,
                     phase === DonationPhases.STATUS_FILLED
                       ? donations[0]
-                        ? new Date(donations[0].timestamp)
+                        ? donations[0].timestamp
                         : END_DATE
                       : END_DATE
                   )}
