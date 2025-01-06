@@ -2,6 +2,9 @@
 
 import { pool } from "../../lib/db";
 
+const startDate = process.env.NEXT_PUBLIC_START_DATE || "2024-12-27T15:00:00Z";
+const endDate = process.env.NEXT_PUBLIC_END_DATE || "2025-01-09T15:00:00Z";
+
 async function findCutoffTimestamp() {
   const query = "SELECT cutoff_timestamp FROM donation_stats";
 
@@ -25,7 +28,7 @@ async function checkEthAddress(ethAddress, cutoffTimestamp) {
           ELSE 0
         END as eligible_eth
       FROM donations 
-      WHERE lower(from_address) = lower($1)
+      WHERE lower(from_address) = lower($1) AND timestamp BETWEEN $3 AND $4
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
@@ -33,6 +36,8 @@ async function checkEthAddress(ethAddress, cutoffTimestamp) {
   const result = await pool.query(query, [
     ethAddress.toLowerCase(),
     cutoffTimestamp || "infinity",
+    new Date(startDate),
+    new Date(endDate),
   ]);
 
   return {
@@ -52,7 +57,7 @@ async function checkNamadaAddress(namadaAddress, cutoffTimestamp) {
           ELSE 0
         END as eligible_eth
       FROM donations 
-      WHERE lower(namada_key) = lower($1)
+      WHERE lower(namada_key) = lower($1) AND timestamp BETWEEN $3 AND $4
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
@@ -60,6 +65,8 @@ async function checkNamadaAddress(namadaAddress, cutoffTimestamp) {
   const result = await pool.query(query, [
     namadaAddress,
     cutoffTimestamp || "infinity",
+    new Date(startDate),
+    new Date(endDate),
   ]);
 
   return {

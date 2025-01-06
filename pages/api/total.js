@@ -3,8 +3,8 @@
 
 import { pool } from "../../lib/db";
 
-const startDate = process.env.NEXT_PUBLIC_START_DATE;
-const endDate = process.env.NEXT_PUBLIC_END_DATE;
+const startDate = process.env.NEXT_PUBLIC_START_DATE || "2024-12-27T15:00:00Z";
+const endDate = process.env.NEXT_PUBLIC_END_DATE || "2025-01-09T15:00:00Z";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
@@ -24,7 +24,10 @@ export default async function handler(req, res) {
     `;
 
     try {
-      const result = await pool.query(query, [startDate, endDate]);
+      const result = await pool.query(query, [
+        new Date(startDate),
+        new Date(endDate),
+      ]);
       const total = parseFloat(result.rows[0].total_sum);
 
       res.status(200).json({ total });
