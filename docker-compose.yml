@@ -1,11 +1,19 @@
 version: "3.8"
 
 services:
-  app:
+  my_app:
     build:
-      context: . # Use the current directory to build the Dockerfile
+      context: .
       dockerfile: Dockerfile
     ports:
-      - "3001:3000" # Map port 3001 on your machine to port 3000 in the container
+      - "3001:3000" # 3001 is the port you reverse proxy (e.g. via Nginx), 3000 is the port exposed in the Dockerfile
     environment:
-      NODE_ENV: production # Run in production mode
+      NODE_ENV: production
+      POSTGRES_HOST: my_db # The name of the donor-drop-backend's Docker service
+      POSTGRES_PORT: 5432 # Use the internal (Docker) Postgres port
+    networks:
+      - your_shared_network # Use the same shared network id as the donor-drop-backend
+
+networks:
+  your_shared_network:
+    external: true
