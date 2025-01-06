@@ -25,8 +25,8 @@ yarn install
 ```env
 POSTGRES_USER='postgres'
 POSTGRES_PASSWORD='admin1234'
-POSTGRES_HOST='localhost'
-POSTGRES_PORT=5434
+POSTGRES_HOST='my_db_service_name' # use localhost if you want to connect via your machine instead of via a shared docker network
+POSTGRES_PORT=5432 # if set to localhost, set this to the mapped port (default: 5434) instead of the internal container port
 POSTGRES_DB='postgres'
 
 NEXT_PUBLIC_SITE_URL='site_where_this_gets_hosted' # this is for SEO (see pages/_document) and MetaMask Deeplinking.
