@@ -64,7 +64,7 @@ const DonationListItem = ({ transaction }: { transaction: ITransaction }) => {
         <p>{transaction.message}</p>
       </div>
       <p className={styles.timestamp}>
-        <TimeAgo date={new Date(transaction.timestamp)} />
+        <TimeAgo date={transaction.timestamp} />
       </p>
     </div>
   );
