@@ -24,7 +24,7 @@ const setNetworkCookie = (walletId: string, networkId: string) =>
   );
 
 const getDonationsCookie = (): Array<ITransaction> => {
-  const item = localStorage.getItem(
+  const item = sessionStorage.getItem(
     `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`
   );
 
@@ -50,7 +50,7 @@ const setDonationsCookie = (donations: Array<ITransaction>) => {
   const serializedDonations = JSON.stringify(donations, (key, value) =>
     key === "amount" ? value.toString() : value
   );
-  localStorage.setItem(
+  sessionStorage.setItem(
     `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`,
     serializedDonations
   );
@@ -59,13 +59,22 @@ const setDonationsCookie = (donations: Array<ITransaction>) => {
 const purgeDonationCookies = () => {
   const excludeKey = `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`;
 
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
     if (
       key !== null &&
       key.startsWith(COOKIE_DONATIONS_NAME) &&
       key !== excludeKey
     ) {
+      sessionStorage.removeItem(key);
+    }
+  }
+
+  // For the people who already experienced the cache to be in the localStorage.
+  // TODO: Deprecate this at some point.
+  for (let j = 0; j < localStorage.length; j++) {
+    const key = localStorage.key(j);
+    if (key !== null && key.startsWith(COOKIE_DONATIONS_NAME)) {
       localStorage.removeItem(key);
     }
   }
