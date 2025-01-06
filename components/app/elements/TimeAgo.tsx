@@ -10,11 +10,6 @@ const TimeAgo = ({ date }: { date: Date }) => {
       ? undefined
       : (currentTimePerMin - date.getTime()) / 1000;
 
-    console.log(currentTimePerMin);
-    console.log(date.toISOString());
-    // if (currentTimePerMin) console.log(currentTimePerMin.getTime());
-    // console.log(from.getTime());
-
     if (seconds !== undefined) {
       if (seconds < 60) {
         setValue("just now");
