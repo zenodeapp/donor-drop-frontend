@@ -22,7 +22,7 @@ yarn install
 ```
 
 ### 2. .env configuration
-```
+```env
 POSTGRES_USER='postgres'
 POSTGRES_PASSWORD='admin1234'
 POSTGRES_HOST='localhost'
@@ -44,6 +44,7 @@ NEXT_PUBLIC_END_DATE="2025-01-09T15:00:00Z"
 # It will always overwrite whatever is said in NEXT_PUBLIC_DONOR_NETWORK with 'Sepolia Testnet' (to prevent people from donating to the real network).
 # Also shows a permanent notification on-screen that this deployment is a test. 
 NEXT_PUBLIC_TEST_ENVIRONMENT=true
+NEXT_PUBLIC_QUERY_INTERVAL_IN_MS=3000
 ```
 
 > Make sure that the POSTGRES_PORT matches the port in the backend's `./docker-compose.yml`
