@@ -1,29 +1,37 @@
 import React from "react";
 import { useTime } from "../../../context/TimeProvider";
 
-function TimeAgo({ date }: { date: Date }) {
+const TimeAgo = ({ date }: { date: Date }) => {
   const { currentTimePerMin } = useTime();
+  const [value, setValue] = React.useState<string>("");
 
-  const timeAgo = (from: Date): string => {
-    const seconds = Math.floor(
-      (currentTimePerMin.getTime() - from.getTime()) / 1000
-    );
+  React.useEffect(() => {
+    const seconds = !currentTimePerMin
+      ? undefined
+      : (currentTimePerMin - date.getTime()) / 1000;
 
-    if (seconds < 60) {
-      return "just now";
-    } else if (seconds < 3600) {
-      const minutes = Math.floor(seconds / 60);
-      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-    } else if (seconds < 86400) {
-      const hours = Math.floor(seconds / 3600);
-      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-    } else {
-      const days = Math.floor(seconds / 86400);
-      return `${days} day${days > 1 ? "s" : ""} ago`;
+    console.log(currentTimePerMin);
+    console.log(date.toISOString());
+    // if (currentTimePerMin) console.log(currentTimePerMin.getTime());
+    // console.log(from.getTime());
+
+    if (seconds !== undefined) {
+      if (seconds < 60) {
+        setValue("just now");
+      } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60);
+        setValue(`${minutes} minute${minutes > 1 ? "s" : ""} ago`);
+      } else if (seconds < 86400) {
+        const hours = Math.floor(seconds / 3600);
+        setValue(`${hours} hour${hours > 1 ? "s" : ""} ago`);
+      } else {
+        const days = Math.floor(seconds / 86400);
+        setValue(`${days} day${days > 1 ? "s" : ""} ago`);
+      }
     }
-  };
+  }, [currentTimePerMin]);
 
-  return <span>{timeAgo(date)}</span>;
-}
+  return <span>{value}</span>;
+};
 
 export default TimeAgo;

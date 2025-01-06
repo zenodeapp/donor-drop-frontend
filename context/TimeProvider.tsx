@@ -1,16 +1,20 @@
 import React from "react";
 
 type ITimeContext = {
-  currentTimePerMin: Date;
+  currentTimePerMin?: number;
 };
 const TimeContext = React.createContext<ITimeContext | undefined>(undefined);
 
 function TimeProvider({ children }: { children: React.ReactNode }) {
-  const [currentTimePerMin, setCurrentTimePerMin] = React.useState(new Date());
+  const [currentTimePerMin, setCurrentTimePerMin] = React.useState<
+    number | undefined
+  >(undefined);
 
   React.useEffect(() => {
+    setCurrentTimePerMin(Date.now());
+
     const interval = setInterval(() => {
-      setCurrentTimePerMin(new Date());
+      setCurrentTimePerMin(Date.now());
     }, 60000); // Update every minute
 
     return () => clearInterval(interval);
