@@ -23,7 +23,6 @@ export default async function handler(req, res) {
     if (result.rows.length === 0) {
       return res.status(200).json({ donationCount: 0, participantCount: 0 });
     }
-    console.log(result);
     // Return the counts
     const { donation_count, participant_count } = result.rows[0];
 
