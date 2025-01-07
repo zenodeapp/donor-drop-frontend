@@ -1,6 +1,6 @@
 // Temporary endpoint for V1 - will move this later
 
-import { pool } from "../../testing/db";
+import { pool } from "../../lib/db";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

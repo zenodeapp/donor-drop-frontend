@@ -1,6 +1,5 @@
 // Temporary endpoint for V1 - will move this later
 
-import { saveTransaction } from "../../testing/db";
 import {
   generateRandomAddress,
   generateRandomBlock,
@@ -8,8 +7,8 @@ import {
   generateRandomNumber,
   generateRandomValue,
   getRandomTnam,
-} from "../../helpers/donations";
-import { getLatestBlock } from "../../testing/etherscan.mjs";
+} from "../../testing/randomizer";
+import { getLatestBlock, saveTransaction } from "../../testing/helpers.mjs";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

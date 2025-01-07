@@ -1,6 +1,8 @@
 // This originated from: Bengt's PR https://github.com/zenodeapp/donor-drop-backend/pull/4/files, thank you ❤!
+// Adapted slightly with additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
+import { END_DATE, START_DATE } from "../../donations.config";
 
 async function findCutoffData() {
   const query = "SELECT cutoff_block, cutoff_tx_index FROM donation_stats";
@@ -37,7 +39,7 @@ async function checkEthAddress(ethAddress, cutoffData) {
           ELSE 0 
         END as address_eligible
       FROM donations 
-      WHERE block_number < $2 OR (block_number = $2 AND tx_index < $3)
+      WHERE (block_number < $2 OR (block_number = $2 AND tx_index < $3)) AND timestamp BETWEEN $4 AND $5
       GROUP BY from_address
     ),
     total_before_cutoff AS (
@@ -54,7 +56,7 @@ async function checkEthAddress(ethAddress, cutoffData) {
           ELSE 0
         END as address_eligible_eth
       FROM donations 
-      WHERE lower(from_address) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3))
+      WHERE lower(from_address) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3)) AND timestamp BETWEEN $4 AND $5
     ),
     cutoff_tx AS (
       -- Get the cutoff transaction if it exists
@@ -76,7 +78,7 @@ async function checkEthAddress(ethAddress, cutoffData) {
           0
         ) as eligible_eth
       FROM donations 
-      WHERE lower(from_address) = $1
+      WHERE lower(from_address) = $1 AND timestamp BETWEEN $4 AND $5
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
@@ -88,6 +90,8 @@ async function checkEthAddress(ethAddress, cutoffData) {
     ethAddress.toLowerCase(),
     cutoffData.cutoff_block || MaxBigInt.toString(),
     cutoffData.cutoff_tx_index || MaxInt,
+    START_DATE,
+    END_DATE,
   ]);
 
   return {
@@ -107,7 +111,7 @@ async function checkNamadaAddress(namadaAddress, cutoffData) {
           ELSE 0 
         END as address_eligible
       FROM donations 
-      WHERE block_number < $2 OR (block_number = $2 AND tx_index < $3)
+      WHERE (block_number < $2 OR (block_number = $2 AND tx_index < $3)) AND timestamp BETWEEN $4 AND $5
       GROUP BY from_address
     ),
     total_before_cutoff AS (
@@ -124,7 +128,7 @@ async function checkNamadaAddress(namadaAddress, cutoffData) {
           ELSE 0
         END as address_eligible_eth
       FROM donations 
-      WHERE lower(namada_key) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3))
+      WHERE lower(namada_key) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3)) AND timestamp BETWEEN $4 AND $5
     ),
     cutoff_tx AS (
       -- Get the cutoff transaction if it exists
@@ -146,7 +150,7 @@ async function checkNamadaAddress(namadaAddress, cutoffData) {
           0
         ) as eligible_eth
       FROM donations 
-      WHERE lower(namada_key) = $1
+      WHERE lower(namada_key) = $1 AND timestamp BETWEEN $4 AND $5
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
@@ -158,6 +162,8 @@ async function checkNamadaAddress(namadaAddress, cutoffData) {
     namadaAddress,
     cutoffData.cutoff_block || MaxBigInt.toString(),
     cutoffData.cutoff_tx_index || MaxInt,
+    START_DATE,
+    END_DATE,
   ]);
 
   return {

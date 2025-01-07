@@ -2,7 +2,7 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { END_DATE } from "../../donations.config";
-import { pool } from "../../testing/db";
+import { pool } from "../../lib/db";
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 
 /// This api endpoint finds the corresponding nam address for a given eth address (if a valid signature is provided)

@@ -7,9 +7,8 @@ import {
   generateRandomNumber,
   generateRandomValue,
   getRandomTnam,
-} from "../../helpers/donations";
-import { saveTransaction } from "../../testing/db";
-import { getLatestBlock } from "../../testing/etherscan.mjs";
+} from "../../testing/randomizer";
+import { getLatestBlock, saveTransaction } from "../../testing/helpers.mjs";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

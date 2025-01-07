@@ -1,15 +1,9 @@
-import { Pool } from "pg";
+// All this below is temporarily included for V1 (originates from Jojo and Bengt's backend - https://github.com/chimmykk/NAMADA-DONOR-DROP)
+// Adapted slightly with additional checks to serve this frontend's needs.
+
+import { pool } from "../lib/db";
 import { bech32m } from "bech32";
 
-export const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  host: process.env.POSTGRES_HOST,
-  port: process.env.POSTGRES_PORT,
-  database: process.env.POSTGRES_DB,
-});
-
-// All this below is temporarily included for V1
 export async function saveTransaction(tx) {
   const query = `
     INSERT INTO donations 
@@ -176,3 +170,21 @@ export async function getTemporaryMessages(fromAddresses) {
   // Convert results to a Map for easy lookup
   return new Map(result.rows.map((row) => [row.from_address, row.message]));
 }
+
+export const getLatestBlock = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.ETHERSCAN_BASE_URL}?module=proxy&action=eth_blockNumber&apikey=${process.env.ETHERSCAN_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return parseInt(data.result, 16);
+  } catch (error) {
+    console.error(`Error fetching latest block: ${error.message}`);
+    return null;
+  }
+};
