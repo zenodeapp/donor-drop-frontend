@@ -1,7 +1,8 @@
 // This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/findNamAddress.js
 // Adapted and added additional checks to serve this frontend's needs.
 
-import { pool } from "../../lib/db";
+import { END_DATE } from "../../donations.config";
+import { pool } from "../../testing/db";
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 
 /// This api endpoint finds the corresponding nam address for a given eth address (if a valid signature is provided)
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
 
     const result = await pool.query(query, [
       recoveredAddress.toLowerCase(),
-      process.env.NEXT_PUBLIC_END_DATE || "infinity",
+      END_DATE,
     ]);
 
     if (result.rows.length === 0) {

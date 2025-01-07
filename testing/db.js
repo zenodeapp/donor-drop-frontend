@@ -13,8 +13,8 @@ export const pool = new Pool({
 export async function saveTransaction(tx) {
   const query = `
     INSERT INTO donations 
-    (transaction_hash, from_address, amount_eth, namada_key, input_message, message, timestamp)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    (transaction_hash, from_address, amount_eth, namada_key, input_message, message, block_number, tx_index, timestamp)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     ON CONFLICT (transaction_hash) DO NOTHING
     RETURNING *
   `;
@@ -28,49 +28,59 @@ export async function saveTransaction(tx) {
     extractNamadaKey(tx.decodedRawInput),
     tx.decodedRawInput,
     message || getRandomMessage(),
+    BigInt(tx.block_number),
+    parseInt(tx.tx_index),
     new Date(tx.timestamp),
   ];
 
   return pool.query(query, values);
 }
 
-// New functions for block tracking
-export async function markBlockAsScraped(blockNumber, transactionsFound = 0) {
-  const query = `
-    INSERT INTO scraped_blocks 
-    (block_number, transactions_found, scraped_at)
-    VALUES ($1, $2, CURRENT_TIMESTAMP)
-    ON CONFLICT (block_number) 
-    DO UPDATE SET 
-      transactions_found = $2,
-      scraped_at = CURRENT_TIMESTAMP
-    RETURNING *
-  `;
+export async function saveTransactions(transactions) {
+  const BATCH_SIZE = 1000; // Adjust based on your needs
 
-  return pool.query(query, [blockNumber, transactionsFound]);
-}
+  // Process in batches
+  for (let i = 0; i < transactions.length; i += BATCH_SIZE) {
+    const batch = transactions.slice(i, i + BATCH_SIZE);
 
-export async function isBlockScraped(blockNumber) {
-  const query = `
-    SELECT EXISTS(
-      SELECT 1 FROM scraped_blocks WHERE block_number = $1
-    ) as exists
-  `;
+    // Get messages for all transactions in this batch
+    const messages = await getTemporaryMessages(batch.map((tx) => tx.from));
 
-  const result = await pool.query(query, [blockNumber]);
-  return result.rows[0].exists;
-}
+    const values = batch
+      .map((tx) => [
+        tx.hash,
+        tx.from,
+        tx.value,
+        extractNamadaKey(tx.decodedRawInput),
+        tx.decodedRawInput,
+        messages.get(tx.from.toLowerCase()) || getRandomMessage(), // Use message from Map if exists, otherwise random
+        BigInt(tx.block_number),
+        parseInt(tx.tx_index),
+        new Date(tx.timestamp),
+      ])
+      .flat();
 
-export async function getLastScrapedBlock() {
-  const query = `
-    SELECT block_number 
-    FROM scraped_blocks 
-    ORDER BY block_number DESC 
-    LIMIT 1
-  `;
+    const placeholders = batch
+      .map((_, j) => {
+        const offset = j * 9; // Updated to 9 parameters
+        return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${
+          offset + 4
+        }, $${offset + 5}, $${offset + 6}, $${offset + 7}, $${offset + 8}, $${
+          offset + 9
+        })`;
+      })
+      .join(",");
 
-  const result = await pool.query(query);
-  return result.rows[0]?.block_number || 0; // Return 0 if no blocks have been scraped
+    const query = `
+      INSERT INTO donations 
+      (transaction_hash, from_address, amount_eth, namada_key, input_message, message, block_number, tx_index, timestamp)
+      VALUES ${placeholders}
+      ON CONFLICT (transaction_hash) DO NOTHING
+      RETURNING *
+    `;
+
+    await pool.query(query, values);
+  }
 }
 
 export function extractNamadaKey(message) {
@@ -103,37 +113,6 @@ export function extractNamadaKey(message) {
     console.error("Error extracting Namada key:", error);
     return "";
   }
-}
-
-// Add a utility function to get block scraping stats
-export async function getBlockScrapingStats(blockNumber) {
-  const query = `
-    SELECT 
-      block_number,
-      transactions_found,
-      scraped_at
-    FROM scraped_blocks 
-    WHERE block_number = $1
-  `;
-
-  const result = await pool.query(query, [blockNumber]);
-  return result.rows[0];
-}
-
-// Optional: Add a function to get recent scraping activity
-export async function getRecentScrapingActivity(limit = 10) {
-  const query = `
-    SELECT 
-      block_number,
-      transactions_found,
-      scraped_at
-    FROM scraped_blocks 
-    ORDER BY scraped_at DESC 
-    LIMIT $1
-  `;
-
-  const result = await pool.query(query, [limit]);
-  return result.rows;
 }
 
 const donationMessages = [
@@ -180,4 +159,20 @@ export async function getTemporaryMessage(from) {
   }
 
   return undefined;
+}
+
+export async function getTemporaryMessages(fromAddresses) {
+  const query = `
+    SELECT lower(from_address) as from_address, message 
+    FROM temporary_messages 
+    WHERE lower(from_address) = ANY($1)
+    AND created_at > NOW() - INTERVAL '10 minutes'
+  `;
+
+  // Convert addresses to lowercase for consistent matching
+  const lowerAddresses = fromAddresses.map((addr) => addr.toLowerCase());
+  const result = await pool.query(query, [lowerAddresses]);
+
+  // Convert results to a Map for easy lookup
+  return new Map(result.rows.map((row) => [row.from_address, row.message]));
 }

@@ -1,42 +1,93 @@
-// This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/checkDonation.js
-// Adapted and added additional checks to serve this frontend's needs.
+// This originated from: Bengt's PR https://github.com/zenodeapp/donor-drop-backend/pull/4/files, thank you ❤!
 
 import { pool } from "../../lib/db";
-import { END_DATE, START_DATE } from "../../donations.config";
 
-async function findCutoffTimestamp() {
-  const query = "SELECT cutoff_timestamp FROM donation_stats";
+async function findCutoffData() {
+  const query = "SELECT cutoff_block, cutoff_tx_index FROM donation_stats";
 
   try {
     const result = await pool.query(query);
-    return result.rows[0]?.cutoff_timestamp || null;
+    const row = result.rows[0];
+
+    if (!row) {
+      return {
+        cutoff_tx_index: null,
+        cutoff_block: null,
+      };
+    }
+
+    return {
+      cutoff_tx_index: row.cutoff_tx_index,
+      cutoff_block: row.cutoff_block,
+    };
   } catch (error) {
-    console.error("Error finding cutoff timestamp:", error);
+    console.error("Error finding cutoff data:", error);
     throw error;
   }
 }
 
-async function checkEthAddress(ethAddress, cutoffTimestamp) {
+async function checkEthAddress(ethAddress, cutoffData) {
   const query = `
-    WITH address_total AS (
+    WITH address_eligibility AS (
+      -- First calculate eligibility per address
+      SELECT from_address,
+        CASE 
+          WHEN SUM(amount_eth) >= 0.03 
+          THEN LEAST(SUM(amount_eth), 0.3)
+          ELSE 0 
+        END as address_eligible
+      FROM donations 
+      WHERE block_number < $2 OR (block_number = $2 AND tx_index < $3)
+      GROUP BY from_address
+    ),
+    total_before_cutoff AS (
+      -- Then sum up all eligible amounts
+      SELECT SUM(address_eligible) as total_eligible_eth
+      FROM address_eligibility
+    ),
+    address_before_cutoff AS (
+      -- Calculate THIS address's eligible amount before cutoff
+      SELECT 
+        CASE 
+          WHEN SUM(amount_eth) >= 0.03 
+          THEN LEAST(SUM(amount_eth), 0.3)
+          ELSE 0
+        END as address_eligible_eth
+      FROM donations 
+      WHERE lower(from_address) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3))
+    ),
+    cutoff_tx AS (
+      -- Get the cutoff transaction if it exists
+      SELECT amount_eth
+      FROM donations
+      WHERE lower(from_address) = $1 AND block_number = $2 AND tx_index = $3
+    ),
+    address_total AS (
       SELECT 
         COALESCE(SUM(amount_eth), 0) as total_eth,
-        CASE 
-          WHEN SUM(CASE WHEN timestamp <= $2 THEN amount_eth ELSE 0 END) >= 0.03 
-          THEN LEAST(SUM(CASE WHEN timestamp <= $2 THEN amount_eth ELSE 0 END), 0.3)
-          ELSE 0
-        END as eligible_eth
+        COALESCE(
+          CASE 
+            WHEN EXISTS (SELECT 1 FROM cutoff_tx) THEN
+              (SELECT address_eligible_eth FROM address_before_cutoff) + 
+              (27.0 - (SELECT total_eligible_eth FROM total_before_cutoff))
+            ELSE
+              (SELECT address_eligible_eth FROM address_before_cutoff)
+          END,
+          0
+        ) as eligible_eth
       FROM donations 
-      WHERE lower(from_address) = lower($1) AND timestamp BETWEEN $3 AND $4
+      WHERE lower(from_address) = $1
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
 
+  const MaxBigInt = BigInt("9223372036854775807"); // for block_number (BIGINT)
+  const MaxInt = 2147483647; // for tx_index (INTEGER)
+
   const result = await pool.query(query, [
     ethAddress.toLowerCase(),
-    cutoffTimestamp || "infinity",
-    START_DATE,
-    END_DATE,
+    cutoffData.cutoff_block || MaxBigInt.toString(),
+    cutoffData.cutoff_tx_index || MaxInt,
   ]);
 
   return {
@@ -45,27 +96,68 @@ async function checkEthAddress(ethAddress, cutoffTimestamp) {
   };
 }
 
-async function checkNamadaAddress(namadaAddress, cutoffTimestamp) {
+async function checkNamadaAddress(namadaAddress, cutoffData) {
   const query = `
-    WITH address_total AS (
+    WITH address_eligibility AS (
+      -- First calculate eligibility per address
+      SELECT from_address,
+        CASE 
+          WHEN SUM(amount_eth) >= 0.03 
+          THEN LEAST(SUM(amount_eth), 0.3)
+          ELSE 0 
+        END as address_eligible
+      FROM donations 
+      WHERE block_number < $2 OR (block_number = $2 AND tx_index < $3)
+      GROUP BY from_address
+    ),
+    total_before_cutoff AS (
+      -- Then sum up all eligible amounts
+      SELECT SUM(address_eligible) as total_eligible_eth
+      FROM address_eligibility
+    ),
+    address_before_cutoff AS (
+      -- Calculate THIS address's eligible amount before cutoff
+      SELECT 
+        CASE 
+          WHEN SUM(amount_eth) >= 0.03 
+          THEN LEAST(SUM(amount_eth), 0.3)
+          ELSE 0
+        END as address_eligible_eth
+      FROM donations 
+      WHERE lower(namada_key) = $1 AND (block_number < $2 OR (block_number = $2 AND tx_index < $3))
+    ),
+    cutoff_tx AS (
+      -- Get the cutoff transaction if it exists
+      SELECT amount_eth
+      FROM donations
+      WHERE lower(namada_key) = $1 AND block_number = $2 AND tx_index = $3
+    ),
+    address_total AS (
       SELECT 
         COALESCE(SUM(amount_eth), 0) as total_eth,
-        CASE 
-          WHEN SUM(CASE WHEN timestamp <= $2 THEN amount_eth ELSE 0 END) >= 0.03 
-          THEN LEAST(SUM(CASE WHEN timestamp <= $2 THEN amount_eth ELSE 0 END), 0.3)
-          ELSE 0
-        END as eligible_eth
+        COALESCE(
+          CASE 
+            WHEN EXISTS (SELECT 1 FROM cutoff_tx) THEN
+              (SELECT address_eligible_eth FROM address_before_cutoff) + 
+              (27.0 - (SELECT total_eligible_eth FROM total_before_cutoff))
+            ELSE
+              (SELECT address_eligible_eth FROM address_before_cutoff)
+          END,
+          0
+        ) as eligible_eth
       FROM donations 
-      WHERE lower(namada_key) = lower($1) AND timestamp BETWEEN $3 AND $4
+      WHERE lower(namada_key) = $1
     )
     SELECT total_eth, eligible_eth FROM address_total
   `;
 
+  const MaxBigInt = BigInt("9223372036854775807"); // for block_number (BIGINT)
+  const MaxInt = 2147483647;
+
   const result = await pool.query(query, [
     namadaAddress,
-    cutoffTimestamp || "infinity",
-    new Date(startDate),
-    new Date(endDate),
+    cutoffData.cutoff_block || MaxBigInt.toString(),
+    cutoffData.cutoff_tx_index || MaxInt,
   ]);
 
   return {
@@ -76,14 +168,15 @@ async function checkNamadaAddress(namadaAddress, cutoffTimestamp) {
 
 async function checkDonation(ethAddress = null, namAddress = null) {
   try {
-    const cutoffTimestamp = await findCutoffTimestamp();
+    const cutoffData = await findCutoffData();
 
     // Check addresses based on what was provided
     const [ethResult, namResult] = await Promise.all([
-      ethAddress ? checkEthAddress(ethAddress, cutoffTimestamp) : null,
-      namAddress ? checkNamadaAddress(namAddress, cutoffTimestamp) : null,
+      ethAddress ? checkEthAddress(ethAddress, cutoffData) : null,
+      namAddress ? checkNamadaAddress(namAddress, cutoffData) : null,
     ]);
 
+    const { cutoffTimestamp } = cutoffData;
     return {
       ...(ethAddress && { ethAddress: ethResult }),
       ...(namAddress && { namadaAddress: namResult }),
@@ -98,7 +191,6 @@ async function checkDonation(ethAddress = null, namAddress = null) {
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { ethAddress, namadaAddress } = req.body;
-
     // Validate that at least one address is provided
     if (!ethAddress && !namadaAddress) {
       return res.status(400).json({
