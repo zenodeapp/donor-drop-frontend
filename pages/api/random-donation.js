@@ -28,7 +28,6 @@ export default async function handler(req, res) {
       timestamp: new Date(),
     };
 
-    console.log(tx);
     const result = await saveTransaction(tx);
 
     if (result.rowCount > 0) {
