@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         input_message,
         message,
         timestamp
-      FROM donations 
+      FROM combined_donations 
       WHERE timestamp BETWEEN $1 AND $2
       ORDER BY timestamp DESC
     `;

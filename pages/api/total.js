@@ -6,13 +6,17 @@ import { END_DATE, START_DATE } from "../../donations.config";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
+    const table = req.query.isFinalized === "true" 
+      ? 'donations_finalized' 
+      : 'combined_donations';
+
     const query = `
     WITH donor_totals AS (
         -- First get total per donor, capped at 0.3
         SELECT 
             from_address,
             LEAST(SUM(amount_eth), 0.3) as capped_total
-        FROM donations
+        FROM ${table}
         WHERE timestamp BETWEEN $1 AND $2
         GROUP BY from_address
         HAVING SUM(amount_eth) >= 0.03  -- Only include donors who gave at least 0.03

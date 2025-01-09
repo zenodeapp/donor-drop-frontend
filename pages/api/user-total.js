@@ -30,7 +30,7 @@ async function findCutoffData(finalized = false) {
 }
 
 async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
-  const table = finalized ? 'donations_finalized' : 'donations';
+  const table = finalized ? 'donations_finalized' : 'combined_donations';
   const query = `
     WITH address_eligibility AS (
       -- First calculate eligibility per address
@@ -97,7 +97,7 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
 }
 
 async function checkNamadaAddress(namadaAddress, cutoffData, finalized = false) {
-  const table = finalized ? 'donations_finalized' : 'donations';
+  const table = finalized ? 'donations_finalized' : 'combined_donations';
   const query = `
     WITH address_eligibility AS (
       -- First calculate eligibility per address

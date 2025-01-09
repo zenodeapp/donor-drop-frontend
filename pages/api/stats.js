@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       SELECT 
         COUNT(*) AS donation_count,
         COUNT(DISTINCT from_address) AS participant_count
-      FROM donations
+      FROM combined_donations
       WHERE timestamp BETWEEN $1 AND $2
     `;
 
