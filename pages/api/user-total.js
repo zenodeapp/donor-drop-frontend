@@ -3,6 +3,7 @@
 
 import { pool } from "../../lib/db";
 import { END_DATE, START_DATE } from "../../donations.config";
+import withMiddleware from "../../middleware/middleware";
 
 async function findCutoffData(finalized = false) {
   const viewTable = finalized ? 'donation_stats_finalized' : 'donation_stats';
@@ -185,30 +186,27 @@ async function checkDonation(ethAddress = null, namAddress = null, isFinalized =
   }
 }
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { ethAddress, namadaAddress, isFinalized } = req.body;
-    
-    // Validate that at least one address is provided
-    if (!ethAddress && !namadaAddress) {
-      return res.status(400).json({ 
-        message: 'At least one address (ETH or Namada) must be provided' 
-      });
-    }
+async function handler(req, res) {
+  const { ethAddress, namadaAddress, isFinalized } = req.body;
+  
+  // Validate that at least one address is provided
+  if (!ethAddress && !namadaAddress) {
+    return res.status(400).json({ 
+      message: 'At least one address (ETH or Namada) must be provided' 
+    });
+  }
 
-    try {
-      const result = await checkDonation(
-        ethAddress || null, 
-        namadaAddress || null,
-        isFinalized || false,
-      );
-      res.status(200).json(result);
-    } catch (error) {
-      console.error('API error:', error);
-      res.status(500).json({ message: 'Error checking donations' });
-    }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  try {
+    const result = await checkDonation(
+      ethAddress || null, 
+      namadaAddress || null,
+      isFinalized || false,
+    );
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('API error:', error);
+    return res.status(500).json({ message: 'Error checking donations' });
   }
 }
+
+export default withMiddleware(handler, ["POST"]);

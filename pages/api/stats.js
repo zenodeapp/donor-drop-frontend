@@ -1,15 +1,10 @@
 import { pool } from "../../lib/db";
 import { END_DATE, START_DATE } from "../../donations.config";
+import withMiddleware from "../../middleware/middleware";
 
 // TODO: this stats endpoint could be improved by adding the actual eligibleDonationCount and eligibleParticipantsCount.
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-    return;
-  }
-
+async function handler(_, res) {
   try {
     // Updated query to get count of rows and count of unique from_address
     const query = `
@@ -28,12 +23,14 @@ export default async function handler(req, res) {
     // Return the counts
     const { donation_count, participant_count } = result.rows[0];
 
-    res.status(200).json({
+    return res.status(200).json({
       donationCount: donation_count,
       participantCount: participant_count,
     });
   } catch (error) {
     console.error("Error fetching donations:", error);
-    res.status(500).json({ error: "Failed to fetch donations" });
+    return res.status(500).json({ error: "Failed to fetch donations" });
   }
 }
+
+export default withMiddleware(handler, ["GET"]);

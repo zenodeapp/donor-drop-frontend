@@ -4,15 +4,10 @@
 import { END_DATE } from "../../donations.config";
 import { pool } from "../../lib/db";
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
+import withMiddleware from "../../middleware/middleware";
 
 /// This api endpoint finds the corresponding nam address for a given eth address (if a valid signature is provided)
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res
-      .status(405)
-      .json({ message: `Method ${req.method} Not Allowed` });
-  }
-
+async function handler(req, res) {
   try {
     const { signature, message } = req.body;
 
@@ -46,12 +41,14 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "No matching address found." });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       namadaKey: result.rows[0].namada_key,
       timestamp: result.rows[0].timestamp,
     });
   } catch (error) {
     console.error("Error finding NAM address:", error);
-    res.status(500).json({ error: "Failed to find NAM address." });
+    return res.status(500).json({ error: "Failed to find NAM address." });
   }
 }
+
+export default withMiddleware(handler, ["POST"]);

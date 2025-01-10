@@ -3,14 +3,9 @@
 
 import { pool } from "../../lib/db";
 import { END_DATE, START_DATE } from "../../donations.config";
+import withMiddleware from "../../middleware/middleware";
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-    return;
-  }
-
+async function handler(req, res) {
   try {
     const query = `
       SELECT 
@@ -44,9 +39,11 @@ export default async function handler(req, res) {
       timestamp: row.timestamp,
     }));
 
-    res.status(200).json({ donations });
+    return res.status(200).json({ donations });
   } catch (error) {
     console.error("Error fetching donations:", error);
-    res.status(500).json({ error: "Failed to fetch donations" });
+    return res.status(500).json({ error: "Failed to fetch donations" });
   }
 }
+
+export default withMiddleware(handler, ["GET"]);
