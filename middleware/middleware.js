@@ -1,11 +1,13 @@
-
 import limiter from "./limiter";
 import { cors, method } from "./validators";
 
 const middleware = (req, res, allowedMethods = ["GET"]) => {
   // CORS validation
-  const corsValidation = cors(req.headers.origin, [process.env.NEXT_PUBLIC_SITE_URL]);
-  if(!corsValidation.success)
+  const origin =
+    req.headers.origin ||
+    (req.headers.referer && new URL(req.headers.referer).origin);
+  const corsValidation = cors(origin, [process.env.NEXT_PUBLIC_SITE_URL]);
+  if (!corsValidation.success)
     return res.status(403).json({ error: "Access denied" });
 
   // Method validation
@@ -16,7 +18,7 @@ const middleware = (req, res, allowedMethods = ["GET"]) => {
   }
 
   // Get ip address for limiter
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   if (!ip)
     return res.status(400).json({ error: "Unable to determine client IP" });
 
@@ -24,9 +26,11 @@ const middleware = (req, res, allowedMethods = ["GET"]) => {
   const limiterValidation = limiter(ip);
   if (!limiterValidation.success) {
     res.setHeader("Retry-After", limiterValidation.retryAfter);
-    return res.status(429).json({ error: "Too many requests, please try again later." });
+    return res
+      .status(429)
+      .json({ error: "Too many requests, please try again later." });
   }
-}
+};
 
 export default function withMiddleware(handler, allowedMethods = ["GET"]) {
   return async (req, res) => {
