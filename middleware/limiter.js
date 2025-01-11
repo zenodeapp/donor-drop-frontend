@@ -67,7 +67,7 @@ const tryMapCleanup = () => {
 
 const limiter = createLimiter({
   windowMs: (process.env.RATE_LIMIT_WINDOW_IN_SEC || 60) * 1000,
-  maxCalls: process.env.RATE_LIMIT_MAX_CALLS || 60,
+  maxCalls: process.env.RATE_LIMIT_MAX_CALLS || 300,
 });
 
 export default limiter;

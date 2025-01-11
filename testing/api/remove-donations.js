@@ -9,7 +9,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const query = "DELETE FROM donations";
+    const query = `DELETE FROM ${
+      req.query.finalized === "true" ? "donations_finalized" : "donations"
+    }`;
     const result = await pool.query(query);
 
     if (result.rowCount > 0) {

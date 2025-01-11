@@ -14,7 +14,9 @@ async function handler(req, res) {
     if (!signature || !message) {
       return res
         .status(400)
-        .json({ error: "Missing required parameters: signature and message" });
+        .json({
+          message: "Missing required parameters: signature and message",
+        });
     }
 
     // Validate the timestamp

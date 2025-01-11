@@ -40,6 +40,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       total: 0n,
       eligible: 0n,
     },
+    userTotalFinalized: {
+      total: 0n,
+      eligible: 0n,
+    },
     total: undefined,
     userExists: false,
     phase: DonationPhases.STATUS_UNKNOWN,
@@ -66,6 +70,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     setBottomDonations,
     setNamAddress,
     setUserTotal,
+    setUserTotalFinalized,
     setTotal,
     setUserExists,
     setPhase,
@@ -84,7 +89,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       const message = `Sign this message to verify your address: ${timestamp}`;
       const signature = await web3Connections.signMessage(message);
 
-      if (!signature.error) return { signature, message };
+      if (!signature?.error) return { signature, message };
     } catch (error) {
       console.error("Error signing message:", error);
     }
@@ -133,16 +138,20 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           console.log("Verification successful:", result.namadaKey);
           setSignedIn(true);
         } else {
-          notify({
-            type: "error",
-            message: result.error,
-            options: {
-              id: web3UI.selectedWallet,
-              Icon: IoMdWarning,
-              duration: 5000,
-            },
-          });
-          console.error("Verification failed:", result.error);
+          if (result.error) {
+            notify({
+              type: "error",
+              message: result.error,
+              options: {
+                id: web3UI.selectedWallet,
+                Icon: IoMdWarning,
+                duration: 5000,
+              },
+            });
+            console.error("Verification failed:", result.error);
+          } else if (result.message) {
+            console.error("Verification failed:", result.message);
+          }
         }
         setUserExists(result.namadaKey || false);
         setNamAddress(result.namadaKey || "");
@@ -394,7 +403,11 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     }
   };
 
-  const getUserTotal = async (): Promise<{
+  const counterRef = React.useRef(0); // Use a ref to track the counter
+
+  const getUserTotal = async (
+    finalized?: boolean
+  ): Promise<{
     cutoffTimestamp: Date | null;
     ethAddress: {
       total: number;
@@ -409,6 +422,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         },
         body: JSON.stringify({
           ethAddress: web3Connections.connections["metamask"].address,
+          isFinalized: finalized || false,
         }),
       });
       if (response.ok) {
@@ -423,23 +437,41 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     return { cutoffTimestamp: null, ethAddress: { total: 0, eligible: 0 } };
   };
 
+  const getUserWeiValues = (ethAddress: {
+    total: number;
+    eligible: number;
+  }) => {
+    const weiValues = {
+      total: ethers.parseEther(ethAddress.total.toString()),
+      eligible: ethers.parseEther(ethAddress.eligible.toString()),
+    };
+
+    return weiValues;
+  };
+
+  const setUserTotalFor = async (finalized: boolean) => {
+    const userTotal = await getUserTotal(finalized);
+    if (userTotal) {
+      const weiValues = getUserWeiValues(userTotal.ethAddress);
+      finalized ? setUserTotalFinalized(weiValues) : setUserTotal(weiValues);
+    }
+  };
+
+  const fetchUserTotal = async () => {
+    const queryFinalized = counterRef.current % 5 === 0;
+
+    if (counterRef.current === 0) await setUserTotalFor(false);
+
+    await setUserTotalFor(queryFinalized);
+
+    counterRef.current = counterRef.current >= 5 ? 1 : counterRef.current + 1;
+  };
+
   React.useEffect(() => {
     const addr =
       web3Connections.connections[
         web3Connections.getConnectedWallet() || "metamask"
       ].address;
-
-    const fetchUserTotal = async () => {
-      const userTotal = await getUserTotal();
-      if (userTotal) {
-        // TODO: Do I need to do something with the cutoffTimestamp?
-        const weiValues = {
-          total: ethers.parseEther(userTotal.ethAddress.total.toString()),
-          eligible: ethers.parseEther(userTotal.ethAddress.eligible.toString()),
-        };
-        setUserTotal(weiValues);
-      }
-    };
 
     if (isConnected && addr && activeSlide === 3) {
       fetchUserTotal();
@@ -447,6 +479,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       const intervalId = setInterval(fetchUserTotal, GET_USER_TOTAL_INTERVAL);
       return () => {
         clearInterval(intervalId);
+        counterRef.current = 0;
       };
     }
   }, [
@@ -556,6 +589,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         filterOn: state.filterOn,
         namAddress: state.namAddress,
         userTotal: state.userTotal,
+        userTotalFinalized: state.userTotalFinalized,
         total: state.total,
         userExists: state.userExists,
         phase: state.phase,
@@ -564,6 +598,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         isFetching: isFetching,
         setNamAddress,
         setUserTotal,
+        setUserTotalFinalized,
         setTotal,
         setDonations,
         setVisibleDonations,

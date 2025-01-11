@@ -6,7 +6,7 @@ import styles from "../../../styles/account.module.scss";
 import { IoWalletOutline } from "react-icons/io5";
 import Image from "next/image";
 import { useWeb3 } from "../../../context/Web3Provider";
-import { FaSignature, FaEthereum } from "react-icons/fa";
+import { FaSignature, FaEthereum, FaClock } from "react-icons/fa";
 import {
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
@@ -15,6 +15,9 @@ import {
 } from "../../../donations.config";
 import DonationProgress from "../donations/DonationProgress";
 import { ethToFloat, truncateEth } from "../../../helpers/web3";
+import TooltipQuestion from "../elements/TooltipQuestion";
+import { GiCheckMark } from "react-icons/gi";
+import { SkeletonText } from "../elements/Skeleton";
 
 export enum AccountPhases {
   STATUS_NOT_CONNECTED = 0,
@@ -33,7 +36,8 @@ const Account = ({
 }) => {
   const { web3Connections } = useWeb3();
   const { isConnected, signedIn, smoothShowApp } = useTheme();
-  const { userExists, namAddress, userTotal, signIn } = useDonation();
+  const { userExists, namAddress, userTotal, userTotalFinalized, signIn } =
+    useDonation();
   const [accountPhase, setAccountPhase] = React.useState<AccountPhases>(
     AccountPhases.STATUS_NOT_CONNECTED
   );
@@ -42,6 +46,10 @@ const Account = ({
   const ethAddress = wallet
     ? web3Connections.connections[wallet].address
     : undefined;
+
+  const isFinalized =
+    userTotal.total === userTotalFinalized.total ||
+    userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS;
 
   // Fix account phase
   React.useEffect(() => {
@@ -75,37 +83,130 @@ const Account = ({
           <h2 className={styles.header}>ETH ADDRESS CHECKER</h2>
           <p className={styles.text}>{ethAddress}</p>
           <DonationProgress
-            value={userTotal.eligible}
+            value={
+              userTotal.total < MIN_ETH_PER_ADDRESS
+                ? userTotal.total
+                : isFinalized
+                ? userTotal.eligible
+                : userTotal.total
+            }
+            finalized={
+              userTotalFinalized.total < MIN_ETH_PER_ADDRESS
+                ? userTotalFinalized.total
+                : isFinalized
+                ? userTotalFinalized.eligible
+                : userTotalFinalized.total
+            }
             max={MAX_ETH_PER_ADDRESS}
             min={MIN_ETH_PER_ADDRESS}
             status={""}
             showActual={false}
             decimals={2}
             colorBasedOn={userTotal.total}
+            style={{ width: "100%", maxWidth: "100%" }}
           />
           <div className={styles.donationInfo}>
-            <span>
+            {/* <span>
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
                 {truncateEth(userTotal.total, 2)} ETH{" "}
                 {userTotal.total !== 0n ? "💛" : "😌"}
               </span>{" "}
               —
-            </span>
-            <span style={{ display: "block", fontSize: "0.8rem" }}>
-              {userTotal.eligible !== userTotal.total ? (
+            </span> */}
+            <span style={{ display: "block", fontSize: "0.9rem" }}>
+              — {`donated `}
+              <span style={{ color: "#e2ebff" }}>
+                {truncateEth(userTotal.total, 2)} ETH{" "}
+                {userTotal.total !== 0n ? "💛" : "😌"}
+              </span>{" "}
+              {userTotal.total >= MIN_ETH_PER_ADDRESS && (
                 <>
-                  — eligible{" "}
-                  <span style={{ color: "#e2ebff" }}>
-                    {ethToFloat(userTotal.eligible)} ETH{" "}
-                    {userTotal.eligible === 0n ? "😥" : ""}
-                  </span>{" "}
-                  —
+                  {userTotal.total < MIN_ETH_PER_ADDRESS
+                    ? " below threshold"
+                    : ""}{" "}
+                  eligible{" "}
+                </>
+              )}
+              {userTotal.total > 0n && (
+                <>
+                  <SkeletonText
+                    text={
+                      userTotal.total < MIN_ETH_PER_ADDRESS ? (
+                        <>below threshold</>
+                      ) : (
+                        <>{truncateEth(userTotalFinalized.eligible, 2)} ETH</>
+                      )
+                    }
+                    status={
+                      isFinalized
+                        ? "done"
+                        : userTotal.total < MIN_ETH_PER_ADDRESS
+                        ? "stale"
+                        : "process"
+                    }
+                  />
+                  {isFinalized && userTotalFinalized.eligible === 0n
+                    ? " 😥"
+                    : ""}
+                </>
+              )}{" "}
+              —
+            </span>
+          </div>
+          <div
+            className={styles.finalized}
+            style={{
+              opacity: userTotal.eligible === 0n ? 0 : 1,
+              pointerEvents: userTotal.eligible === 0n ? "none" : "all",
+            }}
+          >
+            <span
+              className={`${styles.text} ${
+                userTotal.eligible === 0n
+                  ? ""
+                  : isFinalized
+                  ? styles.final
+                  : styles.pending
+              }`}
+            >
+              {userTotal.eligible === 0n ? (
+                ""
+              ) : isFinalized ? (
+                <>
+                  <GiCheckMark size={"0.7rem"} />
+                  PROCESSED
                 </>
               ) : (
-                ""
+                <>
+                  <FaClock size={"0.7rem"} />
+                  PROCESSING
+                </>
               )}
             </span>
+            <TooltipQuestion
+              message={
+                isFinalized ? (
+                  <>
+                    All blocks containing transactions of yours are finalized
+                    on-chain and can be considered valid.
+                  </>
+                ) : (
+                  <>
+                    Blocks have to be finalized on-chain before they can be
+                    considered valid (
+                    <a
+                      href='https://docs.tatum.io/docs/evm-block-finality-and-confidence'
+                      target='_blank'
+                    >
+                      learn more
+                    </a>
+                    ). Please wait ~15 minutes to see your final eligible
+                    amount.
+                  </>
+                )
+              }
+            />
           </div>
         </div>
       )}
@@ -153,28 +254,50 @@ const Account = ({
               : namAddress}
           </p>
           <div className={styles.donationInfo}>
-            <span>
+            <span style={{ fontSize: "0.9rem" }}>
               —{" "}
-              {userTotal.eligible < MIN_ETH_PER_ADDRESS
-                ? "not eligible for any rewards "
-                : `will receive `}
+              {!(
+                userTotal.eligible < MIN_ETH_PER_ADDRESS &&
+                userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
+              ) && "receives "}
+              <SkeletonText
+                text={
+                  userTotal.eligible < MIN_ETH_PER_ADDRESS ? (
+                    "not eligible for any rewards "
+                  ) : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS ? (
+                    "waiting for block finality"
+                  ) : (
+                    // userTotal.eligible === userTotalFinalized.eligible
+                    <>
+                      {userTotalFinalized.eligible >= MIN_ETH_PER_ADDRESS
+                        ? `${(
+                            (parseFloat(
+                              userTotalFinalized.eligible > MAX_ETH_PER_ADDRESS
+                                ? MAX_ETH_PER_ADDRESS.toString()
+                                : userTotalFinalized.eligible.toString()
+                            ) /
+                              parseFloat(TARGET_ETH.toString())) *
+                            REWARD_NAM
+                          ).toFixed(2)} NAM `
+                        : ""}
+                    </>
+                  )
+                  // : `will receive min. `
+                }
+                status={
+                  isFinalized
+                    ? "done"
+                    : userTotal.total < MIN_ETH_PER_ADDRESS
+                    ? "stale"
+                    : "process"
+                }
+              />{" "}
               <span style={{ color: "#e2ebff" }}>
-                {userTotal.eligible >= MIN_ETH_PER_ADDRESS
-                  ? `${(
-                      (parseFloat(
-                        userTotal.eligible > MAX_ETH_PER_ADDRESS
-                          ? MAX_ETH_PER_ADDRESS.toString()
-                          : userTotal.eligible.toString()
-                      ) /
-                        parseFloat(TARGET_ETH.toString())) *
-                      REWARD_NAM
-                    ).toFixed(2)} NAM `
-                  : ""}
-                {userTotal.eligible >= MAX_ETH_PER_ADDRESS
+                {userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : userTotal.eligible < MIN_ETH_PER_ADDRESS
+                  : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
                   ? "😥"
-                  : parseFloat(userTotal.eligible.toString()) <
+                  : parseFloat(userTotalFinalized.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2
                   ? "😇"
                   : "🥰"}

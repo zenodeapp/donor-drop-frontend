@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { FaEthereum } from "react-icons/fa";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import styles from "../../../styles/progress.module.scss";
@@ -8,24 +8,32 @@ const DonationProgress = ({
   value,
   min,
   max,
+  finalized,
   status,
   showActual,
   showSuperscript,
   decimals = 2,
   colorBasedOn,
+  style,
 }: {
   value?: bigint;
   min: bigint;
   max: bigint;
+  finalized?: bigint;
   status?: React.ReactNode;
   showActual?: boolean;
   showSuperscript?: boolean;
   decimals?: number;
   colorBasedOn?: bigint;
+  style?: CSSProperties;
 }) => {
   if (!value) value = 0n;
+  if (finalized === undefined) finalized = -1n;
+
   const donationPercentage =
     (value * 100n) / max <= 100n ? (value * 100n) / max : 100n;
+  const finalizedPercentage =
+    (finalized * 100n) / max <= 100n ? (finalized * 100n) / max : 100n;
 
   const minPercentage = (min * 100n) / max <= 100n ? (min * 100n) / max : 100n;
 
@@ -46,13 +54,29 @@ const DonationProgress = ({
   };
 
   return (
-    <div className={styles.donationContainer}>
+    <div className={styles.donationContainer} style={style}>
       <div className={styles.progressBarContainer}>
         <div className={styles.progressBar}>
           <div
             className={`${styles.progressFilled} ${getProgressClass()}`}
-            style={{ width: `${donationPercentage}%` }}
+            style={{
+              width: `${donationPercentage}%`,
+              opacity: finalized >= 0n ? 0.5 : 1,
+            }}
           />
+          {finalizedPercentage >= 0n && (
+            <div
+              className={`${styles.progressFilled} ${getProgressClass()}`}
+              style={{
+                width: `${finalizedPercentage}%`,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                // backgroundColor: '#ffed88',
+                // borderRight: "1px solid #ac5c23"
+              }}
+            ></div>
+          )}
           <div
             className={styles.userContribution}
             style={{ transform: `translateX(${donationPercentage}%)` }}

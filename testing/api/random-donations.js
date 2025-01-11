@@ -45,9 +45,14 @@ export default async function handler(req, res) {
     }
 
     // Save all transactions and collect results
+    const finalized = req.query.finalized === "true";
     const results = await Promise.all(
-      transactions.map((tx) => saveTransaction(tx))
+      transactions.map((tx) => saveTransaction(tx, finalized))
     );
+
+    if (req.query.finalized === "both") {
+      await Promise.all(transactions.map((tx) => saveTransaction(tx, true)));
+    }
 
     // Extract result.rows[0] for each transaction
     const savedTransactions = results.map((result) => result.rows[0]);

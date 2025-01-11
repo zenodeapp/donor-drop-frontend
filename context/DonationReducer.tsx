@@ -61,6 +61,13 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
 
       return userTotal;
     },
+    setUserTotalFinalized: (userTotalFinalized: EthDonated) => {
+      dispatch({
+        type: DonationActions.SET_USER_TOTAL_FINALIZED,
+        payload: userTotalFinalized,
+      });
+      return userTotalFinalized;
+    },
     setTotal: (total?: bigint) => {
       dispatch({
         type: DonationActions.SET_TOTAL,
@@ -140,6 +147,8 @@ const DonationReducer = (state: IDonationState, action: IDonationActions) => {
       return { ...state, namAddress: action.payload };
     case DonationActions.SET_USER_TOTAL:
       return { ...state, userTotal: action.payload };
+    case DonationActions.SET_USER_TOTAL_FINALIZED:
+      return { ...state, userTotalFinalized: action.payload };
     case DonationActions.SET_TOTAL:
       return { ...state, total: action.payload };
     case DonationActions.SET_USER_EXISTS:

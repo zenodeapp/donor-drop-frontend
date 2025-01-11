@@ -1,4 +1,4 @@
-// Temporary endpoint for V1 - will move this later
+// Temporary endpoint for V1 - make sure to never add this in production!
 
 import {
   generateRandomAddress,
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       timestamp: new Date(),
     };
 
-    const result = await saveTransaction(tx);
+    const result = await saveTransaction(tx, req.query.finalized === "true");
 
     if (result.rowCount > 0) {
       return res.status(200).json({

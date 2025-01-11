@@ -6,32 +6,32 @@ import { END_DATE, START_DATE } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
 
 async function findCutoffData(finalized = false) {
-  const viewTable = finalized ? 'donation_stats_finalized' : 'donation_stats';
+  const viewTable = finalized ? "donation_stats_finalized" : "donation_stats";
   const query = `SELECT cutoff_block, cutoff_tx_index FROM ${viewTable}`;
-  
+
   try {
     const result = await pool.query(query);
     const row = result.rows[0];
-    
+
     if (!row) {
       return {
         cutoff_tx_index: null,
-        cutoff_block: null
+        cutoff_block: null,
       };
     }
 
     return {
       cutoff_tx_index: row.cutoff_tx_index,
-      cutoff_block: row.cutoff_block
+      cutoff_block: row.cutoff_block,
     };
   } catch (error) {
-    console.error('Error finding cutoff data:', error);
+    console.error("Error finding cutoff data:", error);
     throw error;
   }
 }
 
 async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
-  const table = finalized ? 'donations_finalized' : 'combined_donations';
+  const table = finalized ? "donations_finalized" : "combined_donations";
   const query = `
     WITH address_eligibility AS (
       -- First calculate eligibility per address
@@ -86,19 +86,29 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
     SELECT total_eth, eligible_eth FROM address_total
   `;
 
-  const MaxBigInt = BigInt('9223372036854775807');  // for block_number (BIGINT)
-  const MaxInt = 2147483647;                        // for tx_index (INTEGER)
+  const MaxBigInt = BigInt("9223372036854775807"); // for block_number (BIGINT)
+  const MaxInt = 2147483647; // for tx_index (INTEGER)
 
-  const result = await pool.query(query, [ethAddress.toLowerCase(), cutoffData.cutoff_block || MaxBigInt.toString(), cutoffData.cutoff_tx_index || MaxInt, START_DATE, END_DATE]);
-  
+  const result = await pool.query(query, [
+    ethAddress.toLowerCase(),
+    cutoffData.cutoff_block || MaxBigInt.toString(),
+    cutoffData.cutoff_tx_index === 0 ? 0 : cutoffData.cutoff_tx_index || MaxInt,
+    START_DATE,
+    END_DATE,
+  ]);
+
   return {
     total: parseFloat(result.rows[0].total_eth),
-    eligible: parseFloat(result.rows[0].eligible_eth)
+    eligible: parseFloat(result.rows[0].eligible_eth),
   };
 }
 
-async function checkNamadaAddress(namadaAddress, cutoffData, finalized = false) {
-  const table = finalized ? 'donations_finalized' : 'combined_donations';
+async function checkNamadaAddress(
+  namadaAddress,
+  cutoffData,
+  finalized = false
+) {
+  const table = finalized ? "donations_finalized" : "combined_donations";
   const query = `
     WITH address_eligibility AS (
       -- First calculate eligibility per address
@@ -153,59 +163,71 @@ async function checkNamadaAddress(namadaAddress, cutoffData, finalized = false) 
     SELECT total_eth, eligible_eth FROM address_total
   `;
 
-  const MaxBigInt = BigInt('9223372036854775807');  // for block_number (BIGINT)
-  const MaxInt = 2147483647;        
+  const MaxBigInt = BigInt("9223372036854775807"); // for block_number (BIGINT)
+  const MaxInt = 2147483647;
 
-  const result = await pool.query(query, [namadaAddress.toLowerCase(), cutoffData.cutoff_block || MaxBigInt.toString(), cutoffData.cutoff_tx_index || MaxInt, START_DATE, END_DATE]);
-  
+  const result = await pool.query(query, [
+    namadaAddress.toLowerCase(),
+    cutoffData.cutoff_block || MaxBigInt.toString(),
+    cutoffData.cutoff_tx_index === 0 ? 0 : cutoffData.cutoff_tx_index || MaxInt,
+    START_DATE,
+    END_DATE,
+  ]);
+
   return {
     total: parseFloat(result.rows[0].total_eth),
-    eligible: parseFloat(result.rows[0].eligible_eth)
+    eligible: parseFloat(result.rows[0].eligible_eth),
   };
 }
 
-async function checkDonation(ethAddress = null, namAddress = null, isFinalized = false) {
+async function checkDonation(
+  ethAddress = null,
+  namAddress = null,
+  isFinalized = false
+) {
   try {
     const cutoffData = await findCutoffData(isFinalized);
 
     // Check addresses based on what was provided
     const [ethResult, namResult] = await Promise.all([
       ethAddress ? checkEthAddress(ethAddress, cutoffData, isFinalized) : null,
-      namAddress ? checkNamadaAddress(namAddress, cutoffData, isFinalized) : null
+      namAddress
+        ? checkNamadaAddress(namAddress, cutoffData, isFinalized)
+        : null,
     ]);
 
     const { cutoffTimestamp } = cutoffData;
     return {
       ...(ethAddress && { ethAddress: ethResult }),
       ...(namAddress && { namadaAddress: namResult }),
-      cutoffTimestamp: cutoffTimestamp
+      cutoffTimestamp: cutoffTimestamp,
     };
   } catch (error) {
-    console.error('Error checking donations:', error);
+    console.error("Error checking donations:", error);
     throw error;
   }
 }
 
 async function handler(req, res) {
   const { ethAddress, namadaAddress, isFinalized } = req.body;
-  
+
   // Validate that at least one address is provided
   if (!ethAddress && !namadaAddress) {
-    return res.status(400).json({ 
-      message: 'At least one address (ETH or Namada) must be provided' 
+    return res.status(400).json({
+      message: "At least one address (ETH or Namada) must be provided",
     });
   }
 
   try {
     const result = await checkDonation(
-      ethAddress || null, 
+      ethAddress || null,
       namadaAddress || null,
-      isFinalized || false,
+      isFinalized || false
     );
     return res.status(200).json(result);
   } catch (error) {
-    console.error('API error:', error);
-    return res.status(500).json({ message: 'Error checking donations' });
+    console.error("API error:", error);
+    return res.status(500).json({ message: "Error checking donations" });
   }
 }
 

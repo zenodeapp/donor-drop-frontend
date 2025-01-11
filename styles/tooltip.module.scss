@@ -1,0 +1,115 @@
+.tooltip {
+  width: 100%;
+  right: 5px;
+  top: -5px;
+  z-index: 4;
+
+  & .tooltip-text {
+    position: absolute;
+    top: -5px;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border-radius: 50%;
+    background: rgb(31 32 35);
+    border: 1px solid rgb(48 158 211);
+    display: flex;
+    justify-content: center;
+    color: #92d9ff;
+    align-items: center;
+    font-size: 0.7rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    pointer-events: all;
+    right: -5px;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    @media screen and (max-width: 460px) {
+      right: -10px;
+    }
+
+    & .tooltip-balloon {
+      opacity: 0;
+      font-size: 0.8rem;
+      position: absolute;
+      top: 20px;
+      left: -9px;
+      width: 277px;
+      // max-height: 74px;
+      -webkit-hyphens: auto;
+      hyphens: auto;
+      text-align: justify;
+      background: rgb(28 31 37);
+      color: #e4eef7;
+      padding: 10px;
+      border-radius: 5px;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      border: 1px solid #38434d;
+      // display: flex;
+      // justify-content: center;
+      // align-items: center;
+      cursor: default;
+
+      & a {
+        cursor: pointer;
+        color: #ffd07a;
+
+        &:hover {
+          color: #ffc251;
+        }
+      }
+      &.leftSide {
+        right: -11px;
+        left: initial;
+      }
+
+      &.tooltipOpen {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      @media screen and (max-width: 460px) {
+        right: -10px;
+        width: 150px;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: white;
+        background: rgb(34 38 47);
+        background: rgb(28 31 37);
+        display: block;
+        transform: rotate(45deg);
+        top: -6px;
+        left: 10px;
+        border-left: 1px solid #38434d;
+        border-top: 1px solid #38434d;
+      }
+
+      &.leftSide::before {
+        left: initial;
+        right: 11px;
+      }
+    }
+
+    &:hover {
+      & .tooltip-balloon {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+  &.tooltipOpen .tooltip-text {
+    transform: scale(1.1);
+  }
+}

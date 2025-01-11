@@ -29,6 +29,7 @@ export type IDonationState = {
   filterOn: boolean;
   namAddress: string;
   userTotal: EthDonated;
+  userTotalFinalized: EthDonated;
   total?: bigint;
   userExists: boolean;
   phase: DonationPhases;
@@ -62,6 +63,7 @@ export type IDonationContext = IDonationState & {
   signIn: () => Promise<string>;
   setNamAddress: (namAddress: string) => string;
   setUserTotal: (userTotal: EthDonated) => EthDonated;
+  setUserTotalFinalized: (userTotalFinalized: EthDonated) => EthDonated;
   setTotal: (total?: bigint) => bigint | undefined;
   setUserExists: (userExists: boolean) => boolean;
   setPhase: (phase: DonationPhases) => DonationPhases;
@@ -108,6 +110,7 @@ export enum DonationActions {
   SET_BOTTOM_DONATIONS = "SET_BOTTOM_DONATIONS",
   SET_NAM_ADDRESS = "SET_NAM_ADDRESS",
   SET_USER_TOTAL = "SET_USER_TOTAL",
+  SET_USER_TOTAL_FINALIZED = "SET_USER_TOTAL_FINALIZED",
   SET_TOTAL = "SET_TOTAL",
   SET_USER_EXISTS = "SET_USER_EXISTS",
   SET_PHASE = "SET_PHASE",
@@ -139,6 +142,10 @@ export type IDonationActions =
     }
   | {
       type: DonationActions.SET_USER_TOTAL;
+      payload: EthDonated;
+    }
+  | {
+      type: DonationActions.SET_USER_TOTAL_FINALIZED;
       payload: EthDonated;
     }
   | {

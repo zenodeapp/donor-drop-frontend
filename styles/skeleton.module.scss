@@ -1,0 +1,63 @@
+.skeletonText {
+  width: 100%;
+  background: linear-gradient(to right, #483924 0%, #6d521d 50%, #a3852a 100%);
+  background-size: 400% 400%;
+  animation: pulse 1.5s ease infinite;
+  // height: 35px;
+  margin-bottom: 4px;
+  // min-width: 69px;
+  border-radius: 15px;
+  width: auto;
+  display: inline-block;
+  // height: 8px;
+  // height: 1rem;
+  margin: 0 auto;
+  padding: 0 5px;
+  color: rgb(227 226 205);
+  transition: padding 0.3s;
+
+  &.done {
+    color: #e2ebff;
+    background: linear-gradient(
+      to right,
+      #366930 0%,
+      #456f23 50%,
+      #458928 100%
+    );
+    background: none;
+    animation: none;
+    padding: 0;
+    background-size: 400% 400%;
+  }
+
+  &.stale {
+    color: #e2ebff;
+    background: linear-gradient(
+      to right,
+      #482424 0%,
+      #6d1d1d 50%,
+      #a32a2a 100%
+    );
+    background-size: 400% 400%;
+  }
+}
+
+.skeleton {
+  width: 100%;
+  background: linear-gradient(to right, #333 0%, #555 50%, #333 100%);
+  background-size: 400% 400%;
+  animation: pulse 1.5s ease-in-out infinite;
+  min-height: 12px;
+  max-height: 100%;
+  padding: 2px;
+  margin: 2px;
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -135% 0%;
+  }
+}

@@ -4,6 +4,13 @@
 #content {
   position: relative;
   z-index: 1000;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 50px), 0 calc(100% - 50px));
+  -webkit-clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 50px),
+    0 calc(100% - 50px)
+  );
 }
 
 .page {
