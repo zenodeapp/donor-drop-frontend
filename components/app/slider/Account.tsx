@@ -14,10 +14,12 @@ import {
   TARGET_ETH,
 } from "../../../donations.config";
 import DonationProgress from "../donations/DonationProgress";
-import { ethToFloat, truncateEth } from "../../../helpers/web3";
+import { truncateEth } from "../../../helpers/web3";
 import TooltipQuestion from "../elements/TooltipQuestion";
 import { GiCheckMark } from "react-icons/gi";
 import { SkeletonText } from "../elements/Skeleton";
+
+// TODO: this component is a mess and needs refactoring
 
 export enum AccountPhases {
   STATUS_NOT_CONNECTED = 0,
@@ -106,14 +108,6 @@ const Account = ({
             style={{ width: "100%", maxWidth: "100%" }}
           />
           <div className={styles.donationInfo}>
-            {/* <span>
-              — {`donated `}
-              <span style={{ color: "#e2ebff" }}>
-                {truncateEth(userTotal.total, 2)} ETH{" "}
-                {userTotal.total !== 0n ? "💛" : "😌"}
-              </span>{" "}
-              —
-            </span> */}
             <span style={{ display: "block", fontSize: "0.9rem" }}>
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
@@ -267,7 +261,6 @@ const Account = ({
                   ) : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS ? (
                     "waiting for block finality"
                   ) : (
-                    // userTotal.eligible === userTotalFinalized.eligible
                     <>
                       {userTotalFinalized.eligible >= MIN_ETH_PER_ADDRESS
                         ? `${(
@@ -282,7 +275,6 @@ const Account = ({
                         : ""}
                     </>
                   )
-                  // : `will receive min. `
                 }
                 status={
                   isFinalized

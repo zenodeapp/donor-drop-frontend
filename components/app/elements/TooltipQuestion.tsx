@@ -66,50 +66,6 @@ const TooltipQuestion = ({ message }: { message: React.ReactNode }) => {
         </span>
       </span>
     </span>
-
-    //   <span>
-    //   <span
-    //     className={styles.tooltipQuestion}
-    //     onClick={() => {
-    //       setTooltipOpen(!tooltipOpen);
-    //     }}
-    //     onMouseOver={(e) => {
-    //       if (tooltipRef.current) {
-    //         const boundingRect =
-    //           tooltipRef.current.getBoundingClientRect();
-    //         const boundingRectQ =
-    //           e.currentTarget.getBoundingClientRect();
-
-    //         const isRightPossible =
-    //           boundingRectQ.x +
-    //             boundingRectQ.width +
-    //             boundingRect.width +
-    //             5 <
-    //           window.innerWidth;
-
-    //         if (isRightPossible) {
-    //           tooltipRef.current.removeAttribute("style");
-    //         } else {
-    //           tooltipRef.current.style.right = "0";
-    //           tooltipRef.current.style.left = "initial";
-    //         }
-    //       }
-    //     }}
-    //   >
-    //     ?
-    //   </span>
-    //   <span
-    //     className={`${styles.tooltip}${
-    //       tooltipOpen ? ` ${styles.tooltipOpen}` : ""
-    //     }`}
-    //     onMouseLeave={() => {
-    //       setTooltipOpen(false);
-    //     }}
-    //     ref={tooltipRef}
-    //   >
-    //    {message}
-    //   </span>
-    // </span>
   );
 };
 
