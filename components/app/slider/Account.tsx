@@ -250,10 +250,8 @@ const Account = ({
           <div className={styles.donationInfo}>
             <span style={{ fontSize: "0.9rem" }}>
               —{" "}
-              {!(
-                userTotal.eligible < MIN_ETH_PER_ADDRESS &&
-                userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
-              ) && "receives "}
+              {userTotalFinalized.eligible >= MIN_ETH_PER_ADDRESS &&
+                "receives "}
               <SkeletonText
                 text={
                   userTotal.eligible < MIN_ETH_PER_ADDRESS ? (
@@ -287,8 +285,11 @@ const Account = ({
               <span style={{ color: "#e2ebff" }}>
                 {userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
+                  : isFinalized &&
+                    userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
                   ? "😥"
+                  : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
+                  ? "🕔"
                   : parseFloat(userTotalFinalized.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2
                   ? "😇"
