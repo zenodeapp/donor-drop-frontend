@@ -323,6 +323,12 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     all: Array<ITransaction>;
     new: Array<ITransaction>;
   }> => {
+    if (
+      state.phase === DonationPhases.STATUS_FILLED ||
+      state.phase === DonationPhases.STATUS_ENDED
+    )
+      return { all: [], new: [] };
+
     if (isFetching.current) {
       console.log("Fetch already in progress. Skipping...");
       return Promise.reject("Fetch in progress");
@@ -468,6 +474,12 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   };
 
   React.useEffect(() => {
+    if (
+      state.phase === DonationPhases.STATUS_NOT_LIVE ||
+      state.phase === DonationPhases.STATUS_UNKNOWN
+    )
+      return;
+
     const addr =
       web3Connections.connections[
         web3Connections.getConnectedWallet() || "metamask"
@@ -488,6 +500,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     ].address,
     isConnected,
     activeSlide,
+    state.phase,
   ]);
 
   const getTotal = async (): Promise<number | undefined> => {
@@ -514,18 +527,18 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   React.useEffect(() => {
     // Set the interval only when necessary
-    // if (
-    //   !(
-    //     state.phase === DonationPhases.STATUS_ENDED ||
-    //     state.phase === DonationPhases.STATUS_FILLED
-    //   )
-    // ) {
+    if (
+      state.phase === DonationPhases.STATUS_NOT_LIVE ||
+      state.phase === DonationPhases.STATUS_UNKNOWN
+    )
+      return;
+
     const intervalId = setInterval(fetchTotal, GET_TOTAL_INTERVAL);
 
     // Cleanup the interval when the phase changes or the component unmounts
     return () => clearInterval(intervalId);
     // }
-  }, []);
+  }, [state.phase]);
 
   React.useEffect(() => {
     fetchTotal();

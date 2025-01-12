@@ -68,7 +68,7 @@ const DonationList = () => {
 
     return scheduleFetch();
     //eslint-disable-next-line
-  }, [visibleDonations.bottom, donations]);
+  }, [visibleDonations.bottom, donations, phase]);
 
   // Gets triggered when top donations change
   React.useEffect(() => {
