@@ -2,24 +2,36 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-import { END_DATE, START_DATE } from "../../donations.config";
+import {
+  END_DATE,
+  MAX_ETH_PER_ADDRESS,
+  MIN_ETH_PER_ADDRESS,
+  START_DATE,
+  TARGET_ETH,
+} from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
+import { ethToString } from "../../helpers/web3";
 
 async function handler(req, res) {
-  const table = req.query.isFinalized === "true" 
-    ? 'donations_finalized' 
-    : 'combined_donations';
+  const table =
+    req.query.isFinalized === "true"
+      ? "donations_finalized"
+      : "combined_donations";
+
+  const targetEth = parseFloat(ethToString(TARGET_ETH));
+  const minEth = parseFloat(ethToString(MIN_ETH_PER_ADDRESS));
+  const maxEth = parseFloat(ethToString(MAX_ETH_PER_ADDRESS));
 
   const query = `
   WITH donor_totals AS (
-      -- First get total per donor, capped at 0.3
+      -- First get total per donor, capped at maxEth
       SELECT 
           from_address,
-          LEAST(SUM(amount_eth), 0.3) as capped_total
+          LEAST(SUM(amount_eth), ${maxEth}) as capped_total
       FROM ${table}
       WHERE timestamp BETWEEN $1 AND $2
       GROUP BY from_address
-      HAVING SUM(amount_eth) >= 0.03  -- Only include donors who gave at least 0.03
+      HAVING SUM(amount_eth) >= ${minEth}  -- Only include donors who gave at least minEth
   )
   SELECT COALESCE(SUM(capped_total), 0) as total_sum 
   FROM donor_totals
@@ -29,7 +41,7 @@ async function handler(req, res) {
     const result = await pool.query(query, [START_DATE, END_DATE]);
     const total = parseFloat(result.rows[0].total_sum);
 
-    return res.status(200).json({ total });
+    return res.status(200).json({ total: Math.min(targetEth, total) });
   } catch (error) {
     console.error("Error calculating sum:", error);
     return res.status(500).json({ error: "Failed to calculate total" });

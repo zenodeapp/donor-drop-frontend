@@ -74,6 +74,7 @@ async function handler(req, res) {
 
     let runningTotal = 0;
     let runningEligibleTotal = 0;
+    let eligibleTransactionCount = 0;
 
     for (const donation of donations) {
       const { address, amount, hash, namada_address } = donation;
@@ -107,6 +108,8 @@ async function handler(req, res) {
 
         // finally add the amount to the total
         runningEligibleTotal += addToRunningEligibleTotal;
+
+        if (addToRunningEligibleTotal > 0) eligibleTransactionCount++;
       }
 
       const eligible =
@@ -117,7 +120,14 @@ async function handler(req, res) {
         total: (addresses?.[address]?.total || 0) + amount,
         eligible,
         reward: Math.trunc((eligible / targetEth) * REWARD_NAM * 1e6) / 1e6,
-        transactions: isAuthorized
+        transactions: {
+          count: (addresses?.[address]?.transactionCount || 0) + 1,
+          eligible:
+            addToRunningEligibleTotal > 0
+              ? (addresses?.[address]?.eligibleTransactions || 0) + 1
+              : addresses?.[address]?.eligibleTransactions || 0,
+        },
+        hashes: isAuthorized
           ? [...(addresses?.[address]?.transactions || []), hash]
           : undefined,
       };
@@ -141,18 +151,22 @@ async function handler(req, res) {
     }
 
     return res.status(200).json({
-      participants:
+      addresses:
         participant !== undefined
           ? participant
           : req.query.verbose
           ? participants
           : undefined,
-      totalEth: runningTotal,
-      eligibleEth: runningEligibleTotal,
-      totalParticipants: participants.length,
-      eligibleParticipants: participants.filter(
-        (participant) => participant.eligible > 0
-      ).length,
+      eth: { total: runningTotal, eligible: runningEligibleTotal },
+      participants: {
+        total: participants.length,
+        eligible: participants.filter((participant) => participant.eligible > 0)
+          .length,
+      },
+      transactions: {
+        count: donations.length,
+        eligible: eligibleTransactionCount,
+      },
     });
   } catch (error) {
     console.error("Error fetching donations:", error);

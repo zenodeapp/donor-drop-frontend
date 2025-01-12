@@ -2,8 +2,19 @@
 // Adapted slightly with additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-import { END_DATE, START_DATE } from "../../donations.config";
+import {
+  END_DATE,
+  MAX_ETH_PER_ADDRESS,
+  MIN_ETH_PER_ADDRESS,
+  START_DATE,
+  TARGET_ETH,
+} from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
+import { ethToString } from "../../helpers/web3";
+
+const targetEth = parseFloat(ethToString(TARGET_ETH));
+const minEth = parseFloat(ethToString(MIN_ETH_PER_ADDRESS));
+const maxEth = parseFloat(ethToString(MAX_ETH_PER_ADDRESS));
 
 async function findCutoffData(finalized = false) {
   const viewTable = finalized ? "donation_stats_finalized" : "donation_stats";
@@ -37,8 +48,8 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
       -- First calculate eligibility per address
       SELECT from_address,
         CASE 
-          WHEN SUM(amount_eth) >= 0.03 
-          THEN LEAST(SUM(amount_eth), 0.3)
+          WHEN SUM(amount_eth) >= ${minEth} 
+          THEN LEAST(SUM(amount_eth), ${maxEth})
           ELSE 0 
         END as address_eligible
       FROM ${table} 
@@ -54,8 +65,8 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
       -- Calculate THIS address's eligible amount before cutoff
       SELECT 
         CASE 
-          WHEN SUM(amount_eth) >= 0.03 
-          THEN LEAST(SUM(amount_eth), 0.3)
+          WHEN SUM(amount_eth) >= ${minEth} 
+          THEN LEAST(SUM(amount_eth), ${maxEth})
           ELSE 0
         END as address_eligible_eth
       FROM ${table} 
@@ -74,7 +85,7 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
           CASE 
             WHEN EXISTS (SELECT 1 FROM cutoff_tx) THEN
               (SELECT address_eligible_eth FROM address_before_cutoff) + 
-              (27.0 - (SELECT total_eligible_eth FROM total_before_cutoff))
+              (${targetEth} - (SELECT total_eligible_eth FROM total_before_cutoff))
             ELSE
               (SELECT address_eligible_eth FROM address_before_cutoff)
           END,
@@ -114,8 +125,8 @@ async function checkNamadaAddress(
       -- First calculate eligibility per address
       SELECT from_address,
         CASE 
-          WHEN SUM(amount_eth) >= 0.03 
-          THEN LEAST(SUM(amount_eth), 0.3)
+          WHEN SUM(amount_eth) >= ${minEth} 
+          THEN LEAST(SUM(amount_eth), ${maxEth})
           ELSE 0 
         END as address_eligible
       FROM ${table} 
@@ -131,8 +142,8 @@ async function checkNamadaAddress(
       -- Calculate THIS address's eligible amount before cutoff
       SELECT 
         CASE 
-          WHEN SUM(amount_eth) >= 0.03 
-          THEN LEAST(SUM(amount_eth), 0.3)
+          WHEN SUM(amount_eth) >= ${minEth} 
+          THEN LEAST(SUM(amount_eth), ${maxEth})
           ELSE 0
         END as address_eligible_eth
       FROM ${table} 
@@ -151,7 +162,7 @@ async function checkNamadaAddress(
           CASE 
             WHEN EXISTS (SELECT 1 FROM cutoff_tx) THEN
               (SELECT address_eligible_eth FROM address_before_cutoff) + 
-              (27.0 - (SELECT total_eligible_eth FROM total_before_cutoff))
+              (${targetEth} - (SELECT total_eligible_eth FROM total_before_cutoff))
             ELSE
               (SELECT address_eligible_eth FROM address_before_cutoff)
           END,
