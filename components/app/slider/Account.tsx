@@ -154,20 +154,20 @@ const Account = ({
           <div
             className={styles.finalized}
             style={{
-              opacity: userTotal.eligible === 0n ? 0 : 1,
-              pointerEvents: userTotal.eligible === 0n ? "none" : "all",
+              opacity: userTotal.total === 0n ? 0 : 1,
+              pointerEvents: userTotal.total === 0n ? "none" : "all",
             }}
           >
             <span
               className={`${styles.text} ${
-                userTotal.eligible === 0n
+                userTotal.total === 0n
                   ? ""
                   : isFinalized
                   ? styles.final
                   : styles.pending
               }`}
             >
-              {userTotal.eligible === 0n ? (
+              {userTotal.total === 0n ? (
                 ""
               ) : isFinalized ? (
                 <>

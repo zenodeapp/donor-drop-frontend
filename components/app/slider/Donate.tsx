@@ -22,7 +22,7 @@ import {
   TARGET_ETH,
 } from "../../../donations.config";
 import { IoIosClock } from "react-icons/io";
-import { ethToString } from "../../../helpers/web3";
+import { ethToFloat, ethToString } from "../../../helpers/web3";
 import { GiPartyPopper } from "react-icons/gi";
 import { useLayout } from "../../../context/LayoutProvider";
 import { IoRocket, IoWalletSharp, IoWarning } from "react-icons/io5";
@@ -220,6 +220,10 @@ const Donate = ({
   const { notify } = useNotification();
 
   useEffect(() => {
+    setEthInput(parseFloat(ethToString(MIN_ETH_PER_ADDRESS)));
+  }, []);
+
+  useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
 
     if (currentStep === 1) {
@@ -365,11 +369,11 @@ const Donate = ({
           <ul className={styles.timetable}></ul>A participant has to have
           donated a{" "}
           <span style={{ color: "rgb(123 199 217)" }}>
-            minimum of <FaEthereum /> 0.03 ETH.
+            minimum of <FaEthereum /> {ethToFloat(MIN_ETH_PER_ADDRESS, 2)} ETH.
           </span>{" "}
           Feel free to donate more, but we will recognize a{" "}
           <span style={{ color: "rgb(123 199 217)" }}>
-            maximum of <FaEthereum /> 0.30 ETH
+            maximum of <FaEthereum /> {ethToFloat(MAX_ETH_PER_ADDRESS, 2)} ETH
           </span>
           .
           <div style={{ width: "87%", margin: "0 auto" }}>
@@ -402,7 +406,7 @@ const Donate = ({
                     className={styles.text}
                   >
                     {"ETH "}={" "}
-                    {ethInput < 0.03
+                    {ethInput < parseFloat(ethToString(MIN_ETH_PER_ADDRESS))
                       ? "not eligible 😞"
                       : `${(
                           (Math.min(0.3, ethInput) /

@@ -9,11 +9,13 @@ import {
   DONOR_NETWORK,
   END_DATE,
   EXPLORER_LINK,
+  MAX_ETH_PER_ADDRESS,
+  MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
   START_DATE,
   TARGET_ETH,
 } from "../../../donations.config";
-import { truncateEth } from "../../../helpers/web3";
+import { ethToFloat, truncateEth } from "../../../helpers/web3";
 import {
   formatDuration,
   formatNumber,
@@ -188,7 +190,8 @@ const Target = ({
                   <li className={styles.text}>
                     We will recognize any address that donates{" "}
                     <span style={{ background: "#262626", color: "white" }}>
-                      0.03 ETH to a maximum of 0.3 ETH
+                      {ethToFloat(MIN_ETH_PER_ADDRESS, 2)} ETH to a maximum of{" "}
+                      {ethToFloat(MAX_ETH_PER_ADDRESS, 2)} ETH
                     </span>{" "}
                     <i>(but please donate whatever you can!)</i>.
                   </li>
