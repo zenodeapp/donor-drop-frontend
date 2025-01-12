@@ -126,10 +126,10 @@ async function handler(req, res) {
             addToRunningEligibleTotal > 0
               ? (addresses?.[address]?.eligibleTransactions || 0) + 1
               : addresses?.[address]?.eligibleTransactions || 0,
+          hashes: isAuthorized
+            ? [...(addresses?.[address]?.transactions || []), hash]
+            : undefined,
         },
-        hashes: isAuthorized
-          ? [...(addresses?.[address]?.transactions || []), hash]
-          : undefined,
       };
     }
 
