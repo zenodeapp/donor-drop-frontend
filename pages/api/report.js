@@ -121,7 +121,7 @@ async function handler(req, res) {
         eligible,
         reward: Math.trunc((eligible / targetEth) * REWARD_NAM * 1e6) / 1e6,
         transactions: {
-          count: (addresses?.[address]?.transactionCount || 0) + 1,
+          total: (addresses?.[address]?.transactionCount || 0) + 1,
           eligible:
             addToRunningEligibleTotal > 0
               ? (addresses?.[address]?.eligibleTransactions || 0) + 1
@@ -164,7 +164,7 @@ async function handler(req, res) {
           .length,
       },
       transactions: {
-        count: donations.length,
+        total: donations.length,
         eligible: eligibleTransactionCount,
       },
     });
