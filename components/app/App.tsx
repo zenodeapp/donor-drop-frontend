@@ -31,17 +31,17 @@ const Input = () => {
         .closest(`.${sliderStyle["slider"]}`)
         ?.scroll({ top: 0, left: 0 });
     }
-
-    setOtherSlidesLocked(false);
   };
 
   // TODO or deprecated?
   const setTabIndex = (index: number) => {
     if (!showApp || isMobileView) return -1;
 
-    if (otherSlidesLocked && index !== activeSlide) {
+    if (tabs[index].disabled) {
       return -1;
     }
+
+    return undefined;
   };
 
   const tabs = [
@@ -90,11 +90,13 @@ const Input = () => {
       key={2}
       isActive={activeSlide === 2}
       onFocus={(e) => setSlide(2, e)}
+      tabIndex={setTabIndex(2)}
     />,
     <Account
       key={3}
       isActive={activeSlide === 3}
       onFocus={(e) => setSlide(3, e)}
+      tabIndex={setTabIndex(3)}
     />,
   ];
 

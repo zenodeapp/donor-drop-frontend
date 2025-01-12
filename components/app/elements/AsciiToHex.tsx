@@ -12,7 +12,13 @@ import { convertToHex } from "../../../helpers/web3";
 import styles from "../../../styles/ascii.module.scss";
 import { bech32m } from "bech32";
 
-export default function AsciiToHex() {
+export default function AsciiToHex({
+  onFocus,
+  tabIndex,
+}: {
+  onFocus: React.FocusEventHandler;
+  tabIndex?: number;
+}) {
   const { notify } = useNotification();
   const [ascii, setAscii] = useState("");
   const [hex, setHex] = useState("");
@@ -59,6 +65,8 @@ export default function AsciiToHex() {
             placeholder='Enter your address here...'
             maxLength={45}
             autoComplete='off'
+            onFocus={onFocus}
+            tabIndex={tabIndex}
           />
         </label>
         <div className={styles.statusIcon}>
@@ -78,6 +86,8 @@ export default function AsciiToHex() {
             value={hex}
             readOnly
             placeholder='Type a valid address in the field above.'
+            onFocus={onFocus}
+            tabIndex={tabIndex}
           />
         </label>
         <button
@@ -117,6 +127,8 @@ export default function AsciiToHex() {
               }
             );
           }}
+          onFocus={onFocus}
+          tabIndex={tabIndex}
         >
           <FaCopy />
         </button>

@@ -32,9 +32,11 @@ export enum AccountPhases {
 const Account = ({
   isActive,
   onFocus,
+  tabIndex,
 }: {
   isActive: boolean;
   onFocus: React.FocusEventHandler;
+  tabIndex?: number;
 }) => {
   const { web3Connections } = useWeb3();
   const { isConnected, signedIn, smoothShowApp } = useTheme();
@@ -76,6 +78,7 @@ const Account = ({
         )}
         onClick={() => smoothShowApp(false)}
         onFocus={onFocus}
+        tabIndex={tabIndex}
       >
         <IoWalletOutline size='2rem' />
         <p className={styles.connectText}>Connect a wallet to get started.</p>
@@ -227,6 +230,7 @@ const Account = ({
         )}
         onClick={signIn}
         onFocus={onFocus}
+        tabIndex={tabIndex}
       >
         <FaSignature size='2rem' />
         <p className={styles.connectText}>Sign to reveal your tnam address.</p>

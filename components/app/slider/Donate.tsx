@@ -62,6 +62,7 @@ const NavigationButtons = ({
   nextOnClick,
   backOnClick,
   onFocus,
+  tabIndex,
 }: {
   max: number;
   currentStep: number;
@@ -71,6 +72,7 @@ const NavigationButtons = ({
   nextOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   backOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   onFocus: React.FocusEventHandler<HTMLButtonElement>;
+  tabIndex?: number;
 }) => {
   return (
     <div className={styles.navigationButtons}>
@@ -85,6 +87,7 @@ const NavigationButtons = ({
                 }
           }
           onFocus={onFocus}
+          tabIndex={tabIndex}
         >
           <span className={styles.back}>{backTitle ? backTitle : "BACK"}</span>
           <span className={styles.line}></span>
@@ -100,6 +103,7 @@ const NavigationButtons = ({
               }
         }
         onFocus={onFocus}
+        tabIndex={tabIndex}
       >
         <span className={styles.next}>{nextTitle ? nextTitle : "NEXT"}</span>
         <span className={styles.line}></span>
@@ -126,12 +130,14 @@ const StepBubble = ({
   navEnabled = true,
   ghost,
   onFocus,
+  tabIndex,
   maxHeight,
 }: IStepBubble & {
   max: number;
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   onFocus: React.FocusEventHandler<HTMLButtonElement>;
+  tabIndex?: number;
 }) => {
   return (
     <div
@@ -189,6 +195,7 @@ const StepBubble = ({
               nextOnClick={nextOnClick}
               backOnClick={backOnClick}
               onFocus={onFocus}
+              tabIndex={tabIndex}
             />
           )}
         </div>
@@ -200,9 +207,11 @@ const StepBubble = ({
 const Donate = ({
   isActive,
   onFocus,
+  tabIndex,
 }: {
   isActive: boolean;
   onFocus: React.FocusEventHandler;
+  tabIndex?: number;
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const { smoothNavigate } = useLayout();
@@ -381,6 +390,7 @@ const Donate = ({
                     onChange={(e) => {
                       setEthInput(Math.max(0, parseFloat(e.target.value) || 0));
                     }}
+                    onFocus={onFocus}
                     tabIndex={-1}
                   />
                   <span
@@ -434,7 +444,11 @@ const Donate = ({
       bubble: (
         <>
           Would you like to attach a message to your donation?
-          <DonationMessage setSending={setSending} />
+          <DonationMessage
+            setSending={setSending}
+            onFocus={onFocus}
+            tabIndex={tabIndex}
+          />
         </>
       ),
       imageContainer: <FaCommentAlt size='3rem' />,
@@ -488,6 +502,7 @@ const Donate = ({
             target='_blank'
             rel='noreferrer'
             onFocus={onFocus}
+            tabIndex={tabIndex}
           >
             click here
           </a>{" "}
@@ -516,6 +531,7 @@ const Donate = ({
           <button
             className={styles.copyButton}
             onFocus={onFocus}
+            tabIndex={tabIndex}
             onClick={() => {
               if (process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS) {
                 copyToClipboard(
@@ -568,6 +584,7 @@ const Donate = ({
           <button
             className={styles.copyButtonSmall}
             onFocus={onFocus}
+            tabIndex={tabIndex}
             onClick={() => {
               if (process.env.NEXT_PUBLIC_DONOR_ADDRESS) {
                 copyToClipboard(
@@ -630,12 +647,13 @@ const Donate = ({
             rel='noreferrer'
             className={styles.extension}
             onFocus={onFocus}
+            tabIndex={tabIndex}
           >
             Namada extension <FaExternalLinkAlt size={"0.7rem"} />{" "}
           </a>{" "}
           to view your keys and paste your Transparent address here to get its{" "}
           <span style={{ color: "#5cefef" }}>Hex value</span>.
-          <AsciiToHex />
+          <AsciiToHex onFocus={onFocus} tabIndex={tabIndex} />
         </>
       ),
       image: { src: "/icon_x192.png", alt: "Namada", width: 96, height: 96 },
@@ -649,6 +667,7 @@ const Donate = ({
             rel='noreferrer'
             className={styles.extension}
             onFocus={onFocus}
+            tabIndex={tabIndex}
           >
             download the extension
           </a>{" "}
@@ -672,6 +691,7 @@ const Donate = ({
               target='_blank'
               rel='noreferrer'
               onFocus={onFocus}
+              tabIndex={tabIndex}
             >
               {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
             </a>
@@ -758,6 +778,7 @@ const Donate = ({
             backOnClick={step.backOnClick}
             ghost={step.ghost}
             onFocus={onFocus}
+            tabIndex={tabIndex}
             maxHeight={step.maxHeight}
           />
         ))}

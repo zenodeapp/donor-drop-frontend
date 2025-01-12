@@ -14,8 +14,12 @@ const profanityFilter = (message: string) => {
 
 const DonationMessage = ({
   setSending,
+  onFocus,
+  tabIndex,
 }: {
   setSending: React.Dispatch<React.SetStateAction<number>>;
+  onFocus: React.FocusEventHandler;
+  tabIndex?: number;
 }) => {
   const [message, setMessage] = useState("");
   const { sendMessage } = useDonation();
@@ -72,6 +76,8 @@ const DonationMessage = ({
         placeholder='Write your message here (max. 100 characters)'
         onChange={(e) => setMessage(e.target.value)}
         className={styles.textarea}
+        onFocus={onFocus}
+        tabIndex={tabIndex}
       ></textarea>
       <div className={styles.buttonContainer}>
         <button
@@ -80,6 +86,8 @@ const DonationMessage = ({
             isConnected && !message && styles.disabled
           }`}
           disabled={isConnected && !message}
+          onFocus={onFocus}
+          tabIndex={tabIndex}
         >
           {isConnected ? "Sign and Send" : "Connect Wallet"}
         </button>
