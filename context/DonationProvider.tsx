@@ -362,7 +362,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
               setDonations(allDonations);
               return { all: allDonations, new: newDonations };
             } else {
-              console.log("No new transactions found. Retrying...");
+              // console.log("No new transactions found. Retrying...");
             }
           } else {
             // Notify the user about connection issues
@@ -393,7 +393,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         }
 
         // Wait for the delay before retrying
-        console.log(`Retrying in ${delay / 1000} seconds...`);
+        // console.log(`Retrying in ${delay / 1000} seconds...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
 
         delay = Math.min(delay * 2, GET_DONATIONS_MAX_INTERVAL);
