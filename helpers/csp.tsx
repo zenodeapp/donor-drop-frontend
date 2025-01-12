@@ -19,9 +19,7 @@ const getCsp = (inlineScriptSource?: crypto.BinaryLike) => {
   csp.push(scriptSrc);
   csp.push(`style-src 'self' 'unsafe-inline'`);
   csp.push(
-    `connect-src 'self' vitals.vercel-insights.com${
-      CspConnectSource ? ` ${CspConnectSource}` : ""
-    }`
+    `connect-src 'self'${CspConnectSource ? ` ${CspConnectSource}` : ""}`
   );
   csp.push(`img-src 'self' data:`);
   csp.push(`font-src 'self' fonts.gstatic.com`);

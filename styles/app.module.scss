@@ -1,5 +1,5 @@
 @value FadeIn from "animations.module.scss";
-@value show-app, ascended-state from "body.module.scss";
+@value show-app, ascended-state, is-mobile from "body.module.scss";
 
 #content {
   position: relative;
@@ -62,6 +62,17 @@
     height: inherit;
     overflow: auto;
     overflow-x: hidden;
+  }
+}
+
+body:global(.is-mobile) #page-content {
+  @media screen and (max-height: 1215px) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none; /* For Chrome, Safari, and Edge (newer versions) */
+    }
   }
 }
 

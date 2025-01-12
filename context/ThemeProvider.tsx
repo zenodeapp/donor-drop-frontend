@@ -4,7 +4,7 @@ import appStyle from "../styles/app.module.scss";
 import bodyStyle from "../styles/body.module.scss";
 import { IThemeContext, IThemeProvider } from "./ThemeTypes";
 import ThemeReducer, { ThemeDispatch } from "./ThemeReducer";
-import { toggleClass } from "../helpers/layout";
+import { isMobile, toggleClass } from "../helpers/layout";
 
 const ThemeContext = React.createContext<IThemeContext | undefined>(undefined);
 
@@ -52,6 +52,10 @@ const ThemeProvider = ({ children }: IThemeProvider) => {
       document.body.classList.remove(bodyStyle["show-app"]);
     };
   }, [state.showApp]);
+
+  React.useEffect(() => {
+    toggleClass(bodyStyle["is-mobile"], isMobile());
+  }, []);
 
   // TODO: this is likely a temporary fix to smooth things out when we're scrolled down.
   const smoothShowApp = (showApp: boolean) => {

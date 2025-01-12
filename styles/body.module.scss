@@ -4,7 +4,8 @@
 .is-connected,
 body.notification-visible,
 body.display-browser,
-body.ascended-state {
+body.ascended-state,
+body.is-mobile {
   position: relative;
 }
 html.sidebar-expanded {

@@ -74,7 +74,7 @@
       "name": "Hub (ZENODE)",
       "short_name": "Hub (ZENODE)",
       "description": "A unified space for decentralized utilities. Here Anodes come together to work on operations, brew up dApps and upload new existence into the world.",
-      "url": "https://zenode.app/hub",
+      "url": "/hub",
       "icons": [
         {
           "src": "/zenode/hub.png",
@@ -88,7 +88,7 @@
       "name": "Support (ZENODE)",
       "short_name": "Support (ZENODE)",
       "description": "Wish to lend us a helping hand? Support us by donating bolts of lightning, crypto or sharing!",
-      "url": "https://zenode.app/support",
+      "url": "/support",
       "icons": [
         {
           "src": "/zenode/support.png",
