@@ -51,6 +51,8 @@ const Countdown = () => {
           phase === DonationPhases.STATUS_ENDED ||
           phase === DonationPhases.STATUS_FILLED
             ? styles.ended
+            : phase === DonationPhases.STATUS_LIVE
+            ? styles.live
             : ""
         }`}
       >
@@ -58,8 +60,9 @@ const Countdown = () => {
           ? `CAMPAIGN STARTS IN`
           : phase === DonationPhases.STATUS_FILLED ||
             phase === DonationPhases.STATUS_ENDED
-          ? `CAMPAIGN ENDED
-            `
+          ? `CAMPAIGN ENDED`
+          : phase === DonationPhases.STATUS_LIVE
+          ? `CAMPAIGN LIVE`
           : ""}
       </h5>
       {phase !== DonationPhases.STATUS_ENDED &&
