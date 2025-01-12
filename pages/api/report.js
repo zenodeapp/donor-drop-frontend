@@ -121,13 +121,13 @@ async function handler(req, res) {
         eligible,
         reward: Math.trunc((eligible / targetEth) * REWARD_NAM * 1e6) / 1e6,
         transactions: {
-          total: (addresses?.[address]?.transactionCount || 0) + 1,
+          total: (addresses?.[address]?.transactions?.total || 0) + 1,
           eligible:
             addToRunningEligibleTotal > 0
-              ? (addresses?.[address]?.eligibleTransactions || 0) + 1
-              : addresses?.[address]?.eligibleTransactions || 0,
+              ? (addresses?.[address]?.transactions?.eligible || 0) + 1
+              : addresses?.[address]?.transactions?.eligible || 0,
           hashes: isAuthorized
-            ? [...(addresses?.[address]?.transactions || []), hash]
+            ? [...(addresses?.[address]?.transactions?.hashes || []), hash]
             : undefined,
         },
       };
