@@ -1,6 +1,7 @@
 @value FloatExtraSmall from "./animations.module.scss";
 @value progressBar from "./progress.module.scss";
 @value show-app from "./body.module.scss";
+@value tooltip-text from "./tooltip.module.scss";
 
 .wrapper {
   & .eth svg {
@@ -502,6 +503,15 @@
       border-color: #1ed01e;
       background-color: rgb(19 68 71 / 47%);
       border-color: #1eafd0;
+    }
+  }
+
+  &.noRewards {
+    opacity: 0;
+    pointer-events: none;
+
+    & :global(.tooltip-text) {
+      pointer-events: none;
     }
   }
 

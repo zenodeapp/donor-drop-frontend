@@ -29,6 +29,13 @@ export enum AccountPhases {
   STATUS_EXISTING_USER = 4,
 }
 
+export enum TotalsPhases {
+  STATUS_IDLE = 0,
+  STATUS_IS_BELOW_THRESHOLD = 1,
+  STATUS_IS_PROCESSING = 2,
+  STATUS_IS_PROCESSED = 3,
+}
+
 const Account = ({
   isActive,
   onFocus,
@@ -45,15 +52,14 @@ const Account = ({
   const [accountPhase, setAccountPhase] = React.useState<AccountPhases>(
     AccountPhases.STATUS_NOT_CONNECTED
   );
+  const [totalsPhase, setTotalsPhase] = React.useState<TotalsPhases>(
+    TotalsPhases.STATUS_IDLE
+  );
 
   const wallet = web3Connections.getConnectedWallet();
   const ethAddress = wallet
     ? web3Connections.connections[wallet].address
     : undefined;
-
-  const isFinalized =
-    userTotal.total === userTotalFinalized.total ||
-    userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS;
 
   // Fix account phase
   React.useEffect(() => {
@@ -63,6 +69,27 @@ const Account = ({
     if (!userExists) return setAccountPhase(AccountPhases.STATUS_NEW_USER);
     setAccountPhase(AccountPhases.STATUS_EXISTING_USER);
   }, [isConnected, signedIn, userExists]);
+
+  React.useEffect(() => {
+    if (userTotal.total === 0n && userTotal.eligible === 0n) {
+      setTotalsPhase(TotalsPhases.STATUS_IDLE);
+    } else if (
+      userTotal.total < MIN_ETH_PER_ADDRESS &&
+      userTotal.eligible === 0n
+    ) {
+      setTotalsPhase(TotalsPhases.STATUS_IS_BELOW_THRESHOLD);
+    } else if (
+      userTotal.eligible === userTotalFinalized.eligible ||
+      userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
+    ) {
+      setTotalsPhase(TotalsPhases.STATUS_IS_PROCESSED);
+    } else {
+      setTotalsPhase(TotalsPhases.STATUS_IS_PROCESSING);
+    }
+  }, [userTotal, userTotalFinalized]);
+
+  // if we're in a phase that's higher than this TotalsPhase then the user should have rewards.
+  const hasRewards = totalsPhase > TotalsPhases.STATUS_IS_BELOW_THRESHOLD;
 
   const renderEthereumSection = () => (
     <div className={getClassNameByStyle(styles, `section eth`)}>
@@ -91,14 +118,14 @@ const Account = ({
             value={
               userTotal.total < MIN_ETH_PER_ADDRESS
                 ? userTotal.total
-                : isFinalized
+                : totalsPhase === TotalsPhases.STATUS_IS_PROCESSED
                 ? userTotal.eligible
                 : userTotal.total
             }
             finalized={
               userTotalFinalized.total < MIN_ETH_PER_ADDRESS
                 ? userTotalFinalized.total
-                : isFinalized
+                : totalsPhase === TotalsPhases.STATUS_IS_PROCESSED
                 ? userTotalFinalized.eligible
                 : userTotalFinalized.total
             }
@@ -114,36 +141,30 @@ const Account = ({
             <span style={{ display: "block", fontSize: "0.9rem" }}>
               — {`donated `}
               <span style={{ color: "#e2ebff" }}>
-                {truncateEth(userTotal.total, 2)} ETH{" "}
-                {userTotal.total !== 0n ? "💛" : "😌"}
+                {truncateEth(userTotal.total, 2)} ETH {hasRewards ? "💛" : "😌"}
               </span>{" "}
-              {userTotal.total >= MIN_ETH_PER_ADDRESS && (
-                <>
-                  {userTotal.total < MIN_ETH_PER_ADDRESS
-                    ? " below threshold"
-                    : ""}{" "}
-                  eligible{" "}
-                </>
-              )}
-              {userTotal.total > 0n && (
+              {hasRewards && <>eligible </>}
+              {totalsPhase !== TotalsPhases.STATUS_IDLE && (
                 <>
                   <SkeletonText
                     text={
-                      userTotal.total < MIN_ETH_PER_ADDRESS ? (
+                      totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD ? (
                         <>below threshold</>
                       ) : (
                         <>{truncateEth(userTotalFinalized.eligible, 2)} ETH</>
                       )
                     }
                     status={
-                      isFinalized
+                      totalsPhase === TotalsPhases.STATUS_IS_PROCESSED
                         ? "done"
-                        : userTotal.total < MIN_ETH_PER_ADDRESS
+                        : totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD
                         ? "stale"
-                        : "process"
+                        : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING
+                        ? "process"
+                        : undefined
                     }
                   />
-                  {isFinalized && userTotalFinalized.eligible === 0n
+                  {totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD
                     ? " 😥"
                     : ""}
                 </>
@@ -152,43 +173,39 @@ const Account = ({
             </span>
           </div>
           <div
-            className={styles.finalized}
-            style={{
-              opacity: userTotal.total === 0n ? 0 : 1,
-              pointerEvents: userTotal.total === 0n ? "none" : "all",
-            }}
+            className={`${styles.finalized} ${
+              !hasRewards ? styles.noRewards : ""
+            }`}
           >
             <span
               className={`${styles.text} ${
-                userTotal.total === 0n
-                  ? ""
-                  : isFinalized
+                totalsPhase === TotalsPhases.STATUS_IS_PROCESSED
                   ? styles.final
-                  : styles.pending
+                  : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING
+                  ? styles.pending
+                  : ""
               }`}
             >
-              {userTotal.total === 0n ? (
-                ""
-              ) : isFinalized ? (
+              {totalsPhase === TotalsPhases.STATUS_IS_PROCESSED ? (
                 <>
                   <GiCheckMark size={"0.7rem"} />
                   PROCESSED
                 </>
-              ) : (
+              ) : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING ? (
                 <>
                   <FaClock size={"0.7rem"} />
                   PROCESSING
                 </>
-              )}
+              ) : undefined}
             </span>
             <TooltipQuestion
               message={
-                isFinalized ? (
+                totalsPhase === TotalsPhases.STATUS_IS_PROCESSED ? (
                   <>
                     All blocks containing transactions of yours are finalized
                     on-chain and can be considered valid.
                   </>
-                ) : (
+                ) : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING ? (
                   <>
                     Blocks have to be finalized on-chain before they can be
                     considered valid (
@@ -201,7 +218,7 @@ const Account = ({
                     ). Please wait ~15 minutes to see your final eligible
                     amount.
                   </>
-                )
+                ) : undefined
               }
             />
           </div>
@@ -209,6 +226,7 @@ const Account = ({
       )}
     </div>
   );
+
   const renderNamSection = () => (
     <div className={getClassNameByStyle(styles, `section right`)}>
       <span className={getClassNameByStyle(styles, `wallet-icon`)}>
@@ -253,46 +271,43 @@ const Account = ({
           </p>
           <div className={styles.donationInfo}>
             <span style={{ fontSize: "0.9rem" }}>
-              —{" "}
-              {userTotalFinalized.eligible >= MIN_ETH_PER_ADDRESS &&
-                "receives "}
+              — {hasRewards && "receives "}
               <SkeletonText
                 text={
-                  userTotal.eligible < MIN_ETH_PER_ADDRESS ? (
+                  totalsPhase === TotalsPhases.STATUS_IDLE ||
+                  totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD ? (
                     "not eligible for any rewards "
-                  ) : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS ? (
-                    "waiting for block finality"
-                  ) : (
+                  ) : hasRewards ? (
                     <>
-                      {userTotalFinalized.eligible >= MIN_ETH_PER_ADDRESS
-                        ? `${(
-                            (parseFloat(
-                              userTotalFinalized.eligible > MAX_ETH_PER_ADDRESS
-                                ? MAX_ETH_PER_ADDRESS.toString()
-                                : userTotalFinalized.eligible.toString()
-                            ) /
-                              parseFloat(TARGET_ETH.toString())) *
-                            REWARD_NAM
-                          ).toFixed(2)} NAM `
-                        : ""}
+                      {`${(
+                        (parseFloat(userTotalFinalized.eligible.toString()) /
+                          parseFloat(TARGET_ETH.toString())) *
+                        REWARD_NAM
+                      ).toFixed(2)} NAM `}
                     </>
+                  ) : (
+                    "waiting for block finality"
                   )
                 }
                 status={
-                  isFinalized
+                  totalsPhase === TotalsPhases.STATUS_IDLE ||
+                  totalsPhase === TotalsPhases.STATUS_IS_PROCESSED
                     ? "done"
-                    : userTotal.total < MIN_ETH_PER_ADDRESS
+                    : totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD
                     ? "stale"
-                    : "process"
+                    : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING
+                    ? "process"
+                    : undefined
                 }
               />{" "}
               <span style={{ color: "#e2ebff" }}>
                 {userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : isFinalized &&
-                    userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
+                  : totalsPhase === TotalsPhases.STATUS_IDLE
+                  ? ""
+                  : totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD
                   ? "😥"
-                  : userTotalFinalized.eligible < MIN_ETH_PER_ADDRESS
+                  : totalsPhase === TotalsPhases.STATUS_IS_PROCESSING
                   ? "🕔"
                   : parseFloat(userTotalFinalized.eligible.toString()) <
                     parseFloat(MAX_ETH_PER_ADDRESS.toString()) / 2
