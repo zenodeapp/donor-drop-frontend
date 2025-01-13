@@ -143,7 +143,7 @@ const Account = ({
               <span style={{ color: "#e2ebff" }}>
                 {truncateEth(userTotal.total, 2)} ETH {hasRewards ? "💛" : "😌"}
               </span>{" "}
-              {hasRewards && <>eligible </>}
+              {hasRewards && <>recognized </>}
               {totalsPhase !== TotalsPhases.STATUS_IDLE && (
                 <>
                   <SkeletonText
@@ -215,8 +215,7 @@ const Account = ({
                     >
                       learn more
                     </a>
-                    ). Please wait ~15 minutes to see your final eligible
-                    amount.
+                    ). Please wait ~15 minutes to see your recognized amount.
                   </>
                 ) : undefined
               }
@@ -271,12 +270,12 @@ const Account = ({
           </p>
           <div className={styles.donationInfo}>
             <span style={{ fontSize: "0.9rem" }}>
-              — {hasRewards && "receives "}
+              — {hasRewards && "estimated "}
               <SkeletonText
                 text={
                   totalsPhase === TotalsPhases.STATUS_IDLE ||
                   totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD ? (
-                    "not eligible for any rewards "
+                    "not recognized for any rewards "
                   ) : hasRewards ? (
                     <>
                       {`${(
