@@ -152,13 +152,6 @@ async function handler(req, res) {
       );
     }
 
-    // let total = 0;
-    // participants.map((participant) => {
-    //   total = total + participant.eligible;
-    // });
-
-    // console.log(total);
-
     return res.status(200).json({
       addresses:
         participant !== undefined
