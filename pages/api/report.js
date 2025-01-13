@@ -49,10 +49,6 @@ async function handler(req, res) {
 
     const result = await pool.query(query);
 
-    if (result.rows.length === 0) {
-      return res.status(200).json({ donations: [] });
-    }
-
     // Map the rows to a cleaner format and filter it on start and end date.
     let donations = result.rows
       .map((row) => ({
