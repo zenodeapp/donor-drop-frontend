@@ -428,7 +428,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         },
         body: JSON.stringify({
           ethAddress: web3Connections.connections["metamask"].address,
-          isFinalized: finalized || false,
+          finalized: finalized || false,
         }),
       });
       if (response.ok) {

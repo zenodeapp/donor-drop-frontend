@@ -14,7 +14,7 @@ import { ethToString } from "../../helpers/web3";
 
 async function handler(req, res) {
   const table =
-    req.query.isFinalized === "true"
+    req.query.finalized === "true"
       ? "donations_finalized"
       : "combined_donations";
 

@@ -194,17 +194,15 @@ async function checkNamadaAddress(
 async function checkDonation(
   ethAddress = null,
   namAddress = null,
-  isFinalized = false
+  finalized = false
 ) {
   try {
-    const cutoffData = await findCutoffData(isFinalized);
+    const cutoffData = await findCutoffData(finalized);
 
     // Check addresses based on what was provided
     const [ethResult, namResult] = await Promise.all([
-      ethAddress ? checkEthAddress(ethAddress, cutoffData, isFinalized) : null,
-      namAddress
-        ? checkNamadaAddress(namAddress, cutoffData, isFinalized)
-        : null,
+      ethAddress ? checkEthAddress(ethAddress, cutoffData, finalized) : null,
+      namAddress ? checkNamadaAddress(namAddress, cutoffData, finalized) : null,
     ]);
 
     const { cutoffTimestamp } = cutoffData;
@@ -220,8 +218,7 @@ async function checkDonation(
 }
 
 async function handler(req, res) {
-  const { ethAddress, namadaAddress, isFinalized } = req.body;
-
+  const { ethAddress, namadaAddress, finalized } = req.body;
   // Validate that at least one address is provided
   if (!ethAddress && !namadaAddress) {
     return res.status(400).json({
@@ -233,7 +230,7 @@ async function handler(req, res) {
     const result = await checkDonation(
       ethAddress || null,
       namadaAddress || null,
-      isFinalized || false
+      finalized || false
     );
     return res.status(200).json(result);
   } catch (error) {

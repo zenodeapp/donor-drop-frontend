@@ -98,9 +98,14 @@ async function handler(req, res) {
           addToRunningEligibleTotal = Math.min(amount, maxEth - prevEligible); // don't give more than possible
         }
 
-        // If the amount we want to add becomes more than the amount allowed, make sure we correct it to the amount that's left
-        if (runningEligibleTotal + addToRunningEligibleTotal > targetEth) {
-          addToRunningEligibleTotal = targetEth - runningEligibleTotal;
+        // If the amount we want to add becomes more than the amount allowed, make sure we correct it to the amount that's left.
+        // Also another edge case where the user has less than the min amount and there's less than the min amount left.
+        const ethLeft = targetEth - runningEligibleTotal;
+        if (
+          runningEligibleTotal + addToRunningEligibleTotal > targetEth ||
+          (ethLeft < minEth && addToRunningEligibleTotal < minEth)
+        ) {
+          addToRunningEligibleTotal = ethLeft;
         }
 
         // Previous eligible amount the user had + the amount we added is the new eligible total
@@ -126,9 +131,10 @@ async function handler(req, res) {
             addToRunningEligibleTotal > 0
               ? (addresses?.[address]?.transactions?.eligible || 0) + 1
               : addresses?.[address]?.transactions?.eligible || 0,
-          hashes: isAuthorized
-            ? [...(addresses?.[address]?.transactions?.hashes || []), hash]
-            : undefined,
+          hashes:
+            isAuthorized && req.query.hashes === "true"
+              ? [...(addresses?.[address]?.transactions?.hashes || []), hash]
+              : undefined,
         },
       };
     }
@@ -154,7 +160,7 @@ async function handler(req, res) {
       addresses:
         participant !== undefined
           ? participant
-          : req.query.verbose
+          : req.query.verbose === "true"
           ? participants
           : undefined,
       eth: { total: runningTotal, eligible: runningEligibleTotal },
