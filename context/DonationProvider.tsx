@@ -589,7 +589,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           id: "test",
           Icon: IoIosWarning,
           duration: Infinity,
-          dismissable: false,
+          dismissable: true,
         },
       });
   }, []);
