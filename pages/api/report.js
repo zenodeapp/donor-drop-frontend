@@ -20,6 +20,9 @@ async function handler(req, res) {
       req.headers.authorization === `Bearer ${REPORT_SECRET_KEY}`
     : true;
 
+  // If showHashes is true we show all hashes instead of counts
+  const showHashes = isAuthorized && req.query.hashes === "true";
+
   // if (REPORT_SECRET_KEY) {
   //   if (!authorization || authorization !== `Bearer ${REPORT_SECRET_KEY}`) {
   //     return res.status(401).json({ error: "Unauthorized" });
@@ -122,15 +125,16 @@ async function handler(req, res) {
         eligible,
         reward: Math.trunc((eligible / targetEth) * REWARD_NAM * 1e6) / 1e6,
         transactions: {
-          total: (addresses?.[address]?.transactions?.total || 0) + 1,
-          eligible:
-            addToRunningEligibleTotal > 0
-              ? (addresses?.[address]?.transactions?.eligible || 0) + 1
-              : addresses?.[address]?.transactions?.eligible || 0,
-          hashes:
-            isAuthorized && req.query.hashes === "true"
-              ? [...(addresses?.[address]?.transactions?.hashes || []), hash]
-              : undefined,
+          total: showHashes
+            ? [...(addresses?.[address]?.transactions?.total || []), hash]
+            : (addresses?.[address]?.transactions?.total || 0) + 1,
+          eligible: showHashes
+            ? [
+                ...(addresses?.[address]?.transactions?.eligible || []),
+                ...(addToRunningEligibleTotal > 0 ? [hash] : []),
+              ]
+            : (addresses?.[address]?.transactions?.eligible || 0) +
+              (addToRunningEligibleTotal > 0 ? 1 : 0),
         },
       };
     }
@@ -146,11 +150,14 @@ async function handler(req, res) {
       participant = participants.filter(
         (participant) => participant.address === req.query.address.toLowerCase()
       );
-      if (!participant) {
-        return res.status(404).json({ error: "Address not found" });
-      }
-      // return res.status(200).json({ participant });
     }
+
+    // let total = 0;
+    // participants.map((participant) => {
+    //   total = total + participant.eligible;
+    // });
+
+    // console.log(total);
 
     return res.status(200).json({
       addresses:
@@ -161,13 +168,27 @@ async function handler(req, res) {
           : undefined,
       eth: { total: runningTotal, eligible: runningEligibleTotal },
       participants: {
-        total: participants.length,
-        eligible: participants.filter((participant) => participant.eligible > 0)
-          .length,
+        total: showHashes
+          ? participants.flatMap((participant) => participant.address)
+          : participants.length,
+        eligible: showHashes
+          ? participants.flatMap((participant) =>
+              participant.eligible > 0 ? participant.address : []
+            )
+          : participants.filter((participant) => participant.eligible > 0)
+              .length,
       },
       transactions: {
-        total: donations.length,
-        eligible: eligibleTransactionCount,
+        total: showHashes
+          ? participants.flatMap(
+              (participant) => participant.transactions.total
+            )
+          : donations.length,
+        eligible: showHashes
+          ? participants.flatMap(
+              (participant) => participant.transactions.eligible
+            )
+          : eligibleTransactionCount,
       },
     });
   } catch (error) {
