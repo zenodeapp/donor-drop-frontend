@@ -1,4 +1,4 @@
-// Written by ZEN to see if the SQL's match. (https://github.com/zenodeapp/donor-drop-frontend/issues/42). It should work nicely for a report though.
+// Written by ZEN to see if the SQLs match. (https://github.com/zenodeapp/donor-drop-frontend/issues/42). It should work nicely for a report though.
 
 import { pool } from "../../lib/db";
 import {
