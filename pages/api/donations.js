@@ -4,6 +4,7 @@
 import { pool } from "../../lib/db";
 import { END_DATE, START_DATE } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
+import { ethers } from "ethers";
 
 async function handler(req, res) {
   try {
@@ -34,7 +35,7 @@ async function handler(req, res) {
     const donations = result.rows.map((row) => ({
       hash: row.transaction_hash,
       address: row.from_address,
-      amount: parseFloat(row.amount_eth),
+      amount: row.amount_eth.toString(),
       message: row.message,
       timestamp: row.timestamp,
     }));

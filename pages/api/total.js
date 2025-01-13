@@ -11,6 +11,7 @@ import {
 } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
 import { ethToString } from "../../helpers/web3";
+import { ethers } from "ethers";
 
 async function handler(req, res) {
   const table =
@@ -18,9 +19,8 @@ async function handler(req, res) {
       ? "donations_finalized"
       : "combined_donations";
 
-  const targetEth = parseFloat(ethToString(TARGET_ETH));
-  const minEth = parseFloat(ethToString(MIN_ETH_PER_ADDRESS));
-  const maxEth = parseFloat(ethToString(MAX_ETH_PER_ADDRESS));
+  const minEth = ethers.formatEther(MIN_ETH_PER_ADDRESS);
+  const maxEth = ethers.formatEther(MAX_ETH_PER_ADDRESS);
 
   const query = `
   WITH donor_totals AS (
@@ -39,9 +39,11 @@ async function handler(req, res) {
 
   try {
     const result = await pool.query(query, [START_DATE, END_DATE]);
-    const total = parseFloat(result.rows[0].total_sum);
 
-    return res.status(200).json({ total: Math.min(targetEth, total) });
+    let total = ethers.parseEther(result.rows[0].total_sum);
+    if (TARGET_ETH < total) total = TARGET_ETH;
+
+    return res.status(200).json({ total: ethers.formatEther(total) });
   } catch (error) {
     console.error("Error calculating sum:", error);
     return res.status(500).json({ error: "Failed to calculate total" });

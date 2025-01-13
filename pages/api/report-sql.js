@@ -1,5 +1,6 @@
 // Written by ZEN to see if the SQLs match. (https://github.com/zenodeapp/donor-drop-frontend/issues/42). It should work nicely for a report though.
 
+import { ethers } from "ethers";
 import { pool } from "../../lib/db";
 import withMiddleware from "../../middleware/middleware";
 
@@ -25,12 +26,19 @@ async function handler(req, res) {
 
     const result = await pool.query(query);
 
+    let totalEligible = 0n;
+
     // Map the rows to a cleaner format and filter it on start and end date.
-    let participants = result.rows.map((row) => ({
-      address: row.from_address.toLowerCase(),
-      total: null,
-      eligible: parseFloat(row.eligible_amount),
-    }));
+    let participants = result.rows.map((row) => {
+      const currentAmount = ethers.parseEther(row.eligible_amount);
+      totalEligible = totalEligible + currentAmount;
+
+      return {
+        address: row.from_address.toLowerCase(),
+        total: null,
+        eligible: ethers.formatEther(currentAmount),
+      };
+    });
 
     let participant;
     // If an address is provided, filter the results to only include that address
@@ -49,10 +57,7 @@ async function handler(req, res) {
           : undefined,
       eth: {
         total: null,
-        eligible: participants.reduce(
-          (sum, participant) => participant.eligible + sum,
-          0
-        ),
+        eligible: ethers.formatEther(totalEligible),
       },
     });
   } catch (error) {

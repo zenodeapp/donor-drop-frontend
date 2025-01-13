@@ -10,11 +10,11 @@ import {
   TARGET_ETH,
 } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
-import { ethToString } from "../../helpers/web3";
+import { ethers } from "ethers";
 
-const targetEth = parseFloat(ethToString(TARGET_ETH));
-const minEth = parseFloat(ethToString(MIN_ETH_PER_ADDRESS));
-const maxEth = parseFloat(ethToString(MAX_ETH_PER_ADDRESS));
+const targetEth = ethers.formatEther(TARGET_ETH);
+const minEth = ethers.formatEther(MIN_ETH_PER_ADDRESS);
+const maxEth = ethers.formatEther(MAX_ETH_PER_ADDRESS);
 
 async function findCutoffData(finalized = false) {
   const viewTable = finalized ? "donation_stats_finalized" : "donation_stats";
@@ -109,8 +109,8 @@ async function checkEthAddress(ethAddress, cutoffData, finalized = false) {
   ]);
 
   return {
-    total: parseFloat(result.rows[0].total_eth),
-    eligible: parseFloat(result.rows[0].eligible_eth),
+    total: result.rows[0].total_eth.toString(),
+    eligible: result.rows[0].eligible_eth.toString(),
   };
 }
 
@@ -186,8 +186,8 @@ async function checkNamadaAddress(
   ]);
 
   return {
-    total: parseFloat(result.rows[0].total_eth),
-    eligible: parseFloat(result.rows[0].eligible_eth),
+    total: result.rows[0].total_eth.toString(),
+    eligible: result.rows[0].eligible_eth.toString(),
   };
 }
 

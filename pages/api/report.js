@@ -10,7 +10,7 @@ import {
   TARGET_ETH,
 } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
-import { ethToString } from "../../helpers/web3";
+import { ethers } from "ethers";
 
 const REPORT_SECRET_KEY = process.env.REPORT_SECRET_KEY;
 
@@ -58,32 +58,32 @@ async function handler(req, res) {
         hash: row.transaction_hash,
         address: row.from_address.toLowerCase(),
         namada_address: row.namada_key.toLowerCase(),
-        amount: parseFloat(row.amount_eth),
+        amount: ethers.parseEther(row.amount_eth),
         timestamp: new Date(row.timestamp),
         block: row.block_number,
         txIndex: row.tx_index,
       }))
       .filter((tx) => tx.timestamp >= START_DATE && tx.timestamp <= END_DATE);
 
-    const targetEth = parseFloat(ethToString(TARGET_ETH));
-    const minEth = parseFloat(ethToString(MIN_ETH_PER_ADDRESS));
-    const maxEth = parseFloat(ethToString(MAX_ETH_PER_ADDRESS));
+    const targetEth = TARGET_ETH;
+    const minEth = MIN_ETH_PER_ADDRESS;
+    const maxEth = MAX_ETH_PER_ADDRESS;
 
     const addresses = {};
 
-    let runningTotal = 0;
-    let runningEligibleTotal = 0;
+    let runningTotal = 0n;
+    let runningEligibleTotal = 0n;
     let eligibleTransactionCount = 0;
 
     for (const donation of donations) {
       const { address, amount, hash, namada_address } = donation;
 
-      const prevEligible = addresses?.[address]?.eligible || 0;
-      const prevTotal = addresses?.[address]?.total || 0;
+      const prevEligible = addresses?.[address]?.eligible || 0n;
+      const prevTotal = addresses?.[address]?.total || 0n;
       const newTotal = prevTotal + amount;
 
-      let newEligibleTotalForAddress = 0;
-      let addToRunningEligibleTotal = 0;
+      let newEligibleTotalForAddress = 0n;
+      let addToRunningEligibleTotal = 0n;
 
       // Add amount to running total
       runningTotal = runningTotal + amount;
@@ -91,10 +91,11 @@ async function handler(req, res) {
       if (runningEligibleTotal < targetEth) {
         // We now surpass the threshold for the first time
         if (prevTotal < minEth && newTotal >= minEth) {
-          addToRunningEligibleTotal = Math.min(newTotal, maxEth); // do not add more than the max allowed
+          addToRunningEligibleTotal = newTotal < maxEth ? newTotal : maxEth; // Math.min(newTotal, maxEth); // do not add more than the max allowed
         } else if (prevTotal >= minEth) {
           // here we already were part of the set of eligible participants, so only add new values
-          addToRunningEligibleTotal = Math.min(amount, maxEth - prevEligible); // don't give more than possible
+          addToRunningEligibleTotal =
+            amount < maxEth - prevEligible ? amount : maxEth - prevEligible; // Math.min(amount, maxEth - prevEligible); // don't give more than possible
         }
 
         // If the amount we want to add becomes more than the amount allowed, make sure we correct it to the amount that's left.
@@ -107,17 +108,20 @@ async function handler(req, res) {
         // finally add the amount to the total
         runningEligibleTotal += addToRunningEligibleTotal;
 
-        if (addToRunningEligibleTotal > 0) eligibleTransactionCount++;
+        if (addToRunningEligibleTotal > 0n) eligibleTransactionCount++;
       }
 
       const eligible =
-        newEligibleTotalForAddress || addresses?.[address]?.eligible || 0;
+        newEligibleTotalForAddress || addresses?.[address]?.eligible || 0n;
 
       addresses[address] = {
         namada_address: isAuthorized ? namada_address : undefined,
-        total: (addresses?.[address]?.total || 0) + amount,
+        total: (addresses?.[address]?.total || 0n) + amount,
         eligible,
-        reward: Math.trunc((eligible / targetEth) * REWARD_NAM * 1e6) / 1e6,
+        reward:
+          Math.trunc(
+            (Number(eligible) / Number(targetEth)) * REWARD_NAM * 1e6
+          ) / 1e6,
         transactions: {
           total: showHashes
             ? [...(addresses?.[address]?.transactions?.total || []), hash]
@@ -133,9 +137,15 @@ async function handler(req, res) {
       };
     }
 
-    // Convert the Map to a plain object for JSON serialization
+    // Convert the object to a plain object for JSON serialization
     const participants = Object.keys(addresses).map((address) => {
-      return { address, ...addresses[address] };
+      const participant = { address, ...addresses[address] };
+
+      // Convert BigInt fields to strings
+      participant.total = ethers.formatEther(participant.total);
+      participant.eligible = ethers.formatEther(participant.eligible);
+
+      return participant;
     });
 
     let participant;
@@ -154,8 +164,8 @@ async function handler(req, res) {
           ? participants
           : undefined,
       eth: {
-        total: runningTotal,
-        eligible: runningEligibleTotal,
+        total: ethers.formatEther(runningTotal),
+        eligible: ethers.formatEther(runningEligibleTotal),
       },
       participants: {
         total: showHashes
