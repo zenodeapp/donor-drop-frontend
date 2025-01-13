@@ -98,14 +98,8 @@ async function handler(req, res) {
         }
 
         // If the amount we want to add becomes more than the amount allowed, make sure we correct it to the amount that's left.
-        // Also another edge case where the user has less than the min amount and there's less than the min amount left.
-        const ethLeft = targetEth - runningEligibleTotal;
-        if (
-          runningEligibleTotal + addToRunningEligibleTotal > targetEth ||
-          (ethLeft < minEth && addToRunningEligibleTotal < minEth)
-        ) {
-          addToRunningEligibleTotal = ethLeft;
-        }
+        if (runningEligibleTotal + addToRunningEligibleTotal > targetEth)
+          addToRunningEligibleTotal = targetEth - runningEligibleTotal;
 
         // Previous eligible amount the user had + the amount we added is the new eligible total
         newEligibleTotalForAddress = prevEligible + addToRunningEligibleTotal;
@@ -159,7 +153,10 @@ async function handler(req, res) {
           : req.query.verbose === "true"
           ? participants
           : undefined,
-      eth: { total: runningTotal, eligible: runningEligibleTotal },
+      eth: {
+        total: runningTotal,
+        eligible: runningEligibleTotal,
+      },
       participants: {
         total: showHashes
           ? participants.flatMap((participant) => participant.address)
