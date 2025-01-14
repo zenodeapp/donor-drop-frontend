@@ -326,11 +326,11 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     all: Array<ITransaction>;
     new: Array<ITransaction>;
   }> => {
-    if (
-      state.phase === DonationPhases.STATUS_FILLED ||
-      state.phase === DonationPhases.STATUS_ENDED
-    )
-      return { all: [], new: [] };
+    // if (
+    //   state.phase === DonationPhases.STATUS_NOT_LIVE ||
+    //   state.phase === DonationPhases.STATUS_UNKNOWN
+    // )
+    //   return { all: [], new: [] };
 
     if (isFetching.current) {
       console.log("Fetch already in progress. Skipping...");
@@ -347,10 +347,13 @@ const DonationProvider = ({ children }: IDonationProvider) => {
             state.donations.length > 0
               ? state.donations[0].timestamp
               : undefined;
-
+          const block =
+            state.donations.length > 0 ? state.donations[0].block : -1n;
+          const index =
+            state.donations.length > 0 ? state.donations[0].index : -1;
           const response = await fetch(
             `/api/donations${
-              timestamp ? `?timestamp=${timestamp.toISOString()}` : ""
+              block > 0 && index >= 0 ? `?block=${block}&index=${index}` : ""
             }`
           );
 
@@ -359,6 +362,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
             const txs = (result.donations as ITransactionsResult).map((tx) => ({
               ...tx,
               amount: ethers.parseEther(tx.amount.toString()),
+              block: BigInt(tx.block.toString()),
               timestamp: new Date(tx.timestamp),
             }));
 
@@ -424,7 +428,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     };
   }> => {
     try {
-      const response = await fetch("/api/user-total", {
+      const response = await fetch("/api/address", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

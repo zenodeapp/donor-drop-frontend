@@ -23,6 +23,8 @@ export type ITransactionsResult = Array<{
   amount: number;
   message: string;
   timestamp: string;
+  block: string;
+  index: number;
 }>;
 
 export type ITransaction = {
@@ -31,6 +33,8 @@ export type ITransaction = {
   amount: bigint;
   message: string;
   timestamp: Date;
+  block: bigint;
+  index: number;
 };
 
 export type IDonationState = {

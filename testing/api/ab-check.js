@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import withMiddleware from "../../middleware/middleware";
 
-async function handler(req, res) {
+async function handler(_, res) {
   try {
     const endpoint =
       process.env.NODE_ENV === "production"

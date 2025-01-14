@@ -55,7 +55,6 @@ const Account = ({
   const [totalsPhase, setTotalsPhase] = React.useState<TotalsPhases>(
     TotalsPhases.STATUS_IDLE
   );
-
   const wallet = web3Connections.getConnectedWallet();
   const ethAddress = wallet
     ? web3Connections.connections[wallet].address
@@ -79,7 +78,8 @@ const Account = ({
     ) {
       setTotalsPhase(TotalsPhases.STATUS_IS_BELOW_THRESHOLD);
     } else if (
-      userTotal.eligible === userTotalFinalized.eligible ||
+      (userTotal.eligible === userTotalFinalized.eligible &&
+        userTotalFinalized.total === userTotal.total) ||
       userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
     ) {
       setTotalsPhase(TotalsPhases.STATUS_IS_PROCESSED);
@@ -302,7 +302,8 @@ const Account = ({
               <span style={{ color: "#e2ebff" }}>
                 {userTotalFinalized.eligible >= MAX_ETH_PER_ADDRESS
                   ? "🤯"
-                  : totalsPhase === TotalsPhases.STATUS_IDLE
+                  : totalsPhase === TotalsPhases.STATUS_IDLE ||
+                    userTotalFinalized.eligible === 0n
                   ? ""
                   : totalsPhase === TotalsPhases.STATUS_IS_BELOW_THRESHOLD
                   ? "😥"

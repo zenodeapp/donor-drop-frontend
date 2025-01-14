@@ -2,9 +2,8 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-import { END_DATE, START_DATE } from "../../donations.config";
+import { START_DATE } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
-import { ethers } from "ethers";
 
 async function handler(req, res) {
   try {
@@ -13,18 +12,20 @@ async function handler(req, res) {
         transaction_hash,
         from_address,
         amount_eth,
-        namada_key,
         input_message,
         message,
-        timestamp
+        timestamp,
+        block_number,
+        tx_index
       FROM combined_donations 
-      WHERE timestamp BETWEEN $1 AND $2
-      ORDER BY timestamp DESC
+      WHERE block_number > $1 OR (block_number = $1 AND tx_index > $2) 
+      ORDER BY block_number DESC, tx_index DESC
     `;
 
     const result = await pool.query(query, [
-      req.query.timestamp ? new Date(req.query.timestamp) : START_DATE,
-      END_DATE,
+      req.query.block > 0 ? req.query.block : 0,
+      req.query.index >= 0 ? req.query.index : 0,
+      // req.query.timestamp ? new Date(req.query.timestamp) : START_DATE,
     ]);
 
     if (result.rows.length === 0) {
@@ -38,6 +39,8 @@ async function handler(req, res) {
       amount: row.amount_eth.toString(),
       message: row.message,
       timestamp: row.timestamp,
+      block: row.block_number,
+      index: row.tx_index,
     }));
 
     return res.status(200).json({ donations });

@@ -37,7 +37,9 @@ export default async function handler(req, res) {
         value: req.query.amount || generateRandomValue(0.01, 0.5),
         decodedRawInput: req.query.tnam || getRandomTnam(),
         block_number: block,
-        tx_index: req.query.index || txIndex,
+        tx_index:
+          req.query.index ||
+          (count === 1 ? generateRandomNumber(1000) : txIndex),
         timestamp: new Date(),
       };
 

@@ -33,6 +33,8 @@ const getDonationsCookie = (): Array<ITransaction> => {
       const donations = JSON.parse(item, (key, value) =>
         key === "amount" && typeof value === "string"
           ? BigInt(value)
+          : key === "block" && typeof value === "string"
+          ? BigInt(value)
           : key === "timestamp" && typeof value === "string"
           ? new Date(value)
           : value
@@ -48,7 +50,7 @@ const getDonationsCookie = (): Array<ITransaction> => {
 
 const setDonationsCookie = (donations: Array<ITransaction>) => {
   const serializedDonations = JSON.stringify(donations, (key, value) =>
-    key === "amount" ? value.toString() : value
+    key === "amount" || key === "block" ? value.toString() : value
   );
   sessionStorage.setItem(
     `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`,

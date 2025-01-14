@@ -172,8 +172,11 @@
   text-align: left;
   // text-decoration-line: grammar-error;
   // display: none;
+  padding: 0 25px;
+
   @media screen and (max-width: 600px) {
     text-align: center;
+    padding: 0;
   }
 }
 
@@ -306,7 +309,7 @@
   text-align: center;
   display: none;
   width: 100%;
-  padding: 0px 50px;
+  padding: 0px 25px; //0px 50px;
 
   @media screen and (max-width: 600px) {
     padding: 10px;
