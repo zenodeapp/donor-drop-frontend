@@ -63,13 +63,6 @@ async function handler(req, res) {
       };
     });
 
-    console.log(
-      total === ethers.parseEther(result2.rows[0].total_eth_donated || "0")
-    );
-    console.log(
-      eligible === ethers.parseEther(result2.rows[0].eligible_total_eth || "0")
-    );
-
     let participant;
     // If an address is provided, filter the results to only include that address
     if (req.query.address) {
