@@ -5,7 +5,17 @@ export type IVisibleDonations = {
   translateY: { top: number; bottom: number };
 };
 
-export type IStats = { participantCount: number; donationCount: number };
+export type IStats = {
+  eth: { eligible?: bigint; total?: bigint };
+  transactions: { total: number; eligible: number };
+  participants: { total: number; eligible: number };
+};
+
+export type IStatsResult = {
+  eth: { eligible?: string; total?: string };
+  transactions: { total: number; eligible: number };
+  participants: { total: number; eligible: number };
+};
 
 export type ITransactionsResult = Array<{
   hash: string;
@@ -30,7 +40,6 @@ export type IDonationState = {
   namAddress: string;
   userTotal: EthDonated;
   userTotalFinalized: EthDonated;
-  total?: bigint;
   userExists: boolean;
   phase: DonationPhases;
   myDonationCount: number;
@@ -64,7 +73,6 @@ export type IDonationContext = IDonationState & {
   setNamAddress: (namAddress: string) => string;
   setUserTotal: (userTotal: EthDonated) => EthDonated;
   setUserTotalFinalized: (userTotalFinalized: EthDonated) => EthDonated;
-  setTotal: (total?: bigint) => bigint | undefined;
   setUserExists: (userExists: boolean) => boolean;
   setPhase: (phase: DonationPhases) => DonationPhases;
   setDonations: (donations: Array<ITransaction>) => Array<ITransaction>;
@@ -111,7 +119,6 @@ export enum DonationActions {
   SET_NAM_ADDRESS = "SET_NAM_ADDRESS",
   SET_USER_TOTAL = "SET_USER_TOTAL",
   SET_USER_TOTAL_FINALIZED = "SET_USER_TOTAL_FINALIZED",
-  SET_TOTAL = "SET_TOTAL",
   SET_USER_EXISTS = "SET_USER_EXISTS",
   SET_PHASE = "SET_PHASE",
   SET_FILTER_ON = "SET_FILTER_ON",
@@ -147,10 +154,6 @@ export type IDonationActions =
   | {
       type: DonationActions.SET_USER_TOTAL_FINALIZED;
       payload: EthDonated;
-    }
-  | {
-      type: DonationActions.SET_TOTAL;
-      payload: bigint | undefined;
     }
   | {
       type: DonationActions.SET_USER_EXISTS;

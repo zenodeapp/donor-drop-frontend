@@ -5,6 +5,7 @@ import {
   DonationPhases,
   IDonationContext,
   IDonationProvider,
+  IStats,
   ITransaction,
   ITransactionsResult,
 } from "./DonationTypes";
@@ -44,17 +45,20 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       total: 0n,
       eligible: 0n,
     },
-    total: undefined,
     userExists: false,
     phase: DonationPhases.STATUS_UNKNOWN,
     myDonationCount: 0,
-    stats: { donationCount: 0, participantCount: 0 },
+    stats: {
+      eth: { eligible: undefined, total: undefined },
+      transactions: { total: 0, eligible: 0 },
+      participants: { total: 0, eligible: 0 },
+    },
   });
 
   const GET_USER_TOTAL_INTERVAL = parseInt(
     process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
   );
-  const GET_TOTAL_INTERVAL = parseInt(
+  const GET_STATS_INTERVAL = parseInt(
     process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
   );
   const GET_DONATIONS_INTERVAL = parseInt(
@@ -71,7 +75,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     setNamAddress,
     setUserTotal,
     setUserTotalFinalized,
-    setTotal,
     setUserExists,
     setPhase,
     setFilterOn,
@@ -503,26 +506,32 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     state.phase,
   ]);
 
-  const getTotal = async (): Promise<number | undefined> => {
+  const getStats = async (): Promise<IStats> => {
     try {
-      const response = await fetch("/api/total");
+      const response = await fetch("/api/stats");
       if (response.ok) {
         const result = await response.json();
-        return result.total;
+        return {
+          ...result,
+          eth: {
+            total: result.eth.total ? ethers.parseEther(result.eth.total) : 0n,
+            eligible: result.eth.eligible
+              ? ethers.parseEther(result.eth.eligible)
+              : 0n,
+          },
+        };
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Failed to fetch total sum:", error);
+      console.error("Failed to fetch stats:", error);
     }
-    return undefined;
+    return state.stats;
   };
 
-  const fetchTotal = async () => {
-    const result = await getTotal();
-    const weiValue = result ? ethers.parseEther(result.toString()) : 0n;
-
-    setTotal(weiValue);
+  const fetchStats = async () => {
+    const stats = await getStats();
+    setStats(stats);
   };
 
   React.useEffect(() => {
@@ -533,7 +542,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
     )
       return;
 
-    const intervalId = setInterval(fetchTotal, GET_TOTAL_INTERVAL);
+    const intervalId = setInterval(fetchStats, GET_STATS_INTERVAL);
 
     // Cleanup the interval when the phase changes or the component unmounts
     return () => clearInterval(intervalId);
@@ -541,44 +550,8 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   }, [state.phase]);
 
   React.useEffect(() => {
-    fetchTotal();
+    fetchStats();
   }, []);
-
-  const getStats = async (): Promise<{
-    donationCount: number;
-    participantCount: number;
-  }> => {
-    try {
-      const response = await fetch("/api/stats");
-
-      if (response.ok) {
-        const result = await response.json();
-        return result;
-      } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Failed to fetch stats:", error);
-    }
-    return { donationCount: 0, participantCount: 0 };
-  };
-
-  React.useEffect(() => {
-    const fetchStats = async () => {
-      {
-        const stats = await getStats();
-        setStats(stats);
-      }
-    };
-
-    if (
-      (state.phase === DonationPhases.STATUS_ENDED ||
-        state.phase === DonationPhases.STATUS_FILLED) &&
-      activeSlide === 1
-    ) {
-      fetchStats();
-    }
-  }, [state.phase, activeSlide]);
 
   React.useEffect(() => {
     if (process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true")
@@ -603,7 +576,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         namAddress: state.namAddress,
         userTotal: state.userTotal,
         userTotalFinalized: state.userTotalFinalized,
-        total: state.total,
         userExists: state.userExists,
         phase: state.phase,
         myDonationCount: state.myDonationCount,
@@ -612,7 +584,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         setNamAddress,
         setUserTotal,
         setUserTotalFinalized,
-        setTotal,
         setDonations,
         setVisibleDonations,
         setTopDonations,

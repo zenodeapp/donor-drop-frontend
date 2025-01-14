@@ -1,35 +1,43 @@
 import { pool } from "../../lib/db";
-import { END_DATE, START_DATE } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
 
-// TODO: this stats endpoint could be improved by adding the actual eligibleDonationCount and eligibleParticipantsCount.
+async function handler(req, res) {
+  const table =
+    req.query.finalized === "true"
+      ? "donation_stats_finalized"
+      : "donation_stats";
 
-async function handler(_, res) {
+  const query = `
+    SELECT * FROM ${table}
+    LIMIT 1
+  `;
+
   try {
-    // Updated query to get count of rows and count of unique from_address
-    const query = `
-      SELECT 
-        COUNT(*) AS donation_count,
-        COUNT(DISTINCT from_address) AS participant_count
-      FROM combined_donations
-      WHERE timestamp BETWEEN $1 AND $2
-    `;
+    const result = await pool.query(query);
 
-    const result = await pool.query(query, [START_DATE, END_DATE]);
-
-    if (result.rows.length === 0) {
-      return res.status(200).json({ donationCount: 0, participantCount: 0 });
-    }
-    // Return the counts
-    const { donation_count, participant_count } = result.rows[0];
+    const {
+      eligible_total_eth,
+      total_eth_donated,
+      total_participants,
+      total_donations,
+      eligible_donations_approximative,
+      eligible_addresses,
+    } = result.rows[0];
 
     return res.status(200).json({
-      donationCount: donation_count,
-      participantCount: participant_count,
+      eth: { total: total_eth_donated, eligible: eligible_total_eth },
+      participants: {
+        total: total_participants,
+        eligible: eligible_addresses,
+      },
+      transactions: {
+        total: total_donations,
+        eligible: eligible_donations_approximative,
+      },
     });
   } catch (error) {
-    console.error("Error fetching donations:", error);
-    return res.status(500).json({ error: "Failed to fetch donations" });
+    console.error("Error fetching stats:", error);
+    return res.status(500).json({ error: "Failed to fetch stats" });
   }
 }
 

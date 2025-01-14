@@ -8,6 +8,8 @@ const TooltipQuestion = ({ message }: { message: React.ReactNode }) => {
   const [leftSide, setLeftSide] = React.useState(false);
 
   React.useEffect(() => {
+    const tooltipElement = tooltipTextRef.current;
+
     const handleMouseOver = () => {
       if (tooltipRef.current && tooltipTextRef.current) {
         const boundingRect = tooltipRef.current.getBoundingClientRect();
@@ -25,16 +27,13 @@ const TooltipQuestion = ({ message }: { message: React.ReactNode }) => {
       }
     };
 
-    if (tooltipTextRef.current) {
-      tooltipTextRef.current.addEventListener("mouseover", handleMouseOver);
+    if (tooltipElement) {
+      tooltipElement.addEventListener("mouseover", handleMouseOver);
     }
 
     return () => {
-      if (tooltipTextRef.current) {
-        tooltipTextRef.current.removeEventListener(
-          "mouseover",
-          handleMouseOver
-        );
+      if (tooltipElement) {
+        tooltipElement.removeEventListener("mouseover", handleMouseOver);
       }
     };
   }, []);

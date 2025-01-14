@@ -68,14 +68,6 @@ const DonationDispatch = (dispatch: React.Dispatch<IDonationActions>) => {
       });
       return userTotalFinalized;
     },
-    setTotal: (total?: bigint) => {
-      dispatch({
-        type: DonationActions.SET_TOTAL,
-        payload: total,
-      });
-
-      return total;
-    },
     setUserExists: (userExists: boolean) => {
       dispatch({
         type: DonationActions.SET_USER_EXISTS,
@@ -149,8 +141,6 @@ const DonationReducer = (state: IDonationState, action: IDonationActions) => {
       return { ...state, userTotal: action.payload };
     case DonationActions.SET_USER_TOTAL_FINALIZED:
       return { ...state, userTotalFinalized: action.payload };
-    case DonationActions.SET_TOTAL:
-      return { ...state, total: action.payload };
     case DonationActions.SET_USER_EXISTS:
       return { ...state, userExists: action.payload };
     case DonationActions.SET_PHASE:

@@ -19,7 +19,7 @@ import Countdown from "./elements/Countdown";
 const Input = () => {
   const [otherSlidesLocked, setOtherSlidesLocked] = React.useState(false);
   const { showApp, isMobileView, setAppScreenLoaded } = useTheme();
-  const { total, phase } = useDonation();
+  const { stats, phase } = useDonation();
   const { activeSlide, setActiveSlide } = useLayout();
 
   const setSlide = (index: number, e: React.FocusEvent<Element, Element>) => {
@@ -109,7 +109,7 @@ const Input = () => {
   return (
     <>
       <DonationProgress
-        value={total}
+        value={stats.eth.eligible}
         max={TARGET_ETH}
         min={ethers.parseEther("0")}
         status={<Countdown />}

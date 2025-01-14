@@ -13,32 +13,62 @@ async function handler(req, res) {
 
   const table =
     req.query.finalized === "true"
-      ? "donations_finalized"
-      : "eligible_addresses";
+      ? "eligible_addresses_finalized"
+      : "address_totals";
+  const table2 =
+    req.query.finalized === "true"
+      ? "donation_stats_finalized"
+      : "donation_stats";
 
   try {
     const query = `
       SELECT 
         from_address,
-        eligible_amount
+        eligible_amount,
+        total_amount_within_campaign_window
       FROM ${table} 
     `;
-
     const result = await pool.query(query);
 
-    let totalEligible = 0n;
+    const query2 = `
+      SELECT 
+        eligible_total_eth, 
+        total_eth_donated, 
+        total_participants, 
+        total_donations, 
+        eligible_donations_approximative, 
+        eligible_addresses
+      FROM ${table2}
+      LIMIT 1
+    `;
+    const result2 = await pool.query(query2);
+
+    let eligible = 0n;
+    let total = 0n;
 
     // Map the rows to a cleaner format and filter it on start and end date.
     let participants = result.rows.map((row) => {
-      const currentAmount = ethers.parseEther(row.eligible_amount);
-      totalEligible = totalEligible + currentAmount;
+      const currentEligible = ethers.parseEther(row.eligible_amount);
+      const currentTotal = ethers.parseEther(
+        row.total_amount_within_campaign_window
+      );
+
+      eligible = eligible + currentEligible;
+      total = total + currentTotal;
 
       return {
         address: row.from_address.toLowerCase(),
-        total: null,
-        eligible: ethers.formatEther(currentAmount),
+        total: ethers.formatEther(currentTotal),
+        eligible: ethers.formatEther(currentEligible),
       };
     });
+
+    console.log(
+      total === ethers.parseEther(result2.rows[0].total_eth_donated || "0")
+    );
+    console.log(
+      eligible === ethers.parseEther(result2.rows[0].eligible_total_eth || "0")
+    );
 
     let participant;
     // If an address is provided, filter the results to only include that address
@@ -56,8 +86,20 @@ async function handler(req, res) {
           ? participants
           : undefined,
       eth: {
-        total: null,
-        eligible: ethers.formatEther(totalEligible),
+        total: ethers.formatEther(
+          ethers.parseEther(result2.rows[0].total_eth_donated || "0")
+        ), // seems really unnecessary but it makes sure we get the same outcome as report.js
+        eligible: ethers.formatEther(
+          ethers.parseEther(result2.rows[0].eligible_total_eth || "0")
+        ),
+      },
+      participants: {
+        total: Number(result2.rows[0].total_participants) || 0,
+        eligible: Number(result2.rows[0].eligible_addresses) || 0,
+      },
+      transactions: {
+        total: Number(result2.rows[0].total_donations) || 0,
+        eligible: Number(result2.rows[0].eligible_donations_approximative) || 0,
       },
     });
   } catch (error) {

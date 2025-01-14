@@ -6,7 +6,7 @@ import styles from "../../../styles/countdown.module.scss";
 import { formatTimeRemaining } from "../../../helpers/format";
 
 const Countdown = () => {
-  const { phase, setPhase, total } = useDonation();
+  const { phase, setPhase, stats } = useDonation();
   const [timeRemaining, setTimeRemaining] = React.useState<number | undefined>(
     undefined
   );
@@ -18,10 +18,10 @@ const Countdown = () => {
       if (now < START_DATE) {
         setPhase(DonationPhases.STATUS_NOT_LIVE);
         setTimeRemaining(START_DATE.getTime() - now.getTime());
-      } else if (total && total >= TARGET_ETH) {
+      } else if (stats.eth.eligible && stats.eth.eligible >= TARGET_ETH) {
         setPhase(DonationPhases.STATUS_FILLED);
         clearInterval(timer);
-      } else if (now < END_DATE && total !== undefined) {
+      } else if (now < END_DATE && stats.eth.eligible !== undefined) {
         setPhase(DonationPhases.STATUS_LIVE);
         setTimeRemaining(END_DATE.getTime() - now.getTime());
       } else if (now >= END_DATE) {
@@ -40,7 +40,7 @@ const Countdown = () => {
 
     return () => clearInterval(timer);
     //eslint-disable-next-line
-  }, [total]);
+  }, [stats.eth.eligible]);
 
   const { days, hours, minutes, seconds } = formatTimeRemaining(timeRemaining);
 

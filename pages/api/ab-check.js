@@ -47,6 +47,15 @@ async function handler(req, res) {
               totalSql,
             });
           }
+        } else {
+          differences.push({
+            addressJs: address,
+            totalJs,
+            eligibleJs,
+            addressSql: null,
+            totalSql: null,
+            eligibleSql: null,
+          });
         }
       }
     );
@@ -58,8 +67,7 @@ async function handler(req, res) {
     // temporarily added the !== null part, since at the current time the SQL endpoint doesn't give totals
     if (totalSql !== null && totalJs !== totalSql) {
       differences.push({
-        totalJs,
-        totalSql,
+        total: { js: totalJs, sql: totalSql },
       });
     }
 
@@ -69,10 +77,67 @@ async function handler(req, res) {
 
     if (eligibleJs !== eligibleSql) {
       differences.push({
-        eligibleJs,
-        eligibleSql,
+        eligible: { js: eligibleJs, sql: eligibleSql },
       });
     }
+
+    // Compare eligible amount
+    const participantsEligibleJs = json1.participants.eligible;
+    const participantsEligibleSql = json2.participants.eligible;
+
+    if (participantsEligibleJs !== participantsEligibleSql) {
+      differences.push({
+        participants: {
+          eligible: {
+            js: participantsEligibleJs,
+            sql: participantsEligibleSql,
+          },
+        },
+      });
+    }
+
+    // Compare eligible amount
+    const participantsTotalJs = json1.participants.total;
+    const participantsTotalSql = json2.participants.total;
+
+    if (participantsTotalJs !== participantsTotalSql) {
+      differences.push({
+        participants: {
+          total: {
+            js: participantsTotalJs,
+            sql: participantsTotalSql,
+          },
+        },
+      });
+    }
+
+    // Compare eligible amount
+    const transactionsEligibleJs = json1.transactions.eligible;
+    const transactionsEligibleSql = json2.transactions.eligible;
+    const transactionsTotalJs = json1.transactions.total;
+    const transactionsTotalSql = json2.transactions.total;
+
+    differences.push({
+      transactions:
+        transactionsEligibleJs !== transactionsEligibleSql
+          ? {
+              eligible:
+                transactionsEligibleJs !== transactionsEligibleSql
+                  ? {
+                      js: transactionsEligibleJs,
+                      sql: transactionsEligibleSql,
+                    }
+                  : undefined,
+              total:
+                transactionsTotalJs !== transactionsTotalSql
+                  ? {
+                      js: transactionsTotalJs,
+                      sql: transactionsTotalSql,
+                    }
+                  : undefined,
+            }
+          : undefined,
+    });
 
     res.status(200).json({ differences });
   } catch (error) {

@@ -31,18 +31,36 @@ const Target = ({
   isActive: boolean;
   onFocus: React.FocusEventHandler<HTMLAnchorElement>;
 }) => {
-  const { phase, total, donations, stats } = useDonation();
+  const { phase, donations, stats } = useDonation();
   const { smoothNavigate } = useLayout();
-
+  const targetReached = (stats.eth.eligible || 0n) >= TARGET_ETH;
   const results = (
     <div className={styles.visualInfo}>
       {[
-        { value: `${stats.participantCount}`, label: "Participants" },
-        { value: `${stats.donationCount}`, label: "Donations" },
         {
-          value: `${truncateEth(total || 0n, 2)} ETH / ${ethers.formatEther(
-            TARGET_ETH
-          )} ETH`,
+          // value: `${
+          //   !targetReached
+          //     ? `${stats.participants.eligible}x`
+          //     : `${stats.participants.total}x / ${stats.participants.eligible}x`
+          // }`,
+          value: `${stats.participants.total}x`,
+          label: "Participants",
+        },
+        {
+          // value: `${
+          //   !targetReached
+          //     ? `${stats.transactions.eligible}x`
+          //     : `${stats.transactions.total}x / ${stats.transactions.eligible}x`
+          // }`,
+          value: `${stats.transactions.total}x`,
+          label: "Donations",
+        },
+        {
+          value: `${
+            targetReached
+              ? truncateEth(stats.eth.total || 0n, 1)
+              : truncateEth(stats.eth.eligible || 0n, 1)
+          } ETH / ${ethers.formatEther(TARGET_ETH)} ETH`,
           label: "Total Donated",
         },
       ].map((item, index) => (
