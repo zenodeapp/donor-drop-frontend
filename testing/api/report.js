@@ -76,7 +76,7 @@ async function handler(req, res) {
     let eligibleTransactionCount = 0;
 
     for (const donation of donations) {
-      const { address, amount, hash, namada_address } = donation;
+      const { address, amount, hash, namada_address, message } = donation;
 
       const prevEligible = addresses?.[address]?.eligible || 0n;
       const prevTotal = addresses?.[address]?.total || 0n;
@@ -134,6 +134,7 @@ async function handler(req, res) {
             : (addresses?.[address]?.transactions?.eligible || 0) +
               (addToRunningEligibleTotal > 0 ? 1 : 0),
         },
+        message,
       };
     }
 

@@ -53,16 +53,21 @@ const Countdown = () => {
             ? styles.ended
             : phase === DonationPhases.STATUS_LIVE
             ? styles.live
+            : phase === DonationPhases.STATUS_NOT_LIVE
+            ? styles["not-live"]
             : ""
         }`}
       >
+        {process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+          ? `TEST RUN`
+          : `${DonationPhases.STATUS_UNKNOWN ? "" : "CAMPAIGN"}`}
         {phase === DonationPhases.STATUS_NOT_LIVE
-          ? `CAMPAIGN STARTS IN`
+          ? ` STARTS IN`
           : phase === DonationPhases.STATUS_FILLED ||
             phase === DonationPhases.STATUS_ENDED
-          ? `CAMPAIGN ENDED`
+          ? ` ENDED`
           : phase === DonationPhases.STATUS_LIVE
-          ? `CAMPAIGN LIVE`
+          ? ` LIVE`
           : ""}
       </h5>
       {phase !== DonationPhases.STATUS_ENDED &&

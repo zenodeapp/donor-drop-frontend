@@ -1,16 +1,18 @@
 import fetch from "node-fetch";
 import withMiddleware from "../../middleware/middleware";
 
-async function handler(_, res) {
+async function handler(req, res) {
   try {
     const endpoint =
       process.env.NODE_ENV === "production"
         ? process.env.NEXT_PUBLIC_SITE_URL
         : "http://localhost:3000";
 
+    const finalized = req.query.finalized === "true" ? "true" : "false";
+
     const [reportJsRes, reportSqlRes] = await Promise.all([
-      fetch(`${endpoint}/api/report?verbose=true`),
-      fetch(`${endpoint}/api/report-sql?verbose=true`),
+      fetch(`${endpoint}/api/report?verbose=true&finalized=${finalized}`),
+      fetch(`${endpoint}/api/report-sql?verbose=true&finalized=${finalized}`),
     ]);
 
     const [json1, json2] = await Promise.all([

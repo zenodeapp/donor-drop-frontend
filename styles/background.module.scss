@@ -13,8 +13,8 @@
   right: 0;
   height: 100%;
   transition: filter 0.5s 0.7s;
-  filter: hue-rotate(-120deg);
   filter: hue-rotate(61deg);
+  // filter: hue-rotate(61deg);
   z-index: 0;
 
   body:global(.show-app) & {
@@ -43,7 +43,7 @@
 
 .circle {
   position: absolute;
-  border-radius: 1%;
+  // border-radius: 1%;
   box-shadow: 0px 0px 5px 1px #00ffff;
   background: #003d3d;
   box-shadow: 0px 0px 1px 1px #ff4a4a;

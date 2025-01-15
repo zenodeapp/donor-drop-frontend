@@ -257,15 +257,26 @@ const Target = ({
                     governance 👀.
                   </li>
                 </ul>
-                <div className={styles.callToActions}>
+                <div
+                  className={`${styles.callToActions} ${
+                    phase !== DonationPhases.STATUS_LIVE ? styles.disabled : ""
+                  }`}
+                >
                   <div className={styles.speechBubble}>
                     Please participate with one ETH address & don&#39;t bot 🤖!
                   </div>
                   <button
+                    className={
+                      phase !== DonationPhases.STATUS_LIVE
+                        ? styles.disabled
+                        : ""
+                    }
                     onClick={(e) => {
                       e.preventDefault();
-                      smoothNavigate(2);
+                      if (phase === DonationPhases.STATUS_LIVE)
+                        smoothNavigate(2);
                     }}
+                    disabled={phase !== DonationPhases.STATUS_LIVE}
                   >
                     Continue to donate
                   </button>

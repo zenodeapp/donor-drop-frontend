@@ -14,11 +14,12 @@ import { useNotification } from "./NotificationProvider";
 import { IoIosClock, IoIosWarning, IoMdWarning } from "react-icons/io";
 import { IoCheckmark } from "react-icons/io5";
 import { shortenAddress } from "../helpers/web3";
-import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
+import { FaHandHoldingHeart, FaPercentage, FaUser } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { GiStopSign } from "react-icons/gi";
 import { getDonationsCookie, purgeDonationCookies } from "../helpers/cookies";
+import { TARGET_ETH } from "../donations.config";
 
 const DonationContext = React.createContext<IDonationContext | undefined>(
   undefined
@@ -205,6 +206,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   }, [state.donations, web3Connections.connections["metamask"].address]);
 
   React.useEffect(() => {
+    const campaign =
+      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+        ? "test run"
+        : "campaign";
     if (
       state.phase === DonationPhases.STATUS_FILLED ||
       state.phase === DonationPhases.STATUS_ENDED
@@ -212,7 +217,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       smoothNavigate(1);
       notify({
         type: "warning",
-        message: "The campaign ended!",
+        message: `The ${campaign} ended!`,
         options: {
           id: "end",
           Icon: FaHandHoldingHeart,
@@ -224,27 +229,62 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       // smoothNavigate(2);
       notify({
         type: "success",
-        message: "The campaign is live!",
+        message: `The ${campaign} is live!`,
         options: {
           id: "end",
           Icon: FaHandHoldingHeart,
-          duration: 10000,
+          duration: 6000,
           dismissable: true,
         },
       });
     } else if (state.phase === DonationPhases.STATUS_NOT_LIVE) {
-      notify({
-        type: "warning",
-        message: "The campaign hasn't started yet!",
-        options: {
-          id: "end",
-          Icon: GiStopSign,
-          duration: 10000,
-          dismissable: true,
-        },
-      });
+      // notify({
+      //   type: "warning",
+      //   message: `The ${campaign} hasn't started yet!`,
+      //   options: {
+      //     id: "end",
+      //     Icon: GiStopSign,
+      //     duration: 10000,
+      //     dismissable: true,
+      //   },
+      // });
     }
   }, [state.phase]);
+
+  React.useEffect(() => {
+    console.log(state.stats.eth.eligible);
+    const percentage = state.stats.eth.eligible
+      ? (Number(state.stats.eth.eligible) / Number(TARGET_ETH)) * 100
+      : 0;
+
+    if (percentage >= 90 && percentage < 100) {
+      notify({
+        type: "warning",
+        message: (
+          <>
+            WARNING: we're at{" "}
+            <span
+              style={{
+                color: percentage >= 95 ? "#ff5a2b" : "rgb(255 195 43)",
+                transition: "color 0.5s",
+              }}
+            >
+              {percentage.toFixed(1)}%
+            </span>
+            !
+          </>
+        ),
+        options: {
+          id: "percentage",
+          Icon: FaHandHoldingHeart,
+          duration: Infinity,
+          dismissable: false,
+        },
+      });
+    } else {
+      dismiss("percentage", 500);
+    }
+  }, [state.stats.eth.eligible]);
 
   // Returns sign in data
   const sendMessage = async (message: string) => {
@@ -558,15 +598,18 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   }, []);
 
   React.useEffect(() => {
-    if (process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true")
+    if (
+      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true" &&
+      state.phase !== DonationPhases.STATUS_ENDED &&
+      state.phase !== DonationPhases.STATUS_FILLED
+    )
       notify({
         type: "warning",
-        message: `This is a test environment!`,
+        message: `WARNING: this is a test environment.`,
         options: {
           id: "test",
           Icon: IoIosWarning,
-          duration: Infinity,
-          dismissable: true,
+          duration: 10000,
         },
       });
   }, []);

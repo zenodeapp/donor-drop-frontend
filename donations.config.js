@@ -6,7 +6,7 @@ import { Networks } from "./wallets/web3.config";
 const DONATIONS_CACHE_VERSION = "1.0";
 
 const TARGET_ETH = ethers.parseEther(
-  process.env.NEXT_PUBLIC_TARGET_ETH || "27"
+  process.env.NEXT_PUBLIC_TARGET_ETH || "30"
 );
 const MIN_ETH_PER_ADDRESS = ethers.parseEther(
   process.env.NEXT_PUBLIC_MIN_ETH_PER_ADDRESS || "0.03"

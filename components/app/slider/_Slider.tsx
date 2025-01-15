@@ -2,10 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import sliderStyle from "../../../styles/slider.module.scss";
 import { useLayout } from "../../../context/LayoutProvider";
 import { useTheme } from "../../../context/ThemeProvider";
+import { useDonation } from "../../../context/DonationProvider";
 
 const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
   const { activeSlide, sliderHeight, setSliderHeight } = useLayout();
   const { showApp } = useTheme();
+  const { phase } = useDonation();
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // TODO: temporary fix
@@ -31,7 +33,7 @@ const Slider = ({ slides }: { slides: Array<React.ReactNode> }) => {
       window.removeEventListener("resize", setSlideHeight);
     };
     // eslint-disable-next-line
-  }, [activeSlide, showApp]);
+  }, [activeSlide, showApp, phase]);
 
   return (
     <div className={sliderStyle.slider} ref={sliderRef}>

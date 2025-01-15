@@ -146,10 +146,11 @@
     display: block;
     text-shadow: none;
     font-size: 1rem;
-    background: #181818;
     border-radius: 10px 0px;
-    border: 1px solid #232323;
     padding: 6px 6px;
+
+    background: #191919;
+    border: 1px solid #292929;
 
     @media screen and (max-width: 768px) {
       font-size: 0.8rem;
