@@ -2,11 +2,9 @@
 
 import { pool } from "../../lib/db";
 import {
-  END_DATE,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
-  START_DATE,
   TARGET_ETH,
 } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
@@ -41,29 +39,12 @@ async function handler(req, res) {
         from_address,
         amount_eth,
         namada_key,
-        input_message,
-        message,
-        timestamp,
-        block_number,
-        tx_index
+        message
       FROM ${table} 
       ORDER BY block_number ASC, tx_index ASC
     `;
 
     const result = await pool.query(query);
-
-    // Map the rows to a cleaner format and filter it on start and end date.
-    let donations = result.rows
-      .map((row) => ({
-        hash: row.transaction_hash,
-        address: row.from_address.toLowerCase(),
-        namada_address: row.namada_key.toLowerCase(),
-        amount: ethers.parseEther(row.amount_eth),
-        timestamp: new Date(row.timestamp),
-        block: row.block_number,
-        txIndex: row.tx_index,
-      }))
-      .filter((tx) => tx.timestamp >= START_DATE && tx.timestamp <= END_DATE);
 
     const targetEth = TARGET_ETH;
     const minEth = MIN_ETH_PER_ADDRESS;
@@ -75,8 +56,11 @@ async function handler(req, res) {
     let runningEligibleTotal = 0n;
     let eligibleTransactionCount = 0;
 
-    for (const donation of donations) {
-      const { address, amount, hash, namada_address, message } = donation;
+    for (const donation of result.rows) {
+      const address = donation.from_address.toLowerCase();
+      const amount = ethers.parseEther(donation.amount_eth);
+      const namada_address = donation.namada_key.toLowerCase();
+      const { message, transaction_hash } = donation;
 
       const prevEligible = addresses?.[address]?.eligible || 0n;
       const prevTotal = addresses?.[address]?.total || 0n;
@@ -124,12 +108,15 @@ async function handler(req, res) {
           ) / 1e6,
         transactions: {
           total: showHashes
-            ? [...(addresses?.[address]?.transactions?.total || []), hash]
+            ? [
+                ...(addresses?.[address]?.transactions?.total || []),
+                transaction_hash,
+              ]
             : (addresses?.[address]?.transactions?.total || 0) + 1,
           eligible: showHashes
             ? [
                 ...(addresses?.[address]?.transactions?.eligible || []),
-                ...(addToRunningEligibleTotal > 0 ? [hash] : []),
+                ...(addToRunningEligibleTotal > 0 ? [transaction_hash] : []),
               ]
             : (addresses?.[address]?.transactions?.eligible || 0) +
               (addToRunningEligibleTotal > 0 ? 1 : 0),
@@ -184,7 +171,7 @@ async function handler(req, res) {
           ? participants.flatMap(
               (participant) => participant.transactions.total
             )
-          : donations.length,
+          : result.rows.length,
         eligible: showHashes
           ? participants.flatMap(
               (participant) => participant.transactions.eligible
