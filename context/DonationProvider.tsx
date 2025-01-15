@@ -251,7 +251,6 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   }, [state.phase]);
 
   React.useEffect(() => {
-    console.log(state.stats.eth.eligible);
     const percentage = state.stats.eth.eligible
       ? (Number(state.stats.eth.eligible) / Number(TARGET_ETH)) * 100
       : 0;
