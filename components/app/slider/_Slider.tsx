@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import sliderStyle from "../../../styles/slider.module.scss";
 import { useLayout } from "../../../context/LayoutProvider";
 import { useTheme } from "../../../context/ThemeProvider";

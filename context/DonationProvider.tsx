@@ -14,10 +14,9 @@ import { useNotification } from "./NotificationProvider";
 import { IoIosClock, IoIosWarning, IoMdWarning } from "react-icons/io";
 import { IoCheckmark } from "react-icons/io5";
 import { shortenAddress } from "../helpers/web3";
-import { FaHandHoldingHeart, FaPercentage, FaUser } from "react-icons/fa";
+import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
-import { GiStopSign } from "react-icons/gi";
 import { getDonationsCookie, purgeDonationCookies } from "../helpers/cookies";
 import { TARGET_ETH } from "../donations.config";
 
