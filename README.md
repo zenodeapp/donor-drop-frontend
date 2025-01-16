@@ -40,7 +40,7 @@ npm run dev
 
 #### Docker (Recommended)
 
-If you set up the backend with Docker (and used the docker-compose.yml file provided in that repo), you should have an instance of postgres running on a separate network named `your_shared_network`. This is needed in order for docker instances to communicate directly with one another. Other than this it's needed to configure the .env file and ports properly. Make sure to check out the files [docker-compose.yml](./docker-compose.yml) and [Dockerfile](Dockerfile) for more information on how to configure this properly.
+If you set up the backend with Docker (and used the docker-compose.yml file provided in that repo), you should have an instance of postgres running on a separate network named `your_shared_network`. This is needed in order for docker instances to communicate directly with one another. Make sure to check out the files [docker-compose.yml](./docker-compose.yml) and [Dockerfile](Dockerfile) for more information on how to configure this properly.
 
 Once you're ready you could run:
 ```
