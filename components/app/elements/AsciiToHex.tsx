@@ -15,9 +15,11 @@ import { bech32m } from "bech32";
 export default function AsciiToHex({
   onFocus,
   tabIndex,
+  setAllowNext,
 }: {
   onFocus: React.FocusEventHandler;
   tabIndex?: number;
+  setAllowNext: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { notify } = useNotification();
   const [ascii, setAscii] = useState("");
@@ -46,8 +48,10 @@ export default function AsciiToHex({
     setAscii(lcValue);
     const validAddress = validateNamadaAddress(lcValue);
     if (validAddress) {
+      setAllowNext(true);
       setHex(convertToHex(validAddress));
     } else {
+      setAllowNext(false);
       setHex("");
     }
   };

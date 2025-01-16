@@ -2,7 +2,6 @@
 // Adapted and added additional checks to serve this frontend's needs.
 
 import { pool } from "../../lib/db";
-import { START_DATE } from "../../donations.config";
 import withMiddleware from "../../middleware/middleware";
 
 async function handler(req, res) {

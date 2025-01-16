@@ -51,6 +51,7 @@ type IStepBubble = {
   backOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   ghost?: boolean;
   maxHeight?: string;
+  nextDisabled?: boolean;
 };
 
 const NavigationButtons = ({
@@ -63,6 +64,7 @@ const NavigationButtons = ({
   backOnClick,
   onFocus,
   tabIndex,
+  nextDisabled,
 }: {
   max: number;
   currentStep: number;
@@ -73,6 +75,7 @@ const NavigationButtons = ({
   backOnClick?: React.MouseEventHandler<HTMLButtonElement>;
   onFocus: React.FocusEventHandler<HTMLButtonElement>;
   tabIndex?: number;
+  nextDisabled?: boolean;
 }) => {
   return (
     <div className={styles.navigationButtons}>
@@ -94,7 +97,10 @@ const NavigationButtons = ({
         </button>
       )}
       <button
-        className={getClassNameByStyle(styles, "navButton nextButton")}
+        className={getClassNameByStyle(
+          styles,
+          `navButton nextButton ${nextDisabled ? "disabled" : ""}`
+        )}
         onClick={
           nextOnClick
             ? nextOnClick
@@ -104,6 +110,7 @@ const NavigationButtons = ({
         }
         onFocus={onFocus}
         tabIndex={tabIndex}
+        disabled={nextDisabled}
       >
         <span className={styles.next}>{nextTitle ? nextTitle : "NEXT"}</span>
         <span className={styles.line}></span>
@@ -132,12 +139,14 @@ const StepBubble = ({
   onFocus,
   tabIndex,
   maxHeight,
+  nextDisabled,
 }: IStepBubble & {
   max: number;
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   onFocus: React.FocusEventHandler<HTMLButtonElement>;
   tabIndex?: number;
+  nextDisabled?: boolean;
 }) => {
   return (
     <div
@@ -196,6 +205,7 @@ const StepBubble = ({
               backOnClick={backOnClick}
               onFocus={onFocus}
               tabIndex={tabIndex}
+              nextDisabled={nextDisabled}
             />
           )}
         </div>
@@ -218,6 +228,7 @@ const Donate = ({
   const [ethInput, setEthInput] = useState(0.03);
   const [sending, setSending] = useState(0);
   const { notify } = useNotification();
+  const [allowNext, setAllowNext] = React.useState(false);
 
   useEffect(() => {
     setEthInput(parseFloat(ethToString(MIN_ETH_PER_ADDRESS)));
@@ -500,7 +511,7 @@ const Donate = ({
       },
       subscript: (
         <>
-          <span style={{ color: "#cdcdcd" }}>Don&#39;t use MetaMask?</span> Then{" "}
+          <span>Not using MetaMask or on a mobile device?</span> See{" "}
           <a
             href='https://www.myetherwallet.com/blog/how-to-send-a-message-onchain/'
             target='_blank'
@@ -508,9 +519,9 @@ const Donate = ({
             onFocus={onFocus}
             tabIndex={tabIndex}
           >
-            click here
+            this guide
           </a>{" "}
-          for a guide on how to do this using MyEtherWallet.
+          on how to do this using MyEtherWallet.
         </>
       ),
       nextTitle: "NEXT",
@@ -579,12 +590,12 @@ const Donate = ({
           <span style={{ background: "#262626", color: "white" }}>
             {DONOR_NETWORK}
           </span>
-          .
+          . <span style={{ color: "white" }}>Do not transfer just yet!</span>
         </>
       ),
       subscript: (
         <>
-          Do not transfer yet! ENS domains not working?
+          ENS domains not working?
           <button
             className={styles.copyButtonSmall}
             onFocus={onFocus}
@@ -657,7 +668,11 @@ const Donate = ({
           </a>{" "}
           to view your keys and paste your Transparent address here to get its{" "}
           <span style={{ color: "#5cefef" }}>Hex value</span>.
-          <AsciiToHex onFocus={onFocus} tabIndex={tabIndex} />
+          <AsciiToHex
+            onFocus={onFocus}
+            tabIndex={tabIndex}
+            setAllowNext={setAllowNext}
+          />
         </>
       ),
       image: { src: "/icon_x192.png", alt: "Namada", width: 96, height: 96 },
@@ -680,6 +695,7 @@ const Donate = ({
       ),
       nextTitle: "NEXT",
       relative: true,
+      nextDisabled: !allowNext,
     },
     {
       stepNumber: 4,
@@ -784,6 +800,7 @@ const Donate = ({
             onFocus={onFocus}
             tabIndex={tabIndex}
             maxHeight={step.maxHeight}
+            nextDisabled={step.nextDisabled}
           />
         ))}
       </div>

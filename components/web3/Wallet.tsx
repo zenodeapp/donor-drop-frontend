@@ -14,6 +14,7 @@ const Wallet = ({
   };
   wallet: IWalletInfo;
   showAddress: boolean;
+  callback?: Function;
 }) => {
   const { web3UI, web3Connections } = useWeb3();
 
@@ -26,8 +27,19 @@ const Wallet = ({
       className={
         styleModule ? getClassNameByStyle(styleModule, liStyle) : liStyle
       }
-      onClick={() => {
-        web3UI.selectWallet(wallet.id);
+      onClick={async () => {
+        if (web3UI.selectedWallet === wallet.id) {
+          if (web3Connections.connections[web3UI.selectedWallet].connected) {
+            web3Connections.disconnect();
+          } else {
+            await web3Connections.connect(
+              undefined,
+              `https://metamask.app.link/dapp/${process.env.NEXT_PUBLIC_SITE_URL}`
+            );
+          }
+        } else {
+          web3UI.selectWallet(wallet.id);
+        }
       }}
     >
       {wallet.description && (

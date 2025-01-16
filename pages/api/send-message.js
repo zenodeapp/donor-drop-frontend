@@ -8,8 +8,7 @@ async function handler(req, res) {
 
     if (!ethAddress || !message || !signature || !signedMessage) {
       return res.status(400).json({
-        error:
-          "ethAddress, message, signature and signedMessage are required",
+        error: "ethAddress, message, signature and signedMessage are required",
       });
     }
 

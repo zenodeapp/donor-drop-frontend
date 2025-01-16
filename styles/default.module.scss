@@ -14,7 +14,7 @@
   width: 150px;
   position: relative;
 
-  &.selected,
+  // &.selected,
   &.disabled {
     pointer-events: none;
   }

@@ -103,19 +103,23 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
   }, [state.sidebarExpanded]);
 
   React.useEffect(() => {
-    const largeScreenQuery = window.matchMedia("(min-width: 1005px)");
+    const smallScreenQuery = window.matchMedia("(max-width: 1004px)");
+    const _sidebarExpanded = localStorage.getItem("zen.sidebar.expanded");
 
     const onChange = () => {
-      setSidebarExpanded(largeScreenQuery.matches);
-      setPreventOverscroll(!largeScreenQuery.matches);
+      console.log(smallScreenQuery.matches);
+      setSidebarExpanded(
+        _sidebarExpanded === "true" && !smallScreenQuery.matches ? true : false
+      );
+      setPreventOverscroll(smallScreenQuery.matches);
     };
 
     onChange();
 
-    largeScreenQuery.addEventListener("change", onChange);
+    smallScreenQuery.addEventListener("change", onChange);
 
     return () => {
-      largeScreenQuery.removeEventListener("change", onChange);
+      smallScreenQuery.removeEventListener("change", onChange);
     };
   }, []);
 

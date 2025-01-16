@@ -205,15 +205,15 @@ const Target = ({
                     </span>
                     {"."}
                   </li>
-                  <li className={styles.text}>
+                  {/* <li className={styles.text}>
                     We will recognize any address that donates{" "}
                     <span style={{ background: "#262626", color: "white" }}>
                       {ethToFloat(MIN_ETH_PER_ADDRESS, 2)} ETH to a maximum of{" "}
                       {ethToFloat(MAX_ETH_PER_ADDRESS, 2)} ETH
                     </span>{" "}
                     <i>(but please donate whatever you can!)</i>.
-                  </li>
-                  <li className={styles.text}>
+                  </li> */}
+                  {/* <li className={styles.text}>
                     To:{" "}
                     <span style={{ background: "#262626", color: "white" }}>
                       <a
@@ -243,7 +243,7 @@ const Target = ({
                       {DONOR_NETWORK}
                     </span>
                     .
-                  </li>
+                  </li> */}
                   <li className={styles.text}>
                     <span
                       style={{
@@ -262,9 +262,9 @@ const Target = ({
                     phase !== DonationPhases.STATUS_LIVE ? styles.disabled : ""
                   }`}
                 >
-                  <div className={styles.speechBubble}>
+                  {/* <div className={styles.speechBubble}>
                     Please participate with one ETH address & don&#39;t bot 🤖!
-                  </div>
+                  </div> */}
                   <button
                     className={
                       phase !== DonationPhases.STATUS_LIVE

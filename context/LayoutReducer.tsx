@@ -68,6 +68,10 @@ const LayoutReducer = (
     case LayoutActions.SET_ACTIVE_SLIDE:
       return { ...state, activeSlide: action.payload };
     case LayoutActions.SET_SIDEBAR_EXPANDED:
+      localStorage.setItem(
+        "zen.sidebar.expanded",
+        action.payload ? "true" : "false"
+      );
       return { ...state, sidebarExpanded: action.payload };
     case LayoutActions.SET_SLIDER_HEIGHT:
       return { ...state, sliderHeight: action.payload };

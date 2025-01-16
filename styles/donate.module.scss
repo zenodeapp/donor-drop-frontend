@@ -116,6 +116,7 @@
     width: 120%;
     height: 1px;
     display: block;
+    transition: border-color 0.3s;
   }
 
   & .next,
@@ -152,6 +153,15 @@
 
   &.nextButton {
     right: 15px;
+
+    &.disabled {
+      pointer-events: none;
+      color: #666666;
+
+      & .line {
+        border-color: rgb(105, 105, 105);
+      }
+    }
 
     @media screen and (max-width: 600px) {
       right: 5px;
@@ -278,7 +288,7 @@
 
   & a {
     font-weight: 400;
-    color: #e5e5e5;
+    color: #dbdbdb;
 
     &:hover {
       color: #f2efbe;
