@@ -272,6 +272,9 @@
     font-size: 0.9rem;
     text-align: left;
   }
+  & li {
+    margin: 7px 0;
+  }
   @media screen and (max-width: 768px) {
     padding-left: 15px;
   }
