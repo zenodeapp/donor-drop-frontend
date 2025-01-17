@@ -262,6 +262,7 @@ const NotificationProvider = ({ children, options }: INotificationProvider) => {
     clicked?: boolean
   ) => {
     const notification = getNotification(notificationId);
+    if (!notification) return false;
     if (!notification?.dismissable && clicked) return false;
 
     const promiseId = Object.keys(promises.current).find(
