@@ -20,7 +20,7 @@ const SidebarHeader = ({
   const { isConnected } = useTheme();
   const { notify } = useNotification();
   const [isMobile, setIsMobile] = React.useState(false);
-  const { donations, myDonationCount, filterOn, setFilterOn } = useDonation();
+  const { stats, myDonationCount, filterOn, setFilterOn } = useDonation();
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1005px)");
@@ -96,7 +96,7 @@ const SidebarHeader = ({
           className={!filterOn ? styles.active : ""}
         >
           <div className={styles.navIcon}>
-            <span className={styles.count}>({donations.length})</span>
+            <span className={styles.count}>({stats.transactions.total})</span>
             <FaHandHoldingHeart />
           </div>
           RECENT DONATIONS

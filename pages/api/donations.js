@@ -6,17 +6,35 @@ import withMiddleware from "../../middleware/middleware";
 
 async function handler(req, res) {
   try {
+    // This is more accurate, but the extra computation is not necessary (in our case of this being recent donations).
+    // const query = `
+    //   SELECT
+    //     cd.transaction_hash,
+    //     cd.from_address,
+    //     cd.amount_eth,
+    //     cd.timestamp,
+    //     cd.block_number,
+    //     cd.tx_index,
+    //     COALESCE(d.message, cd.message) AS message
+    //   FROM combined_donations cd
+    //   LEFT JOIN
+    //     donations d
+    //   ON
+    //     cd.transaction_hash = d.transaction_hash
+    //   WHERE cd.block_number > $1 OR (cd.block_number = $1 AND cd.tx_index > $2)
+    //   ORDER BY cd.block_number DESC, cd.tx_index DESC
+    // `;
+
     const query = `
       SELECT 
         transaction_hash,
         from_address,
         amount_eth,
-        input_message,
-        message,
         timestamp,
         block_number,
-        tx_index
-      FROM combined_donations 
+        tx_index,
+        message
+      FROM donations
       WHERE block_number > $1 OR (block_number = $1 AND tx_index > $2) 
       ORDER BY block_number DESC, tx_index DESC
     `;

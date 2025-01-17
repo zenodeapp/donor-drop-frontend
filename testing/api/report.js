@@ -38,10 +38,11 @@ async function handler(req, res) {
         transaction_hash,
         from_address,
         amount_eth,
-        namada_key,
-        message
-      FROM ${table} 
-      ORDER BY block_number ASC, tx_index ASC
+        namada_key
+      FROM ${table}
+      ORDER BY 
+        block_number ASC,
+        tx_index ASC;
     `;
 
     const result = await pool.query(query);
@@ -60,7 +61,7 @@ async function handler(req, res) {
       const address = donation.from_address.toLowerCase();
       const amount = ethers.parseEther(donation.amount_eth);
       const namada_address = donation.namada_key.toLowerCase();
-      const { message, transaction_hash } = donation;
+      const { transaction_hash } = donation;
 
       const prevEligible = addresses?.[address]?.eligible || 0n;
       const prevTotal = addresses?.[address]?.total || 0n;
@@ -121,7 +122,6 @@ async function handler(req, res) {
             : (addresses?.[address]?.transactions?.eligible || 0) +
               (addToRunningEligibleTotal > 0 ? 1 : 0),
         },
-        message,
       };
     }
 
