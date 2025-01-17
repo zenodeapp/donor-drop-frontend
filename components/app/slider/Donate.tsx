@@ -393,7 +393,7 @@ const Donate = ({
               min={MIN_ETH_PER_ADDRESS}
               max={MAX_ETH_PER_ADDRESS}
               showActual={false}
-              style={{ width: "100%", maxWidth: "100%" }}
+              style={{ width: "100%", maxWidth: "93%" }}
               status={
                 <div style={{ fontSize: "0.9rem" }}>
                   <input
