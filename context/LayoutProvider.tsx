@@ -107,7 +107,6 @@ const LayoutProvider = ({ config, children }: ILayoutProvider) => {
     const _sidebarExpanded = localStorage.getItem("zen.sidebar.expanded");
 
     const onChange = () => {
-      console.log(smallScreenQuery.matches);
       setSidebarExpanded(
         _sidebarExpanded === "true" && !smallScreenQuery.matches ? true : false
       );
