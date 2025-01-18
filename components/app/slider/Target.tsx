@@ -76,7 +76,7 @@ const Target = ({
     <div className={styles.logoContainer}>
       <a
         className={styles.coinCenter}
-        href='https://www.coincenter.org/donate/'
+        href='https://www.coincenter.org'
         target='_blank'
         rel='noreferrer'
         onFocus={onFocus}
@@ -173,7 +173,7 @@ const Target = ({
                   is{" "}
                   <a
                     className={styles.coinCenter}
-                    href='https://www.coincenter.org/donate'
+                    href='https://www.coincenter.org'
                     target='_blank'
                     rel='noreferrer'
                     onFocus={onFocus}
