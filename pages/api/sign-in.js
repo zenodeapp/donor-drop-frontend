@@ -24,27 +24,46 @@ async function handler(req, res) {
     const recoveredAddress = verifySignature(message, signature);
 
     const query = `
-            SELECT namada_key, timestamp
-            FROM donations 
-            WHERE lower(from_address) = lower($1)
-            AND timestamp <= $2
-            ORDER BY timestamp DESC
-            LIMIT 1
-        `;
+      SELECT namada_key, timestamp
+      FROM donations 
+      WHERE lower(from_address) = lower($1)
+      AND timestamp <= $2
+      ORDER BY timestamp DESC
+      LIMIT 1
+    `;
 
     const result = await pool.query(query, [
       recoveredAddress.toLowerCase(),
       END_DATE,
     ]);
 
-    if (result.rows.length === 0) {
+    // TODO: Temporary? This is a check for those who made a mistake during the first donor drop.
+    // Unsure if we will keep this mechanism, but for now this allows those to see their linked
+    // tnam address.
+    const query2 = `
+      SELECT tnam
+      FROM private_etherscan_not_in_db_eligibles 
+      WHERE lower(from_address) = lower($1)
+      LIMIT 1
+    `;
+
+    const result2 = await pool.query(query2, [recoveredAddress.toLowerCase()]);
+
+    if (result.rows.length === 0 && result2.rows.length === 0) {
       return res.status(404).json({ error: "No matching address found." });
     }
 
-    return res.status(200).json({
-      namadaKey: result.rows[0].namada_key,
-      timestamp: result.rows[0].timestamp,
-    });
+    return res.status(200).json(
+      result.rows.length > 0
+        ? {
+            namadaKey: result.rows[0].namada_key,
+            timestamp: result.rows[0].timestamp,
+          }
+        : {
+            namadaKey: result2.rows[0].tnam,
+            timestamp: END_DATE.toISOString(),
+          }
+    );
   } catch (error) {
     console.error("Error finding NAM address:", error);
     return res.status(500).json({ error: "Failed to find NAM address." });
