@@ -52,6 +52,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       eth: { eligible: undefined, total: undefined },
       transactions: { total: 0, eligible: 0 },
       participants: { total: 0, eligible: 0 },
+      cutoff: { block: 0n, index: 0 },
     },
   });
 
@@ -614,6 +615,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
             eligible: result.eth.eligible
               ? ethers.parseEther(result.eth.eligible)
               : 0n,
+          },
+          cutoff: {
+            block: BigInt(result.cutoff.block),
+            index: Number(result.cutoff.index),
           },
         };
       } else {

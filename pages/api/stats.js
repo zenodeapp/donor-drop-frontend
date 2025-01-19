@@ -22,6 +22,8 @@ async function handler(req, res) {
       total_donations,
       eligible_donations_approximative,
       eligible_addresses,
+      cutoff_block,
+      cutoff_tx_index,
     } = result.rows[0];
 
     return res.status(200).json({
@@ -33,6 +35,10 @@ async function handler(req, res) {
       transactions: {
         total: total_donations,
         eligible: eligible_donations_approximative,
+      },
+      cutoff: {
+        block: cutoff_block,
+        index: cutoff_tx_index,
       },
     });
   } catch (error) {
