@@ -6,7 +6,13 @@ import Donate from "./slider/Donate";
 import Target from "./slider/Target";
 import sliderStyle from "../../styles/slider.module.scss";
 import { useTheme } from "../../context/ThemeProvider";
-import { FaBullseye, FaHandHoldingHeart, FaHome, FaUser } from "react-icons/fa";
+import {
+  FaBullseye,
+  FaHandHoldingHeart,
+  FaHome,
+  FaUser,
+  FaWallet,
+} from "react-icons/fa";
 import Navigation from "../layout/Navigation";
 import DonationProgress from "./donations/DonationProgress";
 import { ethers } from "ethers";
@@ -15,9 +21,9 @@ import { useDonation } from "../../context/DonationProvider";
 import { useLayout } from "../../context/LayoutProvider";
 import { DonationPhases } from "../../context/DonationTypes";
 import Countdown from "./elements/Countdown";
+// import Link from "./slider/Link";
 
 const Input = () => {
-  const [otherSlidesLocked, setOtherSlidesLocked] = React.useState(false);
   const { showApp, isMobileView, setAppScreenLoaded } = useTheme();
   const { stats, phase } = useDonation();
   const { activeSlide, setActiveSlide } = useLayout();
@@ -33,7 +39,6 @@ const Input = () => {
     }
   };
 
-  // TODO or deprecated?
   const setTabIndex = (index: number) => {
     if (!showApp || isMobileView) return -1;
 
@@ -73,6 +78,14 @@ const Input = () => {
         phase === DonationPhases.STATUS_NOT_LIVE ||
         phase === DonationPhases.STATUS_UNKNOWN,
     },
+    // {
+    //   name: "LINK",
+    //   Icon: FaWallet,
+    //   color: "white",
+    //   disabled:
+    //     phase === DonationPhases.STATUS_NOT_LIVE ||
+    //     phase === DonationPhases.STATUS_UNKNOWN,
+    // },
   ];
 
   const slides = [
@@ -98,6 +111,12 @@ const Input = () => {
       onFocus={(e) => setSlide(3, e)}
       tabIndex={setTabIndex(3)}
     />,
+    // <Link
+    //   key={4}
+    //   isActive={activeSlide === 4}
+    //   onFocus={(e) => setSlide(4, e)}
+    //   tabIndex={setTabIndex(4)}
+    // />,
   ];
 
   React.useEffect(() => {
@@ -119,7 +138,6 @@ const Input = () => {
       <Navigation
         tabs={tabs}
         ghostSlide={Math.min(activeSlide + 1, 3)}
-        setOtherSlidesLocked={setOtherSlidesLocked}
         tabIndex={!showApp || isMobileView ? -1 : undefined}
       />
       <Slider slides={slides} />

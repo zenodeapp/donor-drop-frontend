@@ -9,12 +9,14 @@ export type IStats = {
   eth: { eligible?: bigint; total?: bigint };
   transactions: { total: number; eligible: number };
   participants: { total: number; eligible: number };
+  cutoff: { block: bigint; index: number };
 };
 
 export type IStatsResult = {
   eth: { eligible?: string; total?: string };
   transactions: { total: number; eligible: number };
   participants: { total: number; eligible: number };
+  cutoff: { block: string; index: string };
 };
 
 export type ITransactionsResult = Array<{
@@ -97,6 +99,7 @@ export type IDonationContext = IDonationState & {
     transactions: Array<ITransaction>
   ) => Array<ITransaction>;
   sendMessage: (message: string) => Promise<any>;
+  sendAddress: (address: string) => Promise<any>;
   setFilterOn: (filterOn: boolean) => boolean;
   setMyDonationCount: (myDonationCount: number) => number;
   setStats: (stats: IStats) => IStats;

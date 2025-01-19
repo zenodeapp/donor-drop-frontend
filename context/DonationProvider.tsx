@@ -52,6 +52,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       eth: { eligible: undefined, total: undefined },
       transactions: { total: 0, eligible: 0 },
       participants: { total: 0, eligible: 0 },
+      cutoff: { block: 0n, index: 0 },
     },
   });
 
@@ -283,6 +284,60 @@ const DonationProvider = ({ children }: IDonationProvider) => {
       dismiss("percentage", 500);
     }
   }, [state.stats.eth.eligible]);
+
+  // Returns sign in data
+  const sendAddress = async (address: string) => {
+    try {
+      const request = await requestSignature();
+
+      if (request) {
+        const response = await fetch("/api/send-address", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            signature: request.signature,
+            signedMessage: request.message,
+            namAddress: address,
+            ethAddress: web3Connections.connections["metamask"].address,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          dismiss(web3UI.selectedWallet);
+
+          console.log("Sending address succeeded:", result.message);
+        } else {
+          notify({
+            type: "error",
+            message: result.error,
+            options: {
+              id: web3UI.selectedWallet,
+              Icon: IoMdWarning,
+              duration: 5000,
+            },
+          });
+          console.error("Verification failed:", result.message);
+        }
+        return result;
+      }
+    } catch (error) {
+      notify({
+        type: "error",
+        message:
+          "It appears the server can't be reached. Please try signing again later.",
+        options: {
+          id: web3UI.selectedWallet,
+          Icon: IoMdWarning,
+          duration: 10000,
+        },
+      });
+      console.error("Error sending signature to backend:", error);
+    }
+  };
 
   // Returns sign in data
   const sendMessage = async (message: string) => {
@@ -561,6 +616,10 @@ const DonationProvider = ({ children }: IDonationProvider) => {
               ? ethers.parseEther(result.eth.eligible)
               : 0n,
           },
+          cutoff: {
+            block: BigInt(result.cutoff.block),
+            index: Number(result.cutoff.index),
+          },
         };
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
@@ -641,6 +700,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
         getDonations,
         transactionsFrom,
         sendMessage,
+        sendAddress,
         setMyDonationCount,
         setStats,
         getCachedDonations,

@@ -6,16 +6,13 @@ import { GiRadarSweep } from "react-icons/gi";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import {
-  DONOR_NETWORK,
   END_DATE,
   EXPLORER_LINK,
-  MAX_ETH_PER_ADDRESS,
-  MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
   START_DATE,
   TARGET_ETH,
 } from "../../../donations.config";
-import { ethToFloat, truncateEth } from "../../../helpers/web3";
+import { truncateEth } from "../../../helpers/web3";
 import {
   formatDuration,
   formatNumber,
@@ -34,6 +31,40 @@ const Target = ({
   const { phase, donations, stats } = useDonation();
   const { smoothNavigate } = useLayout();
   const targetReached = (stats.eth.eligible || 0n) >= TARGET_ETH;
+  const [cutoffTimestamp, setCutoffTimestamp] = React.useState<
+    Date | undefined
+  >(undefined);
+
+  React.useEffect(() => {
+    if (stats.cutoff.block === 999999999999n) {
+      setCutoffTimestamp(undefined);
+    } else if (phase !== DonationPhases.STATUS_FILLED) {
+      setCutoffTimestamp(END_DATE);
+    } else {
+      donations.forEach((donation) => {
+        console.log(
+          typeof donation.block,
+          donation.block,
+          typeof stats.cutoff.block,
+          stats.cutoff.block
+        );
+        console.log(
+          typeof donation.index,
+          donation.index,
+          typeof stats.cutoff.index,
+          stats.cutoff.index
+        );
+      });
+
+      const donation = donations.find(
+        (donation) =>
+          donation.block === stats.cutoff.block &&
+          donation.index === stats.cutoff.index
+      );
+      setCutoffTimestamp(donation ? donation.timestamp : undefined);
+    }
+  }, [phase, stats, donations]);
+
   const results = (
     <div className={styles.visualInfo}>
       {[
@@ -139,14 +170,9 @@ const Target = ({
               <p className={styles.text}>
                 has been reached in{" "}
                 <span style={{ background: "#262626", color: "white" }}>
-                  {formatDuration(
-                    START_DATE,
-                    phase === DonationPhases.STATUS_FILLED
-                      ? donations[0]
-                        ? donations[0].timestamp
-                        : END_DATE
-                      : END_DATE
-                  )}
+                  {cutoffTimestamp
+                    ? formatDuration(START_DATE, cutoffTimestamp)
+                    : "?"}
                 </span>
                 🥳! Thank you to everyone who participated! Here are the end
                 results for our donor drop to{" "}
