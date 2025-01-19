@@ -19,7 +19,7 @@ async function handler(req, res) {
 
     const addresses = unaccountedAddresses.rows.map((row) => row.from_address);
 
-    console.log(addresses);
+    // console.log(addresses);
 
     if (!addresses.includes(ethAddress.toLowerCase())) {
       return res.status(403).json({

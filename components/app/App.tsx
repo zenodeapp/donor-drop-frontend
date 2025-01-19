@@ -10,8 +10,8 @@ import {
   FaBullseye,
   FaHandHoldingHeart,
   FaHome,
-  FaRedo,
   FaUser,
+  FaWallet,
 } from "react-icons/fa";
 import Navigation from "../layout/Navigation";
 import DonationProgress from "./donations/DonationProgress";
@@ -81,8 +81,8 @@ const Input = () => {
         phase === DonationPhases.STATUS_UNKNOWN,
     },
     {
-      name: "RESTORE",
-      Icon: FaRedo,
+      name: "LINK",
+      Icon: FaWallet,
       color: "white",
       disabled:
         phase === DonationPhases.STATUS_NOT_LIVE ||

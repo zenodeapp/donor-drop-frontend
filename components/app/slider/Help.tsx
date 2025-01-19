@@ -146,7 +146,7 @@ const Help = ({
     {
       bubble: (
         <>
-          If you made a mistake during the process, type your transparent
+          If you made a mistake during the process, enter your transparent
           address here and sign a message with the Ethereum wallet you used.
           <DonationAddress
             setSending={setSending}
