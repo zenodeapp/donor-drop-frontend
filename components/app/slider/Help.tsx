@@ -163,7 +163,7 @@ const Help = ({
         sending === 3 ? (
           <>Address sent successfully!</>
         ) : sending === 2 ? (
-          <>Address wasn't sent successfully.</>
+          <>Address wasn&#39;t sent successfully.</>
         ) : (
           <>Trying to send your address (check your wallet)...</>
         ),
