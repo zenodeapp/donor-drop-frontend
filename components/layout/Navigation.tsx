@@ -11,7 +11,6 @@ import { useLayout } from "../../context/LayoutProvider";
 const Navigation = ({
   tabs,
   ghostSlide,
-  setOtherSlidesLocked,
   tabIndex,
 }: {
   tabs: Array<{
@@ -22,7 +21,6 @@ const Navigation = ({
     disabled?: boolean;
   }>;
   ghostSlide: number;
-  setOtherSlidesLocked: React.Dispatch<React.SetStateAction<boolean>>;
   tabIndex?: number;
 }) => {
   const { activeSlide, smoothNavigate } = useLayout();
@@ -61,9 +59,6 @@ const Navigation = ({
                 }
               }}
               style={{ opacity: tab.disabled ? 0.2 : undefined }}
-              onFocus={() => {
-                setOtherSlidesLocked(true);
-              }}
               tabIndex={tabIndex}
             >
               <tab.Icon size='2rem' />
