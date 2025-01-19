@@ -46,7 +46,7 @@ const DonationAddress = ({
       setSending(1);
 
       const result = await sendAddress(validatedAddress);
-      if (result.error) {
+      if (result === undefined || result.error) {
         setSending(2);
       } else {
         if (result) {
