@@ -13,7 +13,7 @@ async function handler(req, res) {
 
   const table =
     req.query.finalized === "true"
-      ? "eligible_addresses_finalized"
+      ? "address_totals_finalized"
       : "address_totals";
   const table2 =
     req.query.finalized === "true"

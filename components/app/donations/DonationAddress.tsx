@@ -50,7 +50,6 @@ const DonationAddress = ({
         setSending(2);
       } else {
         if (result) {
-          console.log(result);
           setAddress("");
           setSending(3);
         } else {
