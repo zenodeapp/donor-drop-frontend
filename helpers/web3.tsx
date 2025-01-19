@@ -1,3 +1,4 @@
+import { bech32m } from "bech32";
 import { ethers } from "ethers";
 
 const shortenAddress = (
@@ -43,6 +44,24 @@ const convertToHex = (_ascii: string) => {
     .join("")}`;
 };
 
+const validateNamadaAddress = (input: string) => {
+  const match = input.match(/^tnam1[A-Za-z0-9]{40}$/);
+
+  if (match) {
+    const address = match[0];
+
+    try {
+      const decoded = bech32m.decode(address);
+      if (decoded.prefix === "tnam") {
+        return address;
+      }
+    } catch (e) {
+      return "";
+    }
+  }
+  return "";
+};
+
 export {
   shortenAddress,
   ethToString,
@@ -50,4 +69,5 @@ export {
   stringToEth,
   truncateEth,
   convertToHex,
+  validateNamadaAddress,
 };

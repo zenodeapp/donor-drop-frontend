@@ -97,6 +97,7 @@ export type IDonationContext = IDonationState & {
     transactions: Array<ITransaction>
   ) => Array<ITransaction>;
   sendMessage: (message: string) => Promise<any>;
+  sendAddress: (address: string) => Promise<any>;
   setFilterOn: (filterOn: boolean) => boolean;
   setMyDonationCount: (myDonationCount: number) => number;
   setStats: (stats: IStats) => IStats;

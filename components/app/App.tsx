@@ -6,7 +6,13 @@ import Donate from "./slider/Donate";
 import Target from "./slider/Target";
 import sliderStyle from "../../styles/slider.module.scss";
 import { useTheme } from "../../context/ThemeProvider";
-import { FaBullseye, FaHandHoldingHeart, FaHome, FaUser } from "react-icons/fa";
+import {
+  FaBullseye,
+  FaHandHoldingHeart,
+  FaHome,
+  FaRedo,
+  FaUser,
+} from "react-icons/fa";
 import Navigation from "../layout/Navigation";
 import DonationProgress from "./donations/DonationProgress";
 import { ethers } from "ethers";
@@ -15,6 +21,7 @@ import { useDonation } from "../../context/DonationProvider";
 import { useLayout } from "../../context/LayoutProvider";
 import { DonationPhases } from "../../context/DonationTypes";
 import Countdown from "./elements/Countdown";
+import Help from "./slider/Help";
 
 const Input = () => {
   const [otherSlidesLocked, setOtherSlidesLocked] = React.useState(false);
@@ -73,6 +80,14 @@ const Input = () => {
         phase === DonationPhases.STATUS_NOT_LIVE ||
         phase === DonationPhases.STATUS_UNKNOWN,
     },
+    {
+      name: "RESTORE",
+      Icon: FaRedo,
+      color: "white",
+      disabled:
+        phase === DonationPhases.STATUS_NOT_LIVE ||
+        phase === DonationPhases.STATUS_UNKNOWN,
+    },
   ];
 
   const slides = [
@@ -97,6 +112,12 @@ const Input = () => {
       isActive={activeSlide === 3}
       onFocus={(e) => setSlide(3, e)}
       tabIndex={setTabIndex(3)}
+    />,
+    <Help
+      key={4}
+      isActive={activeSlide === 4}
+      onFocus={(e) => setSlide(4, e)}
+      tabIndex={setTabIndex(4)}
     />,
   ];
 
