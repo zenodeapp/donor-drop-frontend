@@ -21,7 +21,7 @@ import { useDonation } from "../../context/DonationProvider";
 import { useLayout } from "../../context/LayoutProvider";
 import { DonationPhases } from "../../context/DonationTypes";
 import Countdown from "./elements/Countdown";
-// import Link from "./slider/Link";
+import Link from "./slider/Link";
 
 const Input = () => {
   const { showApp, isMobileView, setAppScreenLoaded } = useTheme();
@@ -78,14 +78,14 @@ const Input = () => {
         phase === DonationPhases.STATUS_NOT_LIVE ||
         phase === DonationPhases.STATUS_UNKNOWN,
     },
-    // {
-    //   name: "LINK",
-    //   Icon: FaWallet,
-    //   color: "white",
-    //   disabled:
-    //     phase === DonationPhases.STATUS_NOT_LIVE ||
-    //     phase === DonationPhases.STATUS_UNKNOWN,
-    // },
+    {
+      name: "LINK",
+      Icon: FaWallet,
+      color: "white",
+      disabled:
+        phase === DonationPhases.STATUS_NOT_LIVE ||
+        phase === DonationPhases.STATUS_UNKNOWN,
+    },
   ];
 
   const slides = [
@@ -111,12 +111,12 @@ const Input = () => {
       onFocus={(e) => setSlide(3, e)}
       tabIndex={setTabIndex(3)}
     />,
-    // <Link
-    //   key={4}
-    //   isActive={activeSlide === 4}
-    //   onFocus={(e) => setSlide(4, e)}
-    //   tabIndex={setTabIndex(4)}
-    // />,
+    <Link
+      key={4}
+      isActive={activeSlide === 4}
+      onFocus={(e) => setSlide(4, e)}
+      tabIndex={setTabIndex(4)}
+    />,
   ];
 
   React.useEffect(() => {
