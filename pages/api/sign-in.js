@@ -41,8 +41,8 @@ async function handler(req, res) {
     // Unsure if we will keep this mechanism, but for now this allows those to see their linked
     // tnam address.
     const query2 = `
-      SELECT tnam
-      FROM private_etherscan_not_in_db_eligibles 
+      SELECT namada_key
+      FROM unaccounted_addresses 
       WHERE lower(from_address) = lower($1)
       LIMIT 1
     `;
@@ -60,7 +60,7 @@ async function handler(req, res) {
             timestamp: result.rows[0].timestamp,
           }
         : {
-            namadaKey: result2.rows[0].tnam,
+            namadaKey: result2.rows[0].namada_key,
             timestamp: END_DATE.toISOString(),
           }
     );

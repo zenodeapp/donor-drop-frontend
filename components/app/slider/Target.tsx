@@ -41,21 +41,6 @@ const Target = ({
     } else if (phase !== DonationPhases.STATUS_FILLED) {
       setCutoffTimestamp(END_DATE);
     } else {
-      donations.forEach((donation) => {
-        console.log(
-          typeof donation.block,
-          donation.block,
-          typeof stats.cutoff.block,
-          stats.cutoff.block
-        );
-        console.log(
-          typeof donation.index,
-          donation.index,
-          typeof stats.cutoff.index,
-          stats.cutoff.index
-        );
-      });
-
       const donation = donations.find(
         (donation) =>
           donation.block === stats.cutoff.block &&

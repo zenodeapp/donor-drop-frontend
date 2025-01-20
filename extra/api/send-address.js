@@ -20,11 +20,11 @@ async function handler(req, res) {
 
     // console.log(addresses);
 
-    if (!addresses.includes(ethAddress.toLowerCase())) {
-      return res.status(403).json({
-        error: "Sorry, this address is not authorized to send a tnam address.",
-      });
-    }
+    // if (!addresses.includes(ethAddress.toLowerCase())) {
+    //   return res.status(403).json({
+    //     error: "Sorry, this address is not authorized to send a tnam address.",
+    //   });
+    // }
 
     // Verify the signature
     const recoveredAddress = verifySignature(namAddress, signature, ethAddress);
