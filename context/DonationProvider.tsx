@@ -87,10 +87,12 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   const { notify, dismiss } = useNotification();
 
-  const requestSignature = async () => {
+  const requestSignature = async (_message?: string) => {
     try {
       const timestamp = new Date().toISOString();
-      const message = `Sign this message to verify your address: ${timestamp}`;
+      const message = _message
+        ? _message
+        : `Sign this message to verify your address: ${timestamp}`;
       const signature = await web3Connections.signMessage(message);
 
       if (!signature?.error) return { signature, message };
@@ -288,7 +290,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   // Returns sign in data
   const sendAddress = async (address: string) => {
     try {
-      const request = await requestSignature();
+      const request = await requestSignature(address);
 
       if (request) {
         const response = await fetch("/api/send-address", {
@@ -298,8 +300,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
           },
           body: JSON.stringify({
             signature: request.signature,
-            signedMessage: request.message,
-            namAddress: address,
+            namAddress: request.message,
             ethAddress: web3Connections.connections["metamask"].address,
           }),
         });
