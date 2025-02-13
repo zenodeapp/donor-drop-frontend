@@ -6,12 +6,11 @@ import { GiRadarSweep } from "react-icons/gi";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import {
-  END_DATE,
+  CURRENT_CAMPAIGN,
   EXPLORER_LINK,
   REWARD_NAM,
-  START_DATE,
   TARGET_ETH,
-} from "../../../donations.config";
+} from "../../../drop.variables";
 import { truncateEth } from "../../../helpers/web3";
 import {
   formatDuration,
@@ -39,7 +38,7 @@ const Target = ({
     if (stats.cutoff.block === 999999999999n) {
       setCutoffTimestamp(undefined);
     } else if (phase !== DonationPhases.STATUS_FILLED) {
-      setCutoffTimestamp(END_DATE);
+      setCutoffTimestamp(CURRENT_CAMPAIGN.endDate);
     } else {
       const donation = donations.find(
         (donation) =>
@@ -92,14 +91,14 @@ const Target = ({
     <div className={styles.logoContainer}>
       <a
         className={styles.coinCenter}
-        href='https://www.coincenter.org'
+        href={CURRENT_CAMPAIGN.link}
         target='_blank'
         rel='noreferrer'
         onFocus={onFocus}
       >
         <Image
-          src='/logos/coin_center.png'
-          alt='Coin Center'
+          src={CURRENT_CAMPAIGN.logo}
+          alt={CURRENT_CAMPAIGN.title}
           width={96}
           height={96}
           draggable={false}
@@ -136,13 +135,13 @@ const Target = ({
                 end results for our donor drop to{" "}
                 <a
                   className={styles.coinCenterLink}
-                  href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
                   <span style={{ background: "#262626" }}>
-                    {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
+                    {CURRENT_CAMPAIGN.donorAddressEns}
                   </span>
                 </a>
                 :
@@ -156,20 +155,23 @@ const Target = ({
                 has been reached in{" "}
                 <span style={{ background: "#262626", color: "white" }}>
                   {cutoffTimestamp
-                    ? formatDuration(START_DATE, cutoffTimestamp)
+                    ? formatDuration(
+                        CURRENT_CAMPAIGN.startDate,
+                        cutoffTimestamp
+                      )
                     : "?"}
                 </span>
                 🥳! Thank you to everyone who participated! Here are the end
                 results for our donor drop to{" "}
                 <a
                   className={styles.coinCenterLink}
-                  href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+                  href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
                   <span style={{ background: "#262626" }}>
-                    {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
+                    {CURRENT_CAMPAIGN.donorAddressEns}
                   </span>
                 </a>
                 :
@@ -184,18 +186,14 @@ const Target = ({
                   is{" "}
                   <a
                     className={styles.coinCenter}
-                    href='https://www.coincenter.org'
+                    href={CURRENT_CAMPAIGN.link}
                     target='_blank'
                     rel='noreferrer'
                     onFocus={onFocus}
                   >
-                    Coin Center
+                    {CURRENT_CAMPAIGN.title}
                   </a>
-                  ! Their mission is to defend the rights of individuals to
-                  build and use free and open cryptocurrency networks: the right
-                  to write and publish code - to read and to run it. The right
-                  to assemble into peer-to-peer networks. And the right to do
-                  all this privately.
+                  {"!"} {CURRENT_CAMPAIGN.targetText}
                 </p>
                 {logo}
                 <ul className={styles.table}>
@@ -208,7 +206,7 @@ const Target = ({
                   >
                     Donation recognition period begins{" "}
                     <span style={{ background: "#262626", color: "white" }}>
-                      {formatUTCDate(START_DATE)}
+                      {formatUTCDate(CURRENT_CAMPAIGN.startDate)}
                     </span>{" "}
                     and ends when the cap is reached:{" "}
                     <span style={{ background: "#262626", color: "white" }}>
@@ -216,45 +214,6 @@ const Target = ({
                     </span>
                     {"."}
                   </li>
-                  {/* <li className={styles.text}>
-                    We will recognize any address that donates{" "}
-                    <span style={{ background: "#262626", color: "white" }}>
-                      {ethToFloat(MIN_ETH_PER_ADDRESS, 2)} ETH to a maximum of{" "}
-                      {ethToFloat(MAX_ETH_PER_ADDRESS, 2)} ETH
-                    </span>{" "}
-                    <i>(but please donate whatever you can!)</i>.
-                  </li> */}
-                  {/* <li className={styles.text}>
-                    To:{" "}
-                    <span style={{ background: "#262626", color: "white" }}>
-                      <a
-                        className={styles.coinCenterLink}
-                        href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
-                        target='_blank'
-                        rel='noreferrer'
-                        onFocus={onFocus}
-                      >
-                        {process.env.NEXT_PUBLIC_DONOR_ADDRESS}
-                      </a>
-                    </span>
-                    {" or "}
-                    <span style={{ background: "#262626", color: "white" }}>
-                      <a
-                        className={styles.coinCenterLink}
-                        href={`${EXPLORER_LINK}/name-lookup-search?id=${process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}`}
-                        target='_blank'
-                        rel='noreferrer'
-                        onFocus={onFocus}
-                      >
-                        {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
-                      </a>
-                    </span>{" "}
-                    on{" "}
-                    <span style={{ background: "#262626", color: "white" }}>
-                      {DONOR_NETWORK}
-                    </span>
-                    .
-                  </li> */}
                   <li className={styles.text}>
                     <span
                       style={{

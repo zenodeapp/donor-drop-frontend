@@ -12,15 +12,14 @@ import {
 } from "react-icons/fa";
 import { formatUTCDate } from "../../../helpers/format";
 import {
+  CURRENT_CAMPAIGN,
   DONOR_NETWORK,
-  END_DATE,
   EXPLORER_LINK,
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
-  START_DATE,
   TARGET_ETH,
-} from "../../../donations.config";
+} from "../../../drop.variables";
 import { IoIosClock } from "react-icons/io";
 import { ethToFloat, ethToString } from "../../../helpers/web3";
 import { GiPartyPopper } from "react-icons/gi";
@@ -270,8 +269,8 @@ const Donate = ({
     {
       bubble: (
         <>
-          Namada will use its on-chain Public Goods Funding (PGF) to reward Coin
-          Center donors with NAM. There are{" "}
+          Namada will use its on-chain Public Goods Funding (PGF) to reward{" "}
+          {CURRENT_CAMPAIGN.title} donors with NAM. There are{" "}
           <span style={{ color: "#80fffa" }}>required steps</span> involved to
           be recognized, so make sure to follow along as we guide you through
           the process.
@@ -309,7 +308,7 @@ const Donate = ({
           <ul className={styles.table}>
             <li>Anyone is free to donate as usual</li>
             <li>Namada and its community are not an intermediary</li>
-            <li>Coin Center is not involved in this campaign</li>
+            <li>{CURRENT_CAMPAIGN.title} is not involved in this campaign</li>
             <li>
               A recorded donation does not mean recognized-the Namada community
               will do this (so don&#39;t bot!)
@@ -317,8 +316,8 @@ const Donate = ({
           </ul>
           <p>
             It&#39;s literally just: send ETH to{" "}
-            {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} with your tnam address
-            in the memo so that the Namada community can see and recognize it.
+            {CURRENT_CAMPAIGN.donorAddressEns} with your tnam address in the
+            memo so that the Namada community can see and recognize it.
           </p>
         </div>
       ),
@@ -327,9 +326,8 @@ const Donate = ({
         <>
           Since we are not handling donations, we cannot refund your donation,
           even if you make a mistake. Anyone trying to convince you to do
-          anything but send ETH to {process.env.NEXT_PUBLIC_DONOR_ADDRESS}{" "}
-          <i>or</i> {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} is likely
-          scamming you.
+          anything but send ETH to {CURRENT_CAMPAIGN.donorAddress} <i>or</i>{" "}
+          {CURRENT_CAMPAIGN.donorAddressEns} is likely scamming you.
           <br />
           <br />
           We have no control over anything you send, so participate at your own
@@ -348,13 +346,13 @@ const Donate = ({
             <li>
               <h4>OPENS</h4>
               <span style={{ color: "rgb(209 209 209)" }}>
-                {formatUTCDate(START_DATE)}
+                {formatUTCDate(CURRENT_CAMPAIGN.startDate)}
               </span>
             </li>
             <li>
               <h4>CLOSES</h4>
               <span style={{ color: "rgb(209 209 209)" }}>
-                {formatUTCDate(END_DATE)}
+                {formatUTCDate(CURRENT_CAMPAIGN.endDate)}
               </span>{" "}
             </li>
           </ul>
@@ -549,9 +547,9 @@ const Donate = ({
             onFocus={onFocus}
             tabIndex={tabIndex}
             onClick={() => {
-              if (process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS) {
+              if (CURRENT_CAMPAIGN.donorAddressEns) {
                 copyToClipboard(
-                  process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS,
+                  CURRENT_CAMPAIGN.donorAddressEns,
                   () => {
                     notify({
                       type: "success",
@@ -585,7 +583,7 @@ const Donate = ({
               }
             }}
           >
-            {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS} <FaCopy />
+            {CURRENT_CAMPAIGN.donorAddressEns} <FaCopy />
           </button>{" "}
           on the{" "}
           <span style={{ background: "#262626", color: "white" }}>
@@ -602,9 +600,9 @@ const Donate = ({
             onFocus={onFocus}
             tabIndex={tabIndex}
             onClick={() => {
-              if (process.env.NEXT_PUBLIC_DONOR_ADDRESS) {
+              if (CURRENT_CAMPAIGN.donorAddress) {
                 copyToClipboard(
-                  process.env.NEXT_PUBLIC_DONOR_ADDRESS,
+                  CURRENT_CAMPAIGN.donorAddress,
                   () => {
                     notify({
                       type: "success",
@@ -638,7 +636,7 @@ const Donate = ({
               }
             }}
           >
-            {process.env.NEXT_PUBLIC_DONOR_ADDRESS} <FaCopy />
+            {CURRENT_CAMPAIGN.donorAddress} <FaCopy />
           </button>
           <br />
         </>
@@ -708,13 +706,13 @@ const Donate = ({
           donation to{" "}
           <span className={styles.donorLink}>
             <a
-              href={`${EXPLORER_LINK}/address/${process.env.NEXT_PUBLIC_DONOR_ADDRESS}`}
+              href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
               target='_blank'
               rel='noreferrer'
               onFocus={onFocus}
               tabIndex={tabIndex}
             >
-              {process.env.NEXT_PUBLIC_DONOR_ADDRESS_ENS}
+              {CURRENT_CAMPAIGN.donorAddressEns}
             </a>
           </span>
           .
