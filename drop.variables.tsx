@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
 import { Networks } from "./wallets/web3.config";
-import { donorDrops } from "./drop.config";
+import { campaigns } from "./drop.config";
 
 // TODO: I actually want to get rid of this file in its entirety and use a ContextProvider instead.
 const CURRENT_CAMPAIGN =
-  donorDrops[process.env.NEXT_PUBLIC_DONOR_CAMPAIGN || "coinCenter"];
+  campaigns[process.env.NEXT_PUBLIC_DONOR_CAMPAIGN || "coinCenter"];
 
 const TARGET_ETH = ethers.parseEther(CURRENT_CAMPAIGN.targetEth);
 const MIN_ETH_PER_ADDRESS = ethers.parseEther(

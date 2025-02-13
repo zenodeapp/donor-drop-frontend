@@ -1,4 +1,4 @@
-type IDonorDrop = {
+type ICampaign = {
   title: string;
   logo: string;
   link: string;
@@ -14,7 +14,7 @@ type IDonorDrop = {
 };
 
 // Add on to this list if you want to create a new donor drop.
-const donorDrops: { [campaignName: string]: IDonorDrop } = {
+const campaigns: { [campaignName: string]: ICampaign } = {
   coinCenter: {
     title: "Coin Center",
     logo: "/logos/coin_center.png",
@@ -38,4 +38,4 @@ const donorDrops: { [campaignName: string]: IDonorDrop } = {
   },
 };
 
-export { donorDrops };
+export { campaigns };
