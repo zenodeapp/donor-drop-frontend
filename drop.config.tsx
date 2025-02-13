@@ -26,7 +26,7 @@ const donorDrops: { [campaignName: string]: IDonorDrop } = {
     startDate: new Date("2025-01-18T15:00:00Z"), // TODO: let this become a backend param
     endDate: new Date("2025-01-24T15:00:00Z"), // TODO: let this become a backend param
     donorAddress: "0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3",
-    // donorAddressEns: "coincenter.eth",
+    donorAddressEns: "coincenter.eth",
     targetText: (
       <>
         Their mission is to defend the rights of individuals to build and use
