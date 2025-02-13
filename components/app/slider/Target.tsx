@@ -90,7 +90,7 @@ const Target = ({
   const logo = (
     <div className={styles.logoContainer}>
       <a
-        className={styles.coinCenter}
+        className={styles.campaign}
         href={CURRENT_CAMPAIGN.link}
         target='_blank'
         rel='noreferrer'
@@ -106,7 +106,7 @@ const Target = ({
             e.preventDefault();
             return false;
           }}
-          className={styles.coinCenterLogo}
+          className={styles.logo}
         />
       </a>
     </div>
@@ -134,14 +134,14 @@ const Target = ({
                 who came together to help donate for this cause 💛. Here are the
                 end results for our donor drop to{" "}
                 <a
-                  className={styles.coinCenterLink}
+                  className={styles.link}
                   href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
                   <span style={{ background: "#262626" }}>
-                    {CURRENT_CAMPAIGN.donorAddressEns}
+                    {CURRENT_CAMPAIGN.title}
                   </span>
                 </a>
                 :
@@ -164,14 +164,15 @@ const Target = ({
                 🥳! Thank you to everyone who participated! Here are the end
                 results for our donor drop to{" "}
                 <a
-                  className={styles.coinCenterLink}
+                  className={styles.link}
                   href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
                   target='_blank'
                   rel='noreferrer'
                   onFocus={onFocus}
                 >
                   <span style={{ background: "#262626" }}>
-                    {CURRENT_CAMPAIGN.donorAddressEns}
+                    {CURRENT_CAMPAIGN.donorAddressEns ||
+                      CURRENT_CAMPAIGN.donorAddress}
                   </span>
                 </a>
                 :
@@ -185,7 +186,7 @@ const Target = ({
                 <p className={styles.text}>
                   is{" "}
                   <a
-                    className={styles.coinCenter}
+                    className={styles.campaign}
                     href={CURRENT_CAMPAIGN.link}
                     target='_blank'
                     rel='noreferrer'

@@ -316,8 +316,9 @@ const Donate = ({
           </ul>
           <p>
             It&#39;s literally just: send ETH to{" "}
-            {CURRENT_CAMPAIGN.donorAddressEns} with your tnam address in the
-            memo so that the Namada community can see and recognize it.
+            {CURRENT_CAMPAIGN.donorAddressEns || CURRENT_CAMPAIGN.donorAddress}{" "}
+            with your tnam address in the memo so that the Namada community can
+            see and recognize it.
           </p>
         </div>
       ),
@@ -326,8 +327,13 @@ const Donate = ({
         <>
           Since we are not handling donations, we cannot refund your donation,
           even if you make a mistake. Anyone trying to convince you to do
-          anything but send ETH to {CURRENT_CAMPAIGN.donorAddress} <i>or</i>{" "}
-          {CURRENT_CAMPAIGN.donorAddressEns} is likely scamming you.
+          anything but send ETH to {CURRENT_CAMPAIGN.donorAddress}{" "}
+          {CURRENT_CAMPAIGN.donorAddressEns && (
+            <>
+              <i>or</i> {CURRENT_CAMPAIGN.donorAddressEns}
+            </>
+          )}{" "}
+          is likely scamming you.
           <br />
           <br />
           We have no control over anything you send, so participate at your own
@@ -537,9 +543,9 @@ const Donate = ({
           send{" ETH "}
           <span style={{ color: "#d1d1d1" }}>
             (<FaEthereum />
-            {process.env.NEXT_PUBLIC_MIN_ETH_PER_ADDRESS}-
+            {CURRENT_CAMPAIGN.minEthPerAddress}-
             <FaEthereum />
-            {process.env.NEXT_PUBLIC_MAX_ETH_PER_ADDRESS})
+            {CURRENT_CAMPAIGN.maxEthPerAddress})
           </span>{" "}
           to{" "}
           <button
@@ -547,43 +553,38 @@ const Donate = ({
             onFocus={onFocus}
             tabIndex={tabIndex}
             onClick={() => {
-              if (CURRENT_CAMPAIGN.donorAddressEns) {
-                copyToClipboard(
-                  CURRENT_CAMPAIGN.donorAddressEns,
-                  () => {
-                    notify({
-                      type: "success",
-                      message: "Copied ENS domain to clipboard!",
-                      options: {
-                        duration: 4000,
-                        Icon: FaClipboard,
-                      },
-                    });
-                  },
-                  () => {
-                    notify({
-                      type: "error",
-                      message: "Failed to copy ENS domain to clipboard!",
-                      options: {
-                        duration: 4000,
-                        Icon: FaExclamation,
-                      },
-                    });
-                  }
-                );
-              } else {
-                notify({
-                  type: "error",
-                  message: "Failed to copy the ENS domain to clipboard!",
-                  options: {
-                    duration: 4000,
-                    Icon: FaExclamation,
-                  },
-                });
-              }
+              const addressType = CURRENT_CAMPAIGN.donorAddressEns
+                ? "ENS domain"
+                : "address";
+
+              copyToClipboard(
+                CURRENT_CAMPAIGN.donorAddressEns ||
+                  CURRENT_CAMPAIGN.donorAddress,
+                () => {
+                  notify({
+                    type: "success",
+                    message: `Copied ${addressType} to clipboard!`,
+                    options: {
+                      duration: 4000,
+                      Icon: FaClipboard,
+                    },
+                  });
+                },
+                () => {
+                  notify({
+                    type: "error",
+                    message: `Failed to copy ${addressType} to clipboard!`,
+                    options: {
+                      duration: 4000,
+                      Icon: FaExclamation,
+                    },
+                  });
+                }
+              );
             }}
           >
-            {CURRENT_CAMPAIGN.donorAddressEns} <FaCopy />
+            {CURRENT_CAMPAIGN.donorAddressEns || CURRENT_CAMPAIGN.donorAddress}{" "}
+            <FaCopy />
           </button>{" "}
           on the{" "}
           <span style={{ background: "#262626", color: "white" }}>
@@ -594,51 +595,44 @@ const Donate = ({
       ),
       subscript: (
         <>
-          ENS domains not working?
-          <button
-            className={styles.copyButtonSmall}
-            onFocus={onFocus}
-            tabIndex={tabIndex}
-            onClick={() => {
-              if (CURRENT_CAMPAIGN.donorAddress) {
-                copyToClipboard(
-                  CURRENT_CAMPAIGN.donorAddress,
-                  () => {
-                    notify({
-                      type: "success",
-                      message: "Copied address to clipboard!",
-                      options: {
-                        duration: 4000,
-                        Icon: FaClipboard,
-                      },
-                    });
-                  },
-                  () => {
-                    notify({
-                      type: "error",
-                      message: "Failed to copy the address to clipboard!",
-                      options: {
-                        duration: 4000,
-                        Icon: FaExclamation,
-                      },
-                    });
-                  }
-                );
-              } else {
-                notify({
-                  type: "error",
-                  message: "Failed to copy the address to clipboard!",
-                  options: {
-                    duration: 4000,
-                    Icon: FaExclamation,
-                  },
-                });
-              }
-            }}
-          >
-            {CURRENT_CAMPAIGN.donorAddress} <FaCopy />
-          </button>
-          <br />
+          {CURRENT_CAMPAIGN.donorAddressEns && (
+            <>
+              ENS domains not working?
+              <button
+                className={styles.copyButtonSmall}
+                onFocus={onFocus}
+                tabIndex={tabIndex}
+                onClick={() => {
+                  copyToClipboard(
+                    CURRENT_CAMPAIGN.donorAddress,
+                    () => {
+                      notify({
+                        type: "success",
+                        message: "Copied address to clipboard!",
+                        options: {
+                          duration: 4000,
+                          Icon: FaClipboard,
+                        },
+                      });
+                    },
+                    () => {
+                      notify({
+                        type: "error",
+                        message: "Failed to copy the address to clipboard!",
+                        options: {
+                          duration: 4000,
+                          Icon: FaExclamation,
+                        },
+                      });
+                    }
+                  );
+                }}
+              >
+                {CURRENT_CAMPAIGN.donorAddress} <FaCopy />
+              </button>
+              <br />
+            </>
+          )}
         </>
       ),
       // imageContainer: <FaEthereum size='3rem' color='#70f7ff' />,
@@ -712,7 +706,7 @@ const Donate = ({
               onFocus={onFocus}
               tabIndex={tabIndex}
             >
-              {CURRENT_CAMPAIGN.donorAddressEns}
+              {CURRENT_CAMPAIGN.title}
             </a>
           </span>
           .

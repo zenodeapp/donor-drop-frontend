@@ -176,7 +176,7 @@
   }
 }
 
-.coinCenterLogo {
+.logo {
   width: 2rem;
   height: 2rem;
   overflow: hidden;
@@ -241,7 +241,7 @@
   text-transform: lowercase;
 }
 
-.coinCenter {
+.campaign {
   color: rgb(255, 215, 140);
   transform: translateX(-257px) rotate(-646deg);
   transition: transform 2s 0s;
@@ -251,13 +251,13 @@
 }
 
 .visible {
-  & .coinCenter {
+  & .campaign {
     transition-delay: 0.3s;
     transform: none;
   }
 }
 
-.coinCenterLink {
+.link {
   color: #45bba6;
   &:hover {
     color: #4bceb6;
