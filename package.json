@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cloudflare/next-on-pages": "1",
     "@metamask/onboarding": "^1.0.1",
     "ethers": "^6.13.4",
     "next": "15.1.3",
