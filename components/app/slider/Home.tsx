@@ -5,6 +5,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { getClassNameByStyle } from "../../../helpers/layout";
 import { useLayout } from "../../../context/LayoutProvider";
 import SocialItems from "../elements/SocialItems";
+import { CURRENT_CAMPAIGN } from "../../../drop.variables";
 
 const Home = ({
   isActive,
@@ -33,7 +34,7 @@ const Home = ({
               <span style={{ color: "rgb(255 251 204)" }}>Namada</span> Donor
               Drop
             </h2>
-            <p className={styles.text}>
+            {/* <p className={styles.text}>
               The{" "}
               <a
                 href='https://discord.gg/namada'
@@ -43,12 +44,12 @@ const Home = ({
                 Namada community
               </a>{" "}
               is excited to launch the world&#39;s first Donor Drop!
-            </p>
+            </p> */}
             <p className={styles.text}>
               Namada will use its on-chain Public Goods Funding (PGF) to reward
-              ETH donations to Coin Center with Namada&#39;s community token,
-              NAM. It&#39;s a simple yet meaningful way to join our community as
-              a contributor!
+              ETH donations to {CURRENT_CAMPAIGN.title} with Namada&#39;s
+              community token, NAM. It&#39;s a simple yet meaningful way to join
+              our community as a contributor!
             </p>
             <div className={styles.callToActions}>
               <a href='https://namada.net' target='_blank'>

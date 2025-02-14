@@ -5,9 +5,14 @@ import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
 import { FaDiscord } from "react-icons/fa";
 import appStyle from "../../../styles/app.module.scss";
+import { CURRENT_CAMPAIGN } from "../../../drop.variables";
 
 const shareOnTwitter = (phase: DonationPhases) => {
-  const tweet = `The @namada community is hosting the world's first Donor Drop! 🫴❣️ ${window.location.href}\n\nNamada's on-chain PGF will be used to recognize and reward donors to Coin Center's ethereum address.`;
+  const tweet = `The @namada community is hosting the world's first Donor Drop! 🫴❣️ ${
+    window.location.href
+  }\n\nNamada's on-chain PGF will be used to recognize and reward donors to ${
+    CURRENT_CAMPAIGN.title
+  }${CURRENT_CAMPAIGN.title.endsWith("s") ? "'" : "'s"} ethereum address.`;
 
   // TODO: In case we want to change the tweet based on status.
   switch (phase) {

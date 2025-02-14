@@ -6,7 +6,7 @@ import {
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
   TARGET_ETH,
-} from "../../donations.config";
+} from "../../drop.variables";
 import withMiddleware from "../../middleware/middleware";
 import { ethers } from "ethers";
 

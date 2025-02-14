@@ -1,7 +1,7 @@
 // This originated from: https://github.com/chimmykk/NAMADA-DONOR-DROP/blob/main/pages/api/findNamAddress.js
 // Adapted and added additional checks to serve this frontend's needs.
 
-import { END_DATE } from "../../donations.config";
+import { CURRENT_CAMPAIGN } from "../../drop.variables";
 import { pool } from "../../lib/db";
 import { validateTimestamp, verifySignature } from "../../lib/helpers";
 import withMiddleware from "../../middleware/middleware";
@@ -34,7 +34,7 @@ async function handler(req, res) {
 
     const result = await pool.query(query, [
       recoveredAddress.toLowerCase(),
-      END_DATE,
+      CURRENT_CAMPAIGN.endDate,
     ]);
 
     // TODO: Temporary? This is a check for those who made a mistake during the first donor drop.
@@ -61,7 +61,7 @@ async function handler(req, res) {
           }
         : {
             namadaKey: result2.rows[0].namada_key,
-            timestamp: END_DATE.toISOString(),
+            timestamp: CURRENT_CAMPAIGN.endDate.toISOString(),
           }
     );
   } catch (error) {

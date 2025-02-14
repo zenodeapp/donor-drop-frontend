@@ -42,7 +42,6 @@ async function handler(req, res) {
     const result = await pool.query(query, [
       req.query.block > 0 ? req.query.block : 0,
       req.query.index >= 0 ? req.query.index : 0,
-      // req.query.timestamp ? new Date(req.query.timestamp) : START_DATE,
     ]);
 
     if (result.rows.length === 0) {

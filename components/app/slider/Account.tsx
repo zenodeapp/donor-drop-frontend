@@ -12,7 +12,7 @@ import {
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
   TARGET_ETH,
-} from "../../../donations.config";
+} from "../../../drop.variables";
 import DonationProgress from "../donations/DonationProgress";
 import { truncateEth } from "../../../helpers/web3";
 import TooltipQuestion from "../elements/TooltipQuestion";

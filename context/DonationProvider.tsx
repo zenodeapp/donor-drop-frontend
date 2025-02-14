@@ -18,7 +18,7 @@ import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { getDonationsCookie, purgeDonationCookies } from "../helpers/cookies";
-import { TARGET_ETH } from "../donations.config";
+import { TARGET_ETH } from "../drop.variables";
 
 const DonationContext = React.createContext<IDonationContext | undefined>(
   undefined
