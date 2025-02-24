@@ -1,5 +1,4 @@
 import { ITransaction } from "../context/DonationTypes";
-import { DONATIONS_CACHE_VERSION } from "../donations.config";
 
 const COOKIE_CONNECTED_NAME = "zen.isConnected";
 const COOKIE_NETWORK_NAME = "zen.network";
@@ -24,9 +23,7 @@ const setNetworkCookie = (walletId: string, networkId: string) =>
   );
 
 const getDonationsCookie = (): Array<ITransaction> => {
-  const item = sessionStorage.getItem(
-    `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`
-  );
+  const item = sessionStorage.getItem(COOKIE_DONATIONS_NAME);
 
   if (item !== null) {
     try {
@@ -52,14 +49,11 @@ const setDonationsCookie = (donations: Array<ITransaction>) => {
   const serializedDonations = JSON.stringify(donations, (key, value) =>
     key === "amount" || key === "block" ? value.toString() : value
   );
-  sessionStorage.setItem(
-    `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`,
-    serializedDonations
-  );
+  sessionStorage.setItem(COOKIE_DONATIONS_NAME, serializedDonations);
 };
 
 const purgeDonationCookies = () => {
-  const excludeKey = `${COOKIE_DONATIONS_NAME}.${DONATIONS_CACHE_VERSION}`;
+  const excludeKey = COOKIE_DONATIONS_NAME;
 
   for (let i = 0; i < sessionStorage.length; i++) {
     const key = sessionStorage.key(i);

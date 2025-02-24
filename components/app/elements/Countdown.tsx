@@ -1,7 +1,7 @@
 import React from "react";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
-import { END_DATE, START_DATE, TARGET_ETH } from "../../../donations.config";
+import { CURRENT_CAMPAIGN, TARGET_ETH } from "../../../drop.variables";
 import styles from "../../../styles/countdown.module.scss";
 import { formatTimeRemaining } from "../../../helpers/format";
 
@@ -15,16 +15,19 @@ const Countdown = () => {
   React.useEffect(() => {
     const fixPhase = () => {
       const now = new Date();
-      if (now < START_DATE) {
+      if (now < CURRENT_CAMPAIGN.startDate) {
         setPhase(DonationPhases.STATUS_NOT_LIVE);
-        setTimeRemaining(START_DATE.getTime() - now.getTime());
+        setTimeRemaining(CURRENT_CAMPAIGN.startDate.getTime() - now.getTime());
       } else if (stats.eth.eligible && stats.eth.eligible >= TARGET_ETH) {
         setPhase(DonationPhases.STATUS_FILLED);
         clearInterval(timer);
-      } else if (now < END_DATE && stats.eth.eligible !== undefined) {
+      } else if (
+        now < CURRENT_CAMPAIGN.endDate &&
+        stats.eth.eligible !== undefined
+      ) {
         setPhase(DonationPhases.STATUS_LIVE);
-        setTimeRemaining(END_DATE.getTime() - now.getTime());
-      } else if (now >= END_DATE) {
+        setTimeRemaining(CURRENT_CAMPAIGN.endDate.getTime() - now.getTime());
+      } else if (now >= CURRENT_CAMPAIGN.endDate) {
         setPhase(DonationPhases.STATUS_ENDED);
         clearInterval(timer);
       } else {

@@ -16,7 +16,7 @@ import {
 import Navigation from "../layout/Navigation";
 import DonationProgress from "./donations/DonationProgress";
 import { ethers } from "ethers";
-import { TARGET_ETH } from "../../donations.config";
+import { TARGET_ETH } from "../../drop.variables";
 import { useDonation } from "../../context/DonationProvider";
 import { useLayout } from "../../context/LayoutProvider";
 import { DonationPhases } from "../../context/DonationTypes";
