@@ -306,7 +306,7 @@ const Donate = ({
             Beware: nobody from Namada will be handling donations!
           </h4>
           <ul className={styles.table}>
-            <li>Anyone is free to donate as usual</li>
+            <li>Anyone is free to donate</li>
             <li>Namada and its community are not an intermediary</li>
             <li>{CURRENT_CAMPAIGN.title} is not involved in this campaign</li>
             <li>
@@ -314,36 +314,20 @@ const Donate = ({
               will do this (so don&#39;t bot!)
             </li>
           </ul>
-          <p>
-            It&#39;s literally just: send ETH to{" "}
-            {CURRENT_CAMPAIGN.donorAddressEns || CURRENT_CAMPAIGN.donorAddress}{" "}
-            with your tnam address in the memo so that the Namada community can
-            see and recognize it.
-          </p>
         </div>
       ),
       imageContainer: <IoWarning size='3rem' color='#ffff00' />,
       subscript: (
-        <>
+        <i>
           Since we are not handling donations, we cannot refund your donation,
-          even if you make a mistake. Anyone trying to convince you to do
-          anything but send ETH to {CURRENT_CAMPAIGN.donorAddress}{" "}
-          {CURRENT_CAMPAIGN.donorAddressEns && (
-            <>
-              <i>or</i> {CURRENT_CAMPAIGN.donorAddressEns}
-            </>
-          )}{" "}
-          is likely scamming you.
-          <br />
-          <br />
-          We have no control over anything you send, so participate at your own
-          risk 💀
-        </>
+          even if you make a mistake. So make sure you{" "}
+          <u>read carefully and follow each step closely</u>.
+        </i>
       ),
       backOnClick: () => {
         setCurrentStep(currentStep - 2);
       },
-      maxHeight: "216px",
+      maxHeight: "265px",
     },
     {
       bubble: (
