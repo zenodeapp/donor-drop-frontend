@@ -36,6 +36,26 @@ const campaigns: { [campaignName: string]: ICampaign } = {
       </>
     ),
   },
+  web3PrivacyNowTest: {
+    title: "Web3Privacy Now",
+    logo: "/logos/web3privacynow.png",
+    link: "https://web3privacy.info/",
+    targetEth: "50", // TODO: let this become a backend param
+    minEthPerAddress: "0.03", // TODO: let this become a backend param
+    maxEthPerAddress: "0.3", // TODO: let this become a backend param
+    rewardNam: "900000", // TODO: let this become a backend param
+    startDate: new Date("2025-03-21T15:00:00Z"), // TODO: let this become a backend param
+    endDate: new Date("2025-03-24T15:00:00Z"), // TODO: let this become a backend param
+    donorAddress: "0x9120B48e3bc859B22130D30F6c3dF12B002A7d95",
+    donorAddressEns: "",
+    targetText: (
+      <>
+        Their mission is to make privacy accessible to general public & turning
+        it into a daily habit. W3PN acts as a value-aligned ecosystem of people,
+        projects, and organisations who protect and advance human rights online.
+      </>
+    ),
+  },
 };
 
 export { campaigns };
