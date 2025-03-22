@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3001:3000" # 3001 is the port you reverse proxy (e.g. via Nginx), 3000 is the port exposed in the Dockerfile
+      - "3002:3000" # 3002 is the port you reverse proxy (e.g. via Nginx), 3000 is the port exposed in the Dockerfile
     environment:
       NODE_ENV: production
       POSTGRES_HOST: my_db # The name of the donor-drop-backend's Docker service
