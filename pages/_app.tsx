@@ -12,6 +12,7 @@ import MyConfig from "../layout.config";
 
 import "../styles/style.scss";
 import { Poppins } from "next/font/google";
+import { DONOR_NETWORK_ID } from "../drop.variables";
 
 const poppins = Poppins({
   weight: ["200", "400"],
@@ -25,14 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <LayoutProvider config={MyConfig}>
         <NotificationProvider options={{ limit: 5 }}>
           <ThemeProvider>
-            <Web3Provider
-              wallets={["metamask"]}
-              networks={
-                process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-                  ? ["sepolia"]
-                  : ["ethereum"]
-              }
-            >
+            <Web3Provider wallets={["metamask"]} networks={[DONOR_NETWORK_ID]}>
               <DonationProvider>
                 <>
                   <style jsx global>{`

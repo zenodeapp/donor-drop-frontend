@@ -16,6 +16,7 @@ import { Networks, Wallets } from "../wallets/web3.config";
 import WalletProviders from "../wallets";
 import { getConnectedCookie } from "../helpers/cookies";
 import { useNotification } from "./NotificationProvider";
+import { DONOR_NETWORK_ID } from "../drop.variables";
 
 const Web3Context = React.createContext<IWeb3Context | undefined>(undefined);
 
@@ -27,10 +28,7 @@ const Web3Provider = ({
 }: IWeb3Provider) => {
   const [state, dispatch] = React.useReducer(Web3Reducer, {
     selectedWallet: "metamask",
-    selectedNetwork:
-      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-        ? "sepolia"
-        : "ethereum",
+    selectedNetwork: DONOR_NETWORK_ID,
     wallets,
     networks,
     providers: {},
@@ -542,11 +540,7 @@ const Web3Provider = ({
   }, [state.connections]);
 
   React.useEffect(() => {
-    setSelectedNetwork(
-      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-        ? "sepolia"
-        : "ethereum"
-    );
+    setSelectedNetwork(DONOR_NETWORK_ID);
   }, []);
 
   return (

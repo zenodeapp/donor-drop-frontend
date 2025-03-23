@@ -3,6 +3,27 @@ import _NoNetworkLogo from "./icons/wireless-error.svg";
 import EthereumLogo from "./icons/ethereum.svg";
 // import EthersLogo from "./icons/ethers.svg";
 
+type INetworks = {
+  [id: string]: {
+    id: string;
+    name: string;
+    Logo: any;
+    details?: {
+      ethereum: {
+        chainId: string;
+        chainName: string;
+        rpcUrls: Array<string>;
+        nativeCurrency: {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
+        blockExplorerUrls: Array<string>;
+      };
+    };
+  };
+};
+
 const MetaMask = {
   id: "metamask",
   name: "MetaMask",
@@ -37,7 +58,7 @@ const _IncompatibleNetwork = {
 
 const Ethereum = {
   id: "ethereum",
-  name: "Ethereum",
+  name: "Ethereum Mainnet",
   Logo: EthereumLogo,
   details: {
     ethereum: {
@@ -49,7 +70,7 @@ const Ethereum = {
         symbol: "ETH",
         decimals: 18,
       },
-      blockExplorerUrls: ["https://etherscan.com/"],
+      blockExplorerUrls: ["https://etherscan.io"],
     },
   },
 };
@@ -68,7 +89,7 @@ const SepoliaTestnet = {
         symbol: "SepoliaETH",
         decimals: 18,
       },
-      blockExplorerUrls: ["https://sepolia.etherscan.io/"],
+      blockExplorerUrls: ["https://sepolia.etherscan.io"],
     },
   },
 };
@@ -78,7 +99,7 @@ const Wallets = {
   [MetaMask.id]: MetaMask,
 };
 
-const Networks = {
+const Networks: INetworks = {
   [_NoNetwork.id]: _NoNetwork,
   [_IncompatibleNetwork.id]: _IncompatibleNetwork,
   [Ethereum.id]: Ethereum,
