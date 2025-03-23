@@ -269,8 +269,8 @@ const Donate = ({
     {
       bubble: (
         <>
-          Namada will use its on-chain Public Goods Funding (PGF) to reward{" "}
-          {CURRENT_CAMPAIGN.title} donors with NAM. There are{" "}
+          Namada will use its on-chain Public Goods Funding (PGF) to DROP donors
+          with NAM. There are{" "}
           <span style={{ color: "#80fffa" }}>required steps</span> involved to
           be recognized, so make sure to follow along as we guide you through
           the process.
@@ -681,19 +681,7 @@ const Donate = ({
           Finally, in MetaMask, paste the{" "}
           <span style={{ color: "#5cefef" }}>Hex value</span> into the{" "}
           <span style={{ color: "#ab91e5" }}>Hex Data</span>-field and send your
-          donation to{" "}
-          <span className={styles.donorLink}>
-            <a
-              href={`${EXPLORER_LINK}/address/${CURRENT_CAMPAIGN.donorAddress}`}
-              target='_blank'
-              rel='noreferrer'
-              onFocus={onFocus}
-              tabIndex={tabIndex}
-            >
-              {CURRENT_CAMPAIGN.title}
-            </a>
-          </span>
-          .
+          donation.
         </>
       ),
       image: {
