@@ -46,10 +46,9 @@ const Home = ({
               is excited to launch the world&#39;s first Donor Drop!
             </p> */}
             <p className={styles.text}>
-              Namada will use its on-chain Public Goods Funding (PGF) to reward
-              ETH donations to {CURRENT_CAMPAIGN.title} with Namada&#39;s
-              community token, NAM. It&#39;s a simple yet meaningful way to join
-              our community as a contributor!
+              Namada will use its on-chain Public Goods Funding (PGF) to DROP
+              Namada&#39;s community token, NAM, to ETH donors. It&#39;s a
+              simple yet meaningful way to join our community as a contributor!
             </p>
             <div className={styles.callToActions}>
               <a href='https://namada.net' target='_blank'>

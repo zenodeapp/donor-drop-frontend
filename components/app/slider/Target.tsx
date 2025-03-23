@@ -224,7 +224,7 @@ const Target = ({
                     >
                       {formatNumber(REWARD_NAM)} NAM
                     </span>{" "}
-                    earmarked for PGF to reward participants using community
+                    earmarked for PGF to DROP participants using community
                     governance 👀.
                   </li>
                 </ul>

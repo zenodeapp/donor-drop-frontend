@@ -339,9 +339,9 @@ const Account = ({
           NOTE:
         </span>{" "}
         Recorded donations will be recognized by the Namada community (so
-        don&#39;t bot!) and distributed using a PGF governance proposal. The
-        goal is to reward donors within 14 days of the conclusion of the Donor
-        Drop.
+        don&#39;t bot!) and distributed using a PGF governance proposal.
+        {/* The goal is to reward donors within 14 days of the conclusion of the Donor
+        Drop. */}
       </div>
     );
   };
