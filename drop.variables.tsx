@@ -15,14 +15,12 @@ const MAX_ETH_PER_ADDRESS = ethers.parseEther(
 );
 const REWARD_NAM = parseInt(CURRENT_CAMPAIGN.rewardNam);
 
-const DONOR_NETWORK =
-  process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-    ? Networks["sepolia"].name
-    : process.env.NEXT_PUBLIC_DONOR_NETWORK;
+const TEST_ENVIRONMENT = !!CURRENT_CAMPAIGN?.test;
+const DONOR_NETWORK_ID = TEST_ENVIRONMENT ? "sepolia" : "ethereum";
+const DONOR_NETWORK = Networks[DONOR_NETWORK_ID].name;
 const EXPLORER_LINK =
-  process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-    ? "https://sepolia.etherscan.io"
-    : "https://etherscan.io";
+  Networks[DONOR_NETWORK_ID]?.details?.ethereum.blockExplorerUrls?.[0] ||
+  "https://etherscan.io";
 
 export {
   CURRENT_CAMPAIGN,
@@ -30,6 +28,8 @@ export {
   MAX_ETH_PER_ADDRESS,
   MIN_ETH_PER_ADDRESS,
   REWARD_NAM,
+  TEST_ENVIRONMENT,
+  DONOR_NETWORK_ID,
   DONOR_NETWORK,
   EXPLORER_LINK,
 };
