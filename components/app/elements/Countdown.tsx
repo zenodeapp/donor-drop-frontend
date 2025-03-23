@@ -1,7 +1,11 @@
 import React from "react";
 import { useDonation } from "../../../context/DonationProvider";
 import { DonationPhases } from "../../../context/DonationTypes";
-import { CURRENT_CAMPAIGN, TARGET_ETH } from "../../../drop.variables";
+import {
+  CURRENT_CAMPAIGN,
+  TARGET_ETH,
+  TEST_ENVIRONMENT,
+} from "../../../drop.variables";
 import styles from "../../../styles/countdown.module.scss";
 import { formatTimeRemaining } from "../../../helpers/format";
 
@@ -61,7 +65,7 @@ const Countdown = () => {
             : ""
         }`}
       >
-        {process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
+        {TEST_ENVIRONMENT
           ? `TEST RUN`
           : `${DonationPhases.STATUS_UNKNOWN ? "" : "CAMPAIGN"}`}
         {phase === DonationPhases.STATUS_NOT_LIVE

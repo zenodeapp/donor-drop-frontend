@@ -11,6 +11,7 @@ type ICampaign = {
   donorAddress: string;
   donorAddressEns?: string;
   targetText: React.ReactNode;
+  test?: boolean; // omit or set to false if you want to run this on Mainnet
 };
 
 // Add on to this list if you want to create a new donor drop.
@@ -35,6 +36,7 @@ const campaigns: { [campaignName: string]: ICampaign } = {
         networks. And the right to do all this privately.
       </>
     ),
+    test: true,
   },
   web3PrivacyNow: {
     title: "Web3Privacy Now",
@@ -55,6 +57,7 @@ const campaigns: { [campaignName: string]: ICampaign } = {
         projects, and organisations who protect and advance human rights online.
       </>
     ),
+    test: true,
   },
 };
 

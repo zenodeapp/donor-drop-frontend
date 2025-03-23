@@ -18,7 +18,7 @@ import { FaHandHoldingHeart, FaUser } from "react-icons/fa";
 import { ethers } from "ethers";
 import { useLayout } from "./LayoutProvider";
 import { getDonationsCookie, purgeDonationCookies } from "../helpers/cookies";
-import { TARGET_ETH } from "../drop.variables";
+import { TARGET_ETH, TEST_ENVIRONMENT } from "../drop.variables";
 
 const DonationContext = React.createContext<IDonationContext | undefined>(
   undefined
@@ -57,16 +57,16 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   });
 
   const GET_USER_TOTAL_INTERVAL = parseInt(
-    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+    process.env.NEXT_PUBLIC_TALLY_INTERVAL_IN_MS || "5000"
   );
   const GET_STATS_INTERVAL = parseInt(
-    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+    process.env.NEXT_PUBLIC_TALLY_INTERVAL_IN_MS || "5000"
   );
   const GET_DONATIONS_INTERVAL = parseInt(
-    process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000"
+    process.env.NEXT_PUBLIC_TALLY_INTERVAL_IN_MS || "5000"
   );
   const GET_DONATIONS_MAX_INTERVAL =
-    parseInt(process.env.NEXT_PUBLIC_QUERY_INTERVAL_IN_MS || "5000") * 2;
+    parseInt(process.env.NEXT_PUBLIC_TALLY_INTERVAL_IN_MS || "5000") * 2;
 
   const {
     setDonations,
@@ -208,10 +208,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
   }, [state.donations, web3Connections.connections["metamask"].address]);
 
   React.useEffect(() => {
-    const campaign =
-      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true"
-        ? "test run"
-        : "campaign";
+    const campaign = TEST_ENVIRONMENT ? "test run" : "campaign";
     if (
       state.phase === DonationPhases.STATUS_FILLED ||
       state.phase === DonationPhases.STATUS_ENDED
@@ -657,7 +654,7 @@ const DonationProvider = ({ children }: IDonationProvider) => {
 
   React.useEffect(() => {
     if (
-      process.env.NEXT_PUBLIC_TEST_ENVIRONMENT === "true" &&
+      TEST_ENVIRONMENT &&
       state.phase !== DonationPhases.STATUS_ENDED &&
       state.phase !== DonationPhases.STATUS_FILLED
     )
