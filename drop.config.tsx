@@ -19,12 +19,12 @@ const campaigns: { [campaignName: string]: ICampaign } = {
     title: "Coin Center",
     logo: "/logos/coin_center.png",
     link: "https://www.coincenter.org",
-    targetEth: "30", // TODO: let this become a backend param
-    minEthPerAddress: "0.03", // TODO: let this become a backend param
-    maxEthPerAddress: "0.3", // TODO: let this become a backend param
-    rewardNam: "1000000", // TODO: let this become a backend param
-    startDate: new Date("2025-01-18T15:00:00Z"), // TODO: let this become a backend param
-    endDate: new Date("2025-01-24T15:00:00Z"), // TODO: let this become a backend param
+    targetEth: "30",
+    minEthPerAddress: "0.03",
+    maxEthPerAddress: "0.3",
+    rewardNam: "1000000",
+    startDate: new Date("2025-01-18T15:00:00Z"),
+    endDate: new Date("2025-01-24T15:00:00Z"),
     donorAddress: "0x15322B546e31F5Bfe144C4ae133A9Db6F0059fe3",
     donorAddressEns: "coincenter.eth",
     targetText: (
@@ -36,18 +36,18 @@ const campaigns: { [campaignName: string]: ICampaign } = {
       </>
     ),
   },
-  web3PrivacyNowTest: {
+  web3PrivacyNow: {
     title: "Web3Privacy Now",
     logo: "/logos/web3privacynow.png",
-    link: "https://web3privacy.info/",
-    targetEth: "50", // TODO: let this become a backend param
-    minEthPerAddress: "0.03", // TODO: let this become a backend param
-    maxEthPerAddress: "0.3", // TODO: let this become a backend param
-    rewardNam: "900000", // TODO: let this become a backend param
-    startDate: new Date("2025-03-19T10:00:00Z"), // TODO: let this become a backend param
-    endDate: new Date("2025-03-24T15:00:00Z"), // TODO: let this become a backend param
-    donorAddress: "0x9120B48e3bc859B22130D30F6c3dF12B002A7d95",
-    donorAddressEns: "",
+    link: "https://web3privacy.info",
+    targetEth: "50",
+    minEthPerAddress: "0.03",
+    maxEthPerAddress: "0.3",
+    rewardNam: "900000",
+    startDate: new Date("2025-03-22T15:00:00Z"),
+    endDate: new Date("2025-03-24T15:00:00Z"),
+    donorAddress: "0xB8Fbd9A43cc0CeB3d9ddd58b752979a77e6f0c1D",
+    donorAddressEns: "web3privacynow.eth",
     targetText: (
       <>
         Their mission is to make privacy accessible to general public & turning
